@@ -1,0 +1,1742 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dataset Repository - Epidemiological Data</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif;
+            background-color: #0d1117;
+            color: #e6edf3;
+            line-height: 1.6;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #1f2937, #374151);
+            padding: 20px 0;
+            border-bottom: 1px solid #30363d;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .repo-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            gap: 20px;
+        }
+
+        .logo {
+            height: 150px;
+            width: 150px;
+            object-fit: contain;
+            background: #21262d;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #58a6ff;
+            font-weight: bold;
+            font-size: 16px;
+        }
+
+        .logo-primary {
+            order: -1;
+        }
+
+        .logo-secondary {
+            order: 1;
+        }
+
+        .repo-info {
+            flex: 1;
+            text-align: center;
+        }
+
+        .repo-title {
+            font-size: 28px;
+            font-weight: 600;
+            color: #58a6ff;
+        }
+
+        .repo-description {
+            color: #8b949e;
+            margin-top: 8px;
+        }
+
+        .user-info {
+            color: #58a6ff;
+            font-size: 14px;
+            display: none;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .user-role {
+            background: #238636;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .user-role.student {
+            background: #1f6feb;
+        }
+
+        .user-role.lecturer {
+            background: #f85149;
+        }
+
+        .logout-btn {
+            background: #f85149;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            margin-left: 10px;
+        }
+
+        .logout-btn:hover {
+            background: #da3633;
+        }
+
+        .stats-bar {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+            padding: 15px;
+            background: rgba(13, 17, 23, 0.4);
+            border-radius: 6px;
+            border: 1px solid #30363d;
+            margin-bottom: 30px;
+        }
+
+        .stat-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            color: #8b949e;
+            font-size: 14px;
+        }
+
+        .stat-number {
+            color: #e6edf3;
+            font-weight: 600;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 300px;
+            gap: 30px;
+        }
+
+        .categories-container {
+            background: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 6px;
+            overflow: hidden;
+        }
+
+        .categories-header {
+            background: #21262d;
+            padding: 15px 20px;
+            border-bottom: 1px solid #30363d;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .categories-title {
+            font-weight: 600;
+            color: #e6edf3;
+        }
+
+        .upload-btn {
+            background: #1f6feb;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            display: none;
+        }
+
+        .upload-btn:hover {
+            background: #0969da;
+        }
+
+        .category {
+            border-bottom: 1px solid #21262d;
+        }
+
+        .category:last-child {
+            border-bottom: none;
+        }
+
+        .category-header {
+            background: #161b22;
+            padding: 15px 20px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            color: #58a6ff;
+            transition: background 0.2s;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border: none;
+            width: 100%;
+            text-align: left;
+        }
+
+        .category-header:hover {
+            background: #21262d;
+        }
+
+        .category-header:focus {
+            outline: 2px solid #58a6ff;
+            outline-offset: -2px;
+        }
+
+        .category-arrow {
+            transition: transform 0.2s;
+            font-size: 12px;
+        }
+
+        .category-arrow.expanded {
+            transform: rotate(90deg);
+        }
+
+        .files {
+            display: none;
+            background: #0d1117;
+        }
+
+        .files.expanded {
+            display: block;
+        }
+
+        .file {
+            padding: 15px 20px;
+            border-bottom: 1px solid #21262d;
+            transition: background 0.2s;
+            position: relative;
+        }
+
+        .file:hover {
+            background: #161b22;
+        }
+
+        .file:last-child {
+            border-bottom: none;
+        }
+
+        .file-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 8px;
+        }
+
+        .file-name {
+            font-weight: 500;
+            color: #e6edf3;
+            font-size: 14px;
+        }
+
+        .file-meta {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .file-size {
+            color: #58a6ff;
+            font-weight: 600;
+            font-size: 12px;
+        }
+
+        .file-grade {
+            background: #238636;
+            color: white;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .file-grade.pending {
+            background: #f85149;
+        }
+
+        .file-description {
+            color: #8b949e;
+            font-size: 12px;
+            margin-bottom: 10px;
+        }
+
+        .file-actions {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .download-btn {
+            background: #238636;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: background 0.2s;
+        }
+
+        .download-btn:hover {
+            background: #2ea043;
+        }
+
+        .download-btn:focus {
+            outline: 2px solid #2ea043;
+            outline-offset: 2px;
+        }
+
+        .comment-btn {
+            background: #6f42c1;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: background 0.2s;
+        }
+
+        .comment-btn:hover {
+            background: #5a2d91;
+        }
+
+        .grade-btn {
+            background: #f85149;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: background 0.2s;
+        }
+
+        .grade-btn:hover {
+            background: #da3633;
+        }
+
+        .comments-section {
+            margin-top: 15px;
+            padding: 15px;
+            background: #21262d;
+            border-radius: 6px;
+            border-left: 3px solid #6f42c1;
+            display: none;
+        }
+
+        .comments-section.expanded {
+            display: block;
+        }
+
+        .comment {
+            padding: 10px;
+            margin-bottom: 10px;
+            background: #161b22;
+            border-radius: 4px;
+            border-left: 2px solid #6f42c1;
+        }
+
+        .comment:last-child {
+            margin-bottom: 0;
+        }
+
+        .comment-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 5px;
+        }
+
+        .comment-author {
+            font-weight: 600;
+            color: #58a6ff;
+            font-size: 12px;
+        }
+
+        .comment-date {
+            color: #8b949e;
+            font-size: 11px;
+        }
+
+        .comment-text {
+            color: #e6edf3;
+            font-size: 13px;
+            line-height: 1.4;
+        }
+
+        .sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .info-card {
+            background: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 6px;
+            padding: 20px;
+        }
+
+        .card-title {
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: #e6edf3;
+        }
+
+        .info-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #21262d;
+        }
+
+        .info-item:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+        }
+
+        .info-label {
+            color: #8b949e;
+            font-size: 14px;
+        }
+
+        .info-value {
+            color: #e6edf3;
+            font-weight: 500;
+            font-size: 14px;
+        }
+
+        /* Upload Modal */
+        .upload-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(1, 4, 9, 0.9);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .upload-modal-content {
+            background: #161b22;
+            padding: 30px;
+            border-radius: 8px;
+            border: 1px solid #30363d;
+            width: 90%;
+            max-width: 500px;
+        }
+
+        .upload-area {
+            border: 2px dashed #30363d;
+            border-radius: 8px;
+            padding: 40px;
+            text-align: center;
+            margin-bottom: 20px;
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+
+        .upload-area:hover {
+            border-color: #58a6ff;
+            background: rgba(88, 166, 255, 0.05);
+        }
+
+        .upload-area.dragover {
+            border-color: #58a6ff;
+            background: rgba(88, 166, 255, 0.1);
+        }
+
+        .file-input {
+            display: none;
+        }
+
+        .upload-icon {
+            font-size: 48px;
+            margin-bottom: 15px;
+            color: #58a6ff;
+        }
+
+        .upload-text {
+            color: #8b949e;
+            margin-bottom: 10px;
+        }
+
+        .supported-formats {
+            color: #6f42c1;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .upload-form {
+            display: none;
+        }
+
+        .upload-form.show {
+            display: block;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        /* Login Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(1, 4, 9, 0.9);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: #161b22;
+            padding: 40px;
+            border-radius: 8px;
+            border: 1px solid #30363d;
+            width: 90%;
+            max-width: 400px;
+            text-align: center;
+        }
+
+        .modal h2 {
+            color: #58a6ff;
+            margin-bottom: 20px;
+            font-size: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        .form-group label {
+            display: block;
+            color: #e6edf3;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #30363d;
+            border-radius: 6px;
+            background: #0d1117;
+            color: #e6edf3;
+            font-size: 14px;
+        }
+
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+            outline: none;
+            border-color: #58a6ff;
+        }
+
+        .login-btn, .submit-btn {
+            width: 100%;
+            background: #238636;
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .login-btn:hover, .submit-btn:hover {
+            background: #2ea043;
+        }
+
+        .cancel-btn {
+            width: 100%;
+            background: transparent;
+            color: #8b949e;
+            border: 1px solid #30363d;
+            padding: 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            margin-top: 10px;
+        }
+
+        .cancel-btn:hover {
+            background: #21262d;
+        }
+
+        .demo-info {
+            margin-top: 20px;
+            padding: 15px;
+            background: rgba(88, 166, 255, 0.1);
+            border-radius: 6px;
+            border-left: 3px solid #58a6ff;
+        }
+
+        .demo-info p {
+            color: #8b949e;
+            font-size: 12px;
+            margin: 0;
+        }
+
+        .error-message, .success-message {
+            font-size: 12px;
+            margin-top: 10px;
+            display: none;
+            padding: 8px;
+            border-radius: 4px;
+        }
+
+        .error-message {
+            color: #f85149;
+            background: rgba(248, 81, 73, 0.1);
+        }
+
+        .success-message {
+            color: #238636;
+            background: rgba(35, 134, 54, 0.1);
+        }
+
+        .toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #238636;
+            color: white;
+            padding: 15px 20px;
+            border-radius: 6px;
+            z-index: 1001;
+            transform: translateX(400px);
+            transition: transform 0.3s ease;
+            max-width: 350px;
+            word-wrap: break-word;
+        }
+
+        .toast.show {
+            transform: translateX(0);
+        }
+
+        .toast.error {
+            background: #f85149;
+        }
+
+        .toast.info {
+            background: #1f6feb;
+        }
+
+        .student-uploads {
+            background: #0f1419;
+            border: 1px solid #1f6feb;
+            border-radius: 6px;
+            margin-top: 20px;
+        }
+
+        .student-uploads .categories-header {
+            background: #1f6feb;
+            color: white;
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .stats-bar {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+
+            .repo-header {
+                flex-direction: column;
+                align-items: center;
+                gap: 15px;
+                text-align: center;
+            }
+
+            .logo {
+                height: 120px;
+                width: 120px;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .file-actions {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <div class="repo-header">
+                <div class="logo logo-primary">NMCP</div>
+                <div class="repo-info">
+                    <h1 class="repo-title">Clean Malaria Data Repository</h1>
+                    <p class="repo-description">Comprehensive epidemiological trend analysis tools and sample datasets</p>
+                </div>
+                <div class="logo logo-secondary">ICF-SL</div>
+                <div class="user-info" id="userInfo">
+                    <span class="user-role" id="userRole"></span>
+                    <span>Logged in as: <span id="currentUser"></span></span>
+                    <button class="logout-btn" onclick="logout()">Logout</button>
+                </div>
+            </div>
+            
+            <div class="stats-bar">
+                <div class="stat-item">
+                    <span class="stat-number" id="totalFiles">0</span> files
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number" id="totalSize">0</span> total size
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number" id="pendingGrades">0</span> pending grades
+                </div>
+                <div class="stat-item">
+                    Updated <span class="stat-number">2 hours ago</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="container">
+        <div class="main-content">
+            <div>
+                <!-- Main Repository -->
+                <div class="categories-container">
+                    <div class="categories-header">
+                        <div class="categories-title">Dataset Categories</div>
+                    </div>
+                    <div id="categories-container" role="region" aria-label="Dataset categories">
+                        <!-- Categories will be populated by JavaScript -->
+                    </div>
+                </div>
+
+                <!-- Student Uploads Section -->
+                <div class="student-uploads" id="studentUploads" style="display: none;">
+                    <div class="categories-header">
+                        <div class="categories-title">📚 Student Submissions</div>
+                        <button class="upload-btn" id="uploadBtn" onclick="showUploadModal()">
+                            📤 Upload Assignment
+                        </button>
+                    </div>
+                    <div id="student-files-container" role="region" aria-label="Student submissions">
+                        <!-- Student files will be populated by JavaScript -->
+                    </div>
+                </div>
+            </div>
+
+            <aside class="sidebar">
+                <div class="info-card">
+                    <h3 class="card-title">About This Repository</h3>
+                    <p style="color: #8b949e; font-size: 14px; line-height: 1.6;">
+                        This repository contains epidemiological trend analysis tools and sample datasets for healthcare data visualization and statistical analysis.
+                    </p>
+                </div>
+
+                <div class="info-card" id="notificationCard" style="display: none;">
+                    <h3 class="card-title">📧 Recent Notifications</h3>
+                    <div id="notifications-list">
+                        <!-- Notifications will be populated here -->
+                    </div>
+                </div>
+
+                <div class="info-card">
+                    <h3 class="card-title">Dataset Information</h3>
+                    <div class="info-item">
+                        <span class="info-label">Total Categories</span>
+                        <span class="info-value" id="categoryCount">6</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">File Types</span>
+                        <span class="info-value">Excel, PDF, Shapefiles</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Data Period</span>
+                        <span class="info-value">2021</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">License</span>
+                        <span class="info-value">MIT</span>
+                    </div>
+                </div>
+
+                <div class="info-card">
+                    <h3 class="card-title">Quick Start</h3>
+                    <ol style="color: #8b949e; font-size: 14px; line-height: 1.6; padding-left: 20px;">
+                        <li>Login with your credentials</li>
+                        <li>Browse dataset categories</li>
+                        <li id="studentQuickStart" style="display: none;">Upload your assignments</li>
+                        <li>Download files for analysis</li>
+                        <li id="lecturerQuickStart" style="display: none;">Review and grade submissions</li>
+                    </ol>
+                </div>
+            </aside>
+        </div>
+    </main>
+
+    <!-- Login Modal -->
+    <div id="loginModal" class="modal" role="dialog" aria-labelledby="loginTitle" aria-modal="true">
+        <div class="modal-content">
+            <h2 id="loginTitle">🔒 Repository Access</h2>
+            <p style="color: #8b949e; margin-bottom: 30px; font-size: 14px;">
+                Please enter your credentials to access the epidemiological datasets
+            </p>
+            
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <input type="text" id="username" name="username" placeholder="Enter username" required autocomplete="username">
+                </div>
+                
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password" placeholder="Enter password" required autocomplete="current-password">
+                </div>
+                
+                <button type="button" class="login-btn" id="loginButton">Login</button>
+            </form>
+            
+            <div class="error-message" id="errorMessage" role="alert" aria-live="polite">
+                Invalid credentials. Please try again.
+            </div>
+
+            <div class="success-message" id="successMessage" role="alert" aria-live="polite">
+                Login successful! Loading datasets...
+            </div>
+            
+            <div class="demo-info">
+                <p><strong>Demo Credentials:</strong></p>
+                <p>Admin: admin | 1234</p>
+                <p>Researcher: researcher | data2024</p>
+                <p>Student: student | pass123</p>
+                <p>Lecturer: lecturer | teach2024</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Upload Modal -->
+    <div id="uploadModal" class="upload-modal" role="dialog" aria-labelledby="uploadTitle" aria-modal="true">
+        <div class="upload-modal-content">
+            <h2 id="uploadTitle">📤 Upload Assignment</h2>
+            
+            <div class="upload-area" onclick="document.getElementById('fileInput').click()">
+                <div class="upload-icon">📁</div>
+                <div class="upload-text">Click to select files or drag and drop</div>
+                <div class="supported-formats">Supported: R scripts (.R), PDFs (.pdf), Videos (.mp4, .mov), HTML (.html)</div>
+            </div>
+            
+            <input type="file" id="fileInput" class="file-input" multiple accept=".R,.r,.pdf,.mp4,.mov,.avi,.html,.htm">
+            
+            <div class="upload-form" id="uploadForm">
+                <div class="form-group">
+                    <label for="assignmentTitle">Assignment Title</label>
+                    <input type="text" id="assignmentTitle" placeholder="Enter assignment title" required>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="course">Course</label>
+                        <select id="course" required>
+                            <option value="">Select Course</option>
+                            <option value="EPI101">EPI101 - Epidemiology Basics</option>
+                            <option value="STAT202">STAT202 - Biostatistics</option>
+                            <option value="DATA301">DATA301 - Data Analysis with R</option>
+                            <option value="VIZ401">VIZ401 - Data Visualization</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="dueDate">Due Date</label>
+                        <input type="date" id="dueDate" required>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="description">Description (Optional)</label>
+                    <textarea id="description" placeholder="Brief description of your assignment..." rows="3"></textarea>
+                </div>
+                
+                <div style="display: flex; gap: 10px;">
+                    <button type="button" class="submit-btn" onclick="submitUpload()">Submit Assignment</button>
+                    <button type="button" class="cancel-btn" onclick="closeUploadModal()">Cancel</button>
+                </div>
+            </div>
+            
+            <div class="error-message" id="uploadError"></div>
+            <div class="success-message" id="uploadSuccess"></div>
+        </div>
+    </div>
+
+    <!-- Comment/Grade Modal -->
+    <div id="commentModal" class="modal" role="dialog" aria-labelledby="commentTitle" aria-modal="true">
+        <div class="modal-content">
+            <h2 id="commentTitle">💬 Add Comment & Grade</h2>
+            
+            <div class="form-group">
+                <label for="gradeInput">Grade (0-100)</label>
+                <input type="number" id="gradeInput" min="0" max="100" placeholder="Enter grade">
+            </div>
+            
+            <div class="form-group">
+                <label for="commentText">Comment</label>
+                <textarea id="commentText" placeholder="Add your feedback..." rows="4" required></textarea>
+            </div>
+            
+            <div style="display: flex; gap: 10px;">
+                <button type="button" class="submit-btn" onclick="submitComment()">Submit</button>
+                <button type="button" class="cancel-btn" onclick="closeCommentModal()">Cancel</button>
+            </div>
+            
+            <div class="error-message" id="commentError"></div>
+            <div class="success-message" id="commentSuccess"></div>
+        </div>
+    </div>
+
+    <!-- Toast notification -->
+    <div id="toast" class="toast" role="alert" aria-live="polite"></div>
+
+    <script>
+        let isLoggedIn = false;
+        let currentUser = null;
+        let userRole = null;
+        let selectedFile = null;
+        let currentToast = null;
+        let notifications = [];
+        let studentFiles = [];
+
+        // Sample files for each category
+        const shapefiles = [
+            { 
+                name: 'Chiefdom2021', 
+                size: '1 MB', 
+                type: 'shapefile', 
+                icon: '🗺️', 
+                path: '/data/shapefiles/Chiefdom2021', 
+                content: 'Shapefile for chiefdom boundaries in 2021 containing geographic data for administrative divisions.',
+                files: ['Chiefdom2021.shp', 'Chiefdom2021.shx', 'Chiefdom2021.dbf']
+            },
+            { 
+                name: 'District2021', 
+                size: '900 KB', 
+                type: 'shapefile', 
+                icon: '🗺️', 
+                path: '/data/shapefiles/District2021', 
+                content: 'Shapefile for district boundaries in 2021 with complete administrative mapping data.',
+                files: ['District2021.shp', 'District2021.shx', 'District2021.dbf']
+            }
+        ];
+
+        const epiRoutineFiles = [
+            { name: 'epi_data_2021.xlsx', size: '856 KB', type: 'excel', icon: '📊', path: '/data/epi/epi_data_2021.xlsx', content: 'Excel file with comprehensive epidemiological data at district and chiefdom level including case counts and demographics.' }
+        ];
+
+        const interventionFiles = [
+            { name: 'intervention_2021.xlsx', size: '512 KB', type: 'excel', icon: '📊', path: '/data/intervention/intervention_2021.xlsx', content: 'Intervention coverage data for 2021 including vaccination rates and treatment coverage statistics.' }
+        ];
+
+        const campaignSurveyFiles = [
+            { name: 'survey_2021.xlsx', size: '768 KB', type: 'excel', icon: '📊', path: '/data/survey/survey_2021.xlsx', content: 'Survey and campaign data for 2021 with population health indicators and campaign effectiveness metrics.' }
+        ];
+
+        const reportFiles = [
+            { name: 'annual_report_2021.pdf', size: '1.2 MB', type: 'pdf', icon: '📄', path: '/data/reports/annual_report_2021.pdf', content: 'Comprehensive annual epidemiological report for 2021 with analysis and recommendations.' }
+        ];
+
+        const otherFiles = [
+            { name: 'comparative_analysis_2021.xlsx', size: '856 KB', type: 'excel', icon: '📊', path: '/data/historical/comparative_analysis_2021.xlsx', content: 'Excel file containing 2021 epidemiological data with district and chiefdom comparative analysis.' }
+        ];
+
+        // Data categories
+        const dataCategories = {
+            'shapefiles': { name: 'Shapefiles', files: [...shapefiles] },
+            'epi_routine': { name: 'Epi Routine Data', files: [...epiRoutineFiles] },
+            'intervention': { name: 'Intervention Data', files: [...interventionFiles] },
+            'campaign_survey': { name: 'Campaign/Survey Data', files: [...campaignSurveyFiles] },
+            'reports': { name: 'Reports', files: [...reportFiles] },
+            'other': { name: 'Other Files', files: [...otherFiles] }
+        };
+
+        // Valid credentials with roles
+        const validCredentials = {
+            'admin': { password: '1234', role: 'admin' },
+            'researcher': { password: 'data2024', role: 'researcher' },
+            'student': { password: 'pass123', role: 'student' },
+            'lecturer': { password: 'teach2024', role: 'lecturer' }
+        };
+
+        // Email notification system (simulated)
+        const sendEmailNotification = (recipient, subject, message) => {
+            console.log(`📧 Email sent to ${recipient}:`);
+            console.log(`Subject: ${subject}`);
+            console.log(`Message: ${message}`);
+            
+            // Add to notifications
+            notifications.push({
+                id: Date.now(),
+                recipient,
+                subject,
+                message,
+                timestamp: new Date().toLocaleString(),
+                read: false
+            });
+            
+            updateNotifications();
+            showToast(`Email notification sent to ${recipient}`, 'info');
+        };
+
+        // Show login modal
+        const showLoginModal = () => {
+            const modal = document.getElementById('loginModal');
+            modal.style.display = 'flex';
+            setTimeout(() => {
+                document.getElementById('username').focus();
+            }, 100);
+        };
+
+        // Hide login modal
+        const hideLoginModal = () => {
+            document.getElementById('loginModal').style.display = 'none';
+        };
+
+        // Simple login function
+        const simpleLogin = () => {
+            const user = document.getElementById('username').value;
+            const pass = document.getElementById('password').value;
+            const errorMessage = document.getElementById('errorMessage');
+            const successMessage = document.getElementById('successMessage');
+            
+            errorMessage.style.display = 'none';
+            successMessage.style.display = 'none';
+            
+            if (validCredentials[user] && validCredentials[user].password === pass) {
+                isLoggedIn = true;
+                currentUser = user;
+                userRole = validCredentials[user].role;
+                
+                document.getElementById('loginModal').style.display = 'none';
+                document.getElementById('currentUser').textContent = user;
+                document.getElementById('userRole').textContent = userRole;
+                document.getElementById('userRole').className = `user-role ${userRole}`;
+                document.getElementById('userInfo').style.display = 'flex';
+                
+                // Show appropriate interface based on role
+                setupUserInterface();
+                
+                renderCategories();
+                updateStats();
+                showToast(`Welcome, ${user}! Logged in as ${userRole}.`);
+                
+                // Clear form
+                document.getElementById('username').value = '';
+                document.getElementById('password').value = '';
+            } else {
+                errorMessage.style.display = 'block';
+                document.getElementById('password').value = '';
+            }
+        };
+
+        // Setup user interface based on role
+        const setupUserInterface = () => {
+            const studentUploads = document.getElementById('studentUploads');
+            const uploadBtn = document.getElementById('uploadBtn');
+            const studentQuickStart = document.getElementById('studentQuickStart');
+            const lecturerQuickStart = document.getElementById('lecturerQuickStart');
+            const notificationCard = document.getElementById('notificationCard');
+
+            if (userRole === 'student') {
+                studentUploads.style.display = 'block';
+                uploadBtn.style.display = 'block';
+                studentQuickStart.style.display = 'block';
+                renderStudentFiles();
+            } else if (userRole === 'lecturer') {
+                studentUploads.style.display = 'block';
+                lecturerQuickStart.style.display = 'block';
+                notificationCard.style.display = 'block';
+                renderStudentFiles();
+                updateNotifications();
+            }
+        };
+
+        // Show upload modal
+        const showUploadModal = () => {
+            if (userRole !== 'student') {
+                showToast('Only students can upload assignments', 'error');
+                return;
+            }
+            document.getElementById('uploadModal').style.display = 'flex';
+        };
+
+        // Close upload modal
+        const closeUploadModal = () => {
+            document.getElementById('uploadModal').style.display = 'none';
+            document.getElementById('uploadForm').classList.remove('show');
+            document.getElementById('fileInput').value = '';
+            document.getElementById('assignmentTitle').value = '';
+            document.getElementById('course').value = '';
+            document.getElementById('dueDate').value = '';
+            document.getElementById('description').value = '';
+        };
+
+        // Handle file selection
+        const handleFileSelect = (files) => {
+            const uploadForm = document.getElementById('uploadForm');
+            const uploadError = document.getElementById('uploadError');
+            
+            uploadError.style.display = 'none';
+            
+            if (files.length === 0) return;
+            
+            // Validate file types
+            const validExtensions = ['.r', '.R', '.pdf', '.mp4', '.mov', '.avi', '.html', '.htm'];
+            const invalidFiles = [];
+            
+            Array.from(files).forEach(file => {
+                const extension = '.' + file.name.split('.').pop().toLowerCase();
+                if (!validExtensions.includes(extension) && !validExtensions.includes(extension.toUpperCase())) {
+                    invalidFiles.push(file.name);
+                }
+            });
+            
+            if (invalidFiles.length > 0) {
+                uploadError.textContent = `Invalid file types: ${invalidFiles.join(', ')}. Please upload R scripts, PDFs, videos, or HTML files.`;
+                uploadError.style.display = 'block';
+                return;
+            }
+            
+            uploadForm.classList.add('show');
+            showToast(`${files.length} file(s) selected for upload`);
+        };
+
+        // Submit upload
+        const submitUpload = () => {
+            const files = document.getElementById('fileInput').files;
+            const title = document.getElementById('assignmentTitle').value;
+            const course = document.getElementById('course').value;
+            const dueDate = document.getElementById('dueDate').value;
+            const description = document.getElementById('description').value;
+            const uploadError = document.getElementById('uploadError');
+            const uploadSuccess = document.getElementById('uploadSuccess');
+            
+            uploadError.style.display = 'none';
+            uploadSuccess.style.display = 'none';
+            
+            if (!files.length || !title || !course || !dueDate) {
+                uploadError.textContent = 'Please fill in all required fields and select files.';
+                uploadError.style.display = 'block';
+                return;
+            }
+            
+            // Add to student files
+            Array.from(files).forEach(file => {
+                const fileIcon = getFileIcon(file.name);
+                const newFile = {
+                    id: Date.now() + Math.random(),
+                    name: file.name,
+                    title: title,
+                    course: course,
+                    dueDate: dueDate,
+                    description: description,
+                    size: formatFileSize(file.size),
+                    type: file.type || 'application/octet-stream',
+                    icon: fileIcon,
+                    uploadedBy: currentUser,
+                    uploadDate: new Date().toLocaleString(),
+                    grade: null,
+                    comments: [],
+                    status: 'submitted'
+                };
+                studentFiles.push(newFile);
+            });
+            
+            uploadSuccess.textContent = `Assignment "${title}" uploaded successfully!`;
+            uploadSuccess.style.display = 'block';
+            
+            // Send notification to lecturers
+            sendEmailNotification('lecturer@university.edu', 'New Assignment Submitted', 
+                `Student ${currentUser} has submitted "${title}" for course ${course}. Due date: ${dueDate}.`);
+            
+            setTimeout(() => {
+                closeUploadModal();
+                renderStudentFiles();
+                updateStats();
+                showToast('Assignment uploaded and lecturer notified!');
+            }, 2000);
+        };
+
+        // Get file icon based on extension
+        const getFileIcon = (fileName) => {
+            const extension = fileName.split('.').pop().toLowerCase();
+            switch (extension) {
+                case 'r': return '📊';
+                case 'pdf': return '📄';
+                case 'mp4':
+                case 'mov':
+                case 'avi': return '🎥';
+                case 'html':
+                case 'htm': return '🌐';
+                default: return '📁';
+            }
+        };
+
+        // Format file size
+        const formatFileSize = (bytes) => {
+            if (bytes === 0) return '0 B';
+            const k = 1024;
+            const sizes = ['B', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
+        };
+
+        // Render student files
+        const renderStudentFiles = () => {
+            const container = document.getElementById('student-files-container');
+            container.innerHTML = '';
+
+            if (studentFiles.length === 0) {
+                container.innerHTML = '<div style="padding: 20px; text-align: center; color: #8b949e;">No assignments uploaded yet.</div>';
+                return;
+            }
+
+            studentFiles.forEach((file, index) => {
+                const isOwnFile = file.uploadedBy === currentUser;
+                const canComment = userRole === 'lecturer' || userRole === 'admin';
+                
+                const fileDiv = document.createElement('div');
+                fileDiv.classList.add('file');
+                fileDiv.innerHTML = `
+                    <div class="file-header">
+                        <div class="file-name">${file.icon} ${file.name}</div>
+                        <div class="file-meta">
+                            ${file.grade !== null ? `<div class="file-grade">${file.grade}%</div>` : '<div class="file-grade pending">Pending</div>'}
+                            <div class="file-size">${file.size}</div>
+                        </div>
+                    </div>
+                    <div class="file-description">
+                        <strong>${file.title}</strong> - ${file.course}<br>
+                        ${file.description || 'No description provided'}<br>
+                        <small>Uploaded by: ${file.uploadedBy} | Due: ${file.dueDate} | Submitted: ${file.uploadDate}</small>
+                    </div>
+                    <div class="file-actions">
+                        ${isOwnFile || userRole === 'lecturer' || userRole === 'admin' ? 
+                            `<button class="download-btn" onclick="downloadStudentFile('${file.id}')">Download</button>` : ''
+                        }
+                        ${canComment ? 
+                            `<button class="comment-btn" onclick="showCommentModal('${file.id}')">
+                                💬 Comment ${file.comments.length > 0 ? `(${file.comments.length})` : ''}
+                            </button>
+                            <button class="grade-btn" onclick="showGradeModal('${file.id}')">
+                                📝 ${file.grade !== null ? 'Update Grade' : 'Grade'}
+                            </button>` : ''
+                        }
+                    </div>
+                    ${file.comments.length > 0 ? `
+                        <div class="comments-section expanded">
+                            <h4 style="color: #6f42c1; margin-bottom: 10px; font-size: 13px;">💬 Comments & Feedback</h4>
+                            ${file.comments.map(comment => `
+                                <div class="comment">
+                                    <div class="comment-header">
+                                        <span class="comment-author">${comment.author} (${comment.role})</span>
+                                        <span class="comment-date">${comment.date}</span>
+                                    </div>
+                                    <div class="comment-text">${comment.text}</div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    ` : ''}
+                `;
+                container.appendChild(fileDiv);
+            });
+        };
+
+        // Download student file
+        const downloadStudentFile = (fileId) => {
+            const file = studentFiles.find(f => f.id == fileId);
+            if (!file) {
+                showToast('File not found', 'error');
+                return;
+            }
+
+            // Create download link with proper extension
+            const link = document.createElement('a');
+            link.download = file.name;
+            link.href = '#'; // In real app, this would be the actual file URL
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            
+            const extension = file.name.split('.').pop();
+            showToast(`${file.name} downloaded successfully! (.${extension} format)`);
+        };
+
+        // Show comment modal
+        const showCommentModal = (fileId) => {
+            selectedFile = fileId;
+            document.getElementById('commentModal').style.display = 'flex';
+            document.getElementById('commentTitle').textContent = '💬 Add Comment & Grade';
+        };
+
+        // Show grade modal (same as comment modal but focused on grading)
+        const showGradeModal = (fileId) => {
+            selectedFile = fileId;
+            const file = studentFiles.find(f => f.id == fileId);
+            if (file && file.grade !== null) {
+                document.getElementById('gradeInput').value = file.grade;
+            }
+            document.getElementById('commentModal').style.display = 'flex';
+            document.getElementById('commentTitle').textContent = '📝 Grade Assignment';
+        };
+
+        // Close comment modal
+        const closeCommentModal = () => {
+            document.getElementById('commentModal').style.display = 'none';
+            document.getElementById('gradeInput').value = '';
+            document.getElementById('commentText').value = '';
+            document.getElementById('commentError').style.display = 'none';
+            document.getElementById('commentSuccess').style.display = 'none';
+            selectedFile = null;
+        };
+
+        // Submit comment and grade
+        const submitComment = () => {
+            const grade = document.getElementById('gradeInput').value;
+            const commentText = document.getElementById('commentText').value;
+            const commentError = document.getElementById('commentError');
+            const commentSuccess = document.getElementById('commentSuccess');
+            
+            commentError.style.display = 'none';
+            commentSuccess.style.display = 'none';
+            
+            if (!commentText.trim()) {
+                commentError.textContent = 'Please enter a comment.';
+                commentError.style.display = 'block';
+                return;
+            }
+            
+            const file = studentFiles.find(f => f.id == selectedFile);
+            if (!file) {
+                commentError.textContent = 'File not found.';
+                commentError.style.display = 'block';
+                return;
+            }
+            
+            // Add comment
+            file.comments.push({
+                id: Date.now(),
+                author: currentUser,
+                role: userRole,
+                text: commentText.trim(),
+                date: new Date().toLocaleString()
+            });
+            
+            // Update grade if provided
+            let gradeMessage = '';
+            if (grade && grade >= 0 && grade <= 100) {
+                const oldGrade = file.grade;
+                file.grade = parseInt(grade);
+                gradeMessage = oldGrade !== null ? 
+                    ` Grade updated from ${oldGrade}% to ${grade}%.` : 
+                    ` Grade assigned: ${grade}%.`;
+            }
+            
+            commentSuccess.textContent = 'Comment added successfully!' + gradeMessage;
+            commentSuccess.style.display = 'block';
+            
+            // Send email notification to student
+            const emailSubject = grade ? 
+                `Grade Posted: ${file.title}` : 
+                `New Comment: ${file.title}`;
+            const emailMessage = grade ? 
+                `Your assignment "${file.title}" has been graded: ${grade}%. Comment: ${commentText}` :
+                `New comment on your assignment "${file.title}": ${commentText}`;
+                
+            sendEmailNotification(`${file.uploadedBy}@university.edu`, emailSubject, emailMessage);
+            
+            setTimeout(() => {
+                closeCommentModal();
+                renderStudentFiles();
+                updateStats();
+            }, 2000);
+        };
+
+        // Update notifications display
+        const updateNotifications = () => {
+            const notificationsList = document.getElementById('notifications-list');
+            if (!notificationsList) return;
+            
+            const recentNotifications = notifications.slice(-5).reverse();
+            
+            if (recentNotifications.length === 0) {
+                notificationsList.innerHTML = '<div style="color: #8b949e; font-size: 12px;">No recent notifications</div>';
+                return;
+            }
+            
+            notificationsList.innerHTML = recentNotifications.map(notif => `
+                <div style="padding: 8px 0; border-bottom: 1px solid #21262d; font-size: 12px;">
+                    <div style="color: #58a6ff; font-weight: 600;">${notif.subject}</div>
+                    <div style="color: #8b949e; margin-top: 2px;">${notif.timestamp}</div>
+                </div>
+            `).join('');
+        };
+
+        // Download file function
+        const downloadFile = (fileName, fileType) => {
+            if (!isLoggedIn) {
+                showToast('Please log in first', 'error');
+                return;
+            }
+
+            let fileData = null;
+            Object.values(dataCategories).forEach(category => {
+                const found = category.files.find(f => f.name === fileName || f.name.startsWith(fileName));
+                if (found) fileData = found;
+            });
+
+            if (!fileData) {
+                showToast('File not found', 'error');
+                return;
+            }
+
+            showToast(`Preparing download for ${fileName}...`);
+            
+            setTimeout(() => {
+                if (fileType === 'shapefile' && fileData.files) {
+                    // Download all shapefile components
+                    fileData.files.forEach((file, index) => {
+                        setTimeout(() => {
+                            const link = document.createElement('a');
+                            link.download = file;
+                            link.href = '#';
+                            document.body.appendChild(link);
+                            link.click();
+                            document.body.removeChild(link);
+
+                            if (index === 0) {
+                                const extension = file.split('.').pop();
+                                showToast(`Downloaded ${file} (.${extension} format)`);
+                            }
+                        }, index * 200);
+                    });
+
+                    setTimeout(() => {
+                        showToast(`All ${fileName} shapefile components downloaded! Files: ${fileData.files.join(', ')}`);
+                    }, fileData.files.length * 200 + 500);
+                } else {
+                    const link = document.createElement('a');
+                    link.download = fileData.name;
+                    link.href = '#';
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                    
+                    const extension = fileData.name.split('.').pop();
+                    showToast(`${fileName} downloaded successfully! (.${extension} format)`);
+                }
+            }, 800);
+        };
+
+        // Logout function
+        const logout = () => {
+            if (confirm('Are you sure you want to logout?')) {
+                isLoggedIn = false;
+                currentUser = null;
+                userRole = null;
+                document.getElementById('userInfo').style.display = 'none';
+                document.getElementById('categories-container').innerHTML = '';
+                document.getElementById('student-files-container').innerHTML = '';
+                document.getElementById('studentUploads').style.display = 'none';
+                document.getElementById('notificationCard').style.display = 'none';
+                document.getElementById('uploadBtn').style.display = 'none';
+                document.getElementById('studentQuickStart').style.display = 'none';
+                document.getElementById('lecturerQuickStart').style.display = 'none';
+                document.getElementById('totalFiles').textContent = '0';
+                document.getElementById('totalSize').textContent = '0';
+                document.getElementById('pendingGrades').textContent = '0';
+                showLoginModal();
+                showToast('Logged out successfully.');
+            }
+        };
+
+        // Render categories and files
+        const renderCategories = () => {
+            const container = document.getElementById('categories-container');
+            container.innerHTML = '';
+
+            Object.keys(dataCategories).forEach((key, index) => {
+                const category = dataCategories[key];
+
+                const categoryDiv = document.createElement('div');
+                categoryDiv.classList.add('category');
+
+                const headerButton = document.createElement('button');
+                headerButton.classList.add('category-header');
+                headerButton.setAttribute('aria-expanded', 'false');
+                headerButton.setAttribute('aria-controls', `files-${key}`);
+                headerButton.innerHTML = `
+                    <span>${category.name} (${category.files.length} files)</span>
+                    <span class="category-arrow">▶</span>
+                `;
+                headerButton.addEventListener('click', () => toggleCategory(key));
+                categoryDiv.appendChild(headerButton);
+
+                const filesDiv = document.createElement('div');
+                filesDiv.classList.add('files');
+                filesDiv.id = `files-${key}`;
+                filesDiv.setAttribute('role', 'region');
+                filesDiv.setAttribute('aria-label', `${category.name} files`);
+
+                category.files.forEach((file, fileIndex) => {
+                    const fileDiv = document.createElement('div');
+                    fileDiv.classList.add('file');
+                    fileDiv.innerHTML = `
+                        <div class="file-header">
+                            <div class="file-name">${file.icon} ${file.name}</div>
+                            <div class="file-meta">
+                                <div class="file-size">${file.size}</div>
+                            </div>
+                        </div>
+                        <div class="file-description">${file.content}</div>
+                        <div class="file-actions">
+                            <button class="download-btn" onclick="downloadFile('${file.name}', '${file.type}')">
+                                Download ${file.type === 'shapefile' ? 'All Files' : ''}
+                            </button>
+                        </div>
+                    `;
+                    filesDiv.appendChild(fileDiv);
+                });
+
+                categoryDiv.appendChild(filesDiv);
+                container.appendChild(categoryDiv);
+            });
+        };
+
+        // Toggle category visibility
+        const toggleCategory = (categoryKey) => {
+            const filesDiv = document.getElementById(`files-${categoryKey}`);
+            const headerButton = document.querySelector(`[aria-controls="files-${categoryKey}"]`);
+            const arrow = headerButton.querySelector('.category-arrow');
+            
+            if (filesDiv.classList.contains('expanded')) {
+                filesDiv.classList.remove('expanded');
+                arrow.classList.remove('expanded');
+                headerButton.setAttribute('aria-expanded', 'false');
+            } else {
+                filesDiv.classList.add('expanded');
+                arrow.classList.add('expanded');
+                headerButton.setAttribute('aria-expanded', 'true');
+            }
+        };
+
+        // Update statistics
+        const updateStats = () => {
+            let totalFiles = 0;
+            let totalSizeKB = 0;
+            let pendingGrades = 0;
+            
+            // Count main repository files
+            Object.values(dataCategories).forEach(category => {
+                totalFiles += category.files.length;
+                category.files.forEach(file => {
+                    const sizeMatch = file.size.match(/(\d+(?:\.\d+)?)\s*(KB|MB)/i);
+                    if (sizeMatch) {
+                        const size = parseFloat(sizeMatch[1]);
+                        const unit = sizeMatch[2].toUpperCase();
+                        totalSizeKB += unit === 'MB' ? size * 1024 : size;
+                    }
+                });
+            });
+            
+            // Count student files
+            totalFiles += studentFiles.length;
+            pendingGrades = studentFiles.filter(f => f.grade === null).length;
+            
+            document.getElementById('totalFiles').textContent = totalFiles;
+            document.getElementById('totalSize').textContent = totalSizeKB > 1024 
+                ? `${(totalSizeKB / 1024).toFixed(1)} MB` 
+                : `${Math.round(totalSizeKB)} KB`;
+            document.getElementById('pendingGrades').textContent = pendingGrades;
+        };
+
+        // Show toast notification
+        const showToast = (message, type = 'success') => {
+            if (currentToast) {
+                clearTimeout(currentToast);
+            }
+
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.className = `toast ${type}`;
+            toast.classList.add('show');
+            
+            currentToast = setTimeout(() => {
+                toast.classList.remove('show');
+                currentToast = null;
+            }, 4000);
+        };
+
+        // Add sample student data for demo
+        const addSampleStudentData = () => {
+            if (studentFiles.length === 0) {
+                studentFiles.push(
+                    {
+                        id: 1,
+                        name: 'malaria_analysis.R',
+                        title: 'Malaria Data Analysis Project',
+                        course: 'DATA301',
+                        dueDate: '2025-09-15',
+                        description: 'Statistical analysis of malaria incidence data using R',
+                        size: '45 KB',
+                        type: 'application/x-r-script',
+                        icon: '📊',
+                        uploadedBy: 'john_doe',
+                        uploadDate: '2025-08-28 14:30',
+                        grade: 85,
+                        comments: [
+                            {
+                                id: 1,
+                                author: 'Dr. Smith',
+                                role: 'lecturer',
+                                text: 'Good analysis! Consider adding more visualizations for better data presentation.',
+                                date: '2025-08-29 10:15'
+                            }
+                        ],
+                        status: 'graded'
+                    },
+                    {
+                        id: 2,
+                        name: 'epi_report.pdf',
+                        title: 'Epidemiological Trends Report',
+                        course: 'EPI101',
+                        dueDate: '2025-09-01',
+                        description: 'Comprehensive report on epidemiological trends in West Africa',
+                        size: '2.1 MB',
+                        type: 'application/pdf',
+                        icon: '📄',
+                        uploadedBy: 'jane_smith',
+                        uploadDate: '2025-08-30 09:45',
+                        grade: null,
+                        comments: [],
+                        status: 'submitted'
+                    }
+                );
+            }
+        };
+
+        // Initialize application
+        document.addEventListener('DOMContentLoaded', () => {
+            // Set up file input handler
+            const fileInput = document.getElementById('fileInput');
+            fileInput.addEventListener('change', (e) => {
+                handleFileSelect(e.target.files);
+            });
+
+            // Set up drag and drop
+            const uploadArea = document.querySelector('.upload-area');
+            
+            ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+                uploadArea.addEventListener(eventName, preventDefaults, false);
+            });
+
+            function preventDefaults(e) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
+
+            ['dragenter', 'dragover'].forEach(eventName => {
+                uploadArea.addEventListener(eventName, () => {
+                    uploadArea.classList.add('dragover');
+                }, false);
+            });
+
+            ['dragleave', 'drop'].forEach(eventName => {
+                uploadArea.addEventListener(eventName, () => {
+                    uploadArea.classList.remove('dragover');
+                }, false);
+            });
+
+            uploadArea.addEventListener('drop', (e) => {
+                const files = e.dataTransfer.files;
+                handleFileSelect(files);
+            }, false);
+
+            // Set up login
+            const loginBtn = document.getElementById('loginButton');
+            const usernameInput = document.getElementById('username');
+            const passwordInput = document.getElementById('password');
+            
+            loginBtn.onclick = simpleLogin;
+            
+            usernameInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    passwordInput.focus();
+                }
+            });
+
+            passwordInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    simpleLogin();
+                }
+            });
+
+            // Add sample data and show login
+            addSampleStudentData();
+            updateStats();
+            showLoginModal();
+        });
+    </script>
+</body>
+</html>

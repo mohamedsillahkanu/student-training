@@ -1,0 +1,694 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Week 4: Combining Multiple Data Files for Malaria Analysis</title>
+    <style>
+        .malaria-module {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #e2e8f0;
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            min-height: 100vh;
+        }
+
+        .malaria-module .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #1e293b;
+            margin-top: 20px;
+            margin-bottom: 20px;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+            border: 1px solid #334155;
+        }
+
+        .malaria-module .header {
+            background: linear-gradient(135deg, #1e40af, #1d4ed8);
+            color: white;
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(30,64,175,0.3);
+        }
+
+        .malaria-module .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .malaria-module .objectives {
+            background: linear-gradient(135deg, #1e40af, #2563eb);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+        }
+
+        .malaria-module .note-section {
+            background: #334155;
+            padding: 25px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            border-left: 5px solid #3b82f6;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .malaria-module .note-section h2 {
+            color: #60a5fa;
+            margin-bottom: 20px;
+            font-size: 1.8em;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .malaria-module .note-section h3 {
+            color: #93c5fd;
+            margin: 25px 0 15px 0;
+            font-size: 1.4em;
+            border-bottom: 2px solid #3b82f6;
+            padding-bottom: 5px;
+        }
+
+        .malaria-module .note-section h4 {
+            color: #3b82f6;
+            margin: 20px 0 10px 0;
+            font-size: 1.2em;
+        }
+
+        .malaria-module .note-section h5 {
+            color: #10b981;
+            margin: 15px 0 8px 0;
+            font-size: 1.1em;
+        }
+
+        .malaria-module .note-section p {
+            color: #cbd5e1;
+        }
+
+        .malaria-module .note-section ol {
+            color: #cbd5e1;
+            margin: 10px 0 10px 20px;
+        }
+
+        .malaria-module .note-section li {
+            margin: 8px 0;
+        }
+
+        .malaria-module .code-block {
+            background: #0f172a;
+            color: #e2e8f0;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 15px 0;
+            position: relative;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            overflow-x: auto;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            border: 1px solid #1e293b;
+        }
+
+        .malaria-module .copy-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: #475569;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.8em;
+            transition: all 0.3s ease;
+        }
+
+        .malaria-module .copy-btn:hover {
+            background: #1e293b;
+            transform: translateY(-2px);
+        }
+
+        .malaria-module .r-comment { color: #34d399; }
+        .malaria-module .r-variable { color: #60a5fa; }
+        .malaria-module .r-function { color: #fbbf24; }
+        .malaria-module .r-operator { color: #f87171; }
+        .malaria-module .r-bracket { color: #e2e8f0; }
+        .malaria-module .r-string { color: #a78bfa; }
+        .malaria-module .r-parameter { color: #2dd4bf; }
+        .malaria-module .r-boolean { color: #fb7185; }
+        .malaria-module .r-number { color: #fbbf24; }
+
+        .malaria-module .explanation-box {
+            background: linear-gradient(135deg, #0f172a, #1e293b);
+            border-left: 4px solid #10b981;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 0 8px 8px 0;
+            box-shadow: 0 2px 8px rgba(16,185,129,0.2);
+        }
+
+        .malaria-module .explanation-box h5 {
+            color: #10b981;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .malaria-module .explanation-box p {
+            margin: 0;
+            color: #cbd5e1;
+        }
+
+        .malaria-module .summary-section {
+            background: linear-gradient(135deg, #1e40af, #1d4ed8);
+            color: white;
+            padding: 25px;
+            border-radius: 12px;
+            margin: 30px 0;
+            box-shadow: 0 10px 25px rgba(30,64,175,0.3);
+        }
+
+        .malaria-module .warning-box {
+            background: linear-gradient(135deg, #dc2626, #b91c1c);
+            border-left: 4px solid #f87171;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 0 8px 8px 0;
+            box-shadow: 0 2px 8px rgba(248,113,113,0.2);
+        }
+
+        .malaria-module .warning-box h5 {
+            color: #fef2f2;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .malaria-module .warning-box p {
+            margin: 0;
+            color: #fef2f2;
+        }
+
+        .malaria-module .progress-bar {
+            background: #374151;
+            height: 8px;
+            border-radius: 4px;
+            margin: 20px 0;
+            overflow: hidden;
+        }
+
+        .malaria-module .progress-fill {
+            background: linear-gradient(90deg, #3b82f6, #60a5fa);
+            height: 100%;
+            width: 75%;
+            border-radius: 4px;
+            transition: width 0.5s ease;
+        }
+
+        @media (max-width: 768px) {
+            .malaria-module .container {
+                margin: 10px;
+                padding: 15px;
+            }
+            
+            .malaria-module .header h1 {
+                font-size: 2em;
+            }
+            
+            .malaria-module .code-block {
+                font-size: 0.9em;
+            }
+        }
+
+        /* Animated elements */
+        .malaria-module .fade-in {
+            animation: fadeIn 0.6s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .malaria-module .note-section:hover {
+            transform: translateY(-2px);
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+        }
+    </style>
+</head>
+<body>
+    <div class="malaria-module">
+        <div class="container">
+            <div class="header fade-in">
+                <h1>📁 Week 4: Combining Multiple Data Files</h1>
+                <p>Efficiently merging malaria datasets from multiple sources</p>
+                <div class="progress-bar">
+                    <div class="progress-fill"></div>
+                </div>
+            </div>
+
+            <div class="objectives fade-in">
+                <p><strong>This week, we will:</strong><br>
+                ✅ <strong>Install and manage packages efficiently</strong> using the <code>pacman</code> package<br>
+                ✅ <strong>Navigate file systems</strong> and work with multiple Excel files<br>
+                ✅ <strong>Combine datasets programmatically</strong> using <code>lapply()</code> and <code>bind_rows()</code><br>
+                ✅ <strong>Validate and export merged datasets</strong> for further analysis</p>
+            </div>
+
+            <div class="note-section fade-in">
+                <h2>1️⃣ Package Management with Pacman</h2>
+                
+                <h3>Why Use Pacman?</h3>
+                <p>📌 The <strong>pacman</strong> package simplifies package management by automatically installing missing packages and loading them in a single command. This is especially useful when working with multiple datasets that require various packages.</p>
+                
+                <h4>Step 1: Install and Load Pacman</h4>
+                <div class="code-block">
+                    <button class="copy-btn" onclick="copyCode(this)">📋 Copy</button>
+                    <code>
+<span class="r-comment"># Install pacman if not already installed</span><br>
+<span class="r-function">if</span><span class="r-bracket">(</span><span class="r-operator">!</span><span class="r-function">require</span><span class="r-bracket">(</span><span class="r-variable">pacman</span><span class="r-bracket">))</span> <span class="r-function">install.packages</span><span class="r-bracket">(</span><span class="r-string">"pacman"</span><span class="r-bracket">)</span>
+                    </code>
+                </div>
+                
+                <div class="explanation-box">
+                    <h5>🔍 Explanation:</h5>
+                    <p>✔ <code>require()</code> checks if pacman is available<br>
+                    ✔ If not available, <code>install.packages()</code> installs it automatically<br>
+                    ✔ This ensures the script works on any system, regardless of which packages are pre-installed</p>
+                </div>
+                
+                <h4>Step 2: Load Required Packages</h4>
+                <div class="code-block">
+                    <button class="copy-btn" onclick="copyCode(this)">📋 Copy</button>
+                    <code>
+<span class="r-comment"># Load required packages using pacman</span><br>
+<span class="r-variable">pacman</span><span class="r-operator">::</span><span class="r-function">p_load</span><span class="r-bracket">(</span><span class="r-variable">readxl</span><span class="r-operator">,</span> <span class="r-variable">dplyr</span><span class="r-bracket">)</span>
+                    </code>
+                </div>
+                
+                <div class="explanation-box">
+                    <h5>🔍 Explanation:</h5>
+                    <p>✔ <code>p_load()</code> installs packages if missing and loads them<br>
+                    ✔ <code>readxl</code> is for reading Excel files<br>
+                    ✔ <code>dplyr</code> provides data manipulation functions like <code>bind_rows()</code></p>
+                </div>
+            </div>
+
+            <div class="note-section fade-in">
+                <h2>2️⃣ Setting Up File Paths and Directory Navigation</h2>
+                
+                <h4>Step 1: Define the Folder Path</h4>
+                <div class="code-block">
+                    <button class="copy-btn" onclick="copyCode(this)">📋 Copy</button>
+                    <code>
+<span class="r-comment"># Set the folder path where the Excel files are stored</span><br>
+<span class="r-variable">folder_path</span> <span class="r-operator">&lt;-</span> <span class="r-string">"data/malaria_files"</span>
+                    </code>
+                </div>
+                
+                <div class="explanation-box">
+                    <h5>🔍 Explanation:</h5>
+                    <p>✔ Replace <code>"data/malaria_files"</code> with your actual folder path<br>
+                    ✔ Use forward slashes (/) even on Windows for compatibility<br>
+                    ✔ Can be absolute path (e.g., <code>"C:/Users/Data/malaria"</code>) or relative to your working directory</p>
+                </div>
+                
+                <h4>Step 2: Verify Working Directory</h4>
+                <div class="code-block">
+                    <button class="copy-btn" onclick="copyCode(this)">📋 Copy</button>
+                    <code>
+<span class="r-comment"># Check current working directory</span><br>
+<span class="r-function">getwd</span><span class="r-bracket">()</span><br>
+<br>
+<span class="r-comment"># List contents of the target folder</span><br>
+<span class="r-function">list.files</span><span class="r-bracket">(</span><span class="r-variable">folder_path</span><span class="r-bracket">)</span>
+                    </code>
+                </div>
+                
+                <div class="explanation-box">
+                    <h5>🔍 Explanation:</h5>
+                    <p>✔ <code>getwd()</code> shows your current working directory<br>
+                    ✔ <code>list.files()</code> displays all files in the specified folder<br>
+                    ✔ This helps verify that your path is correct and files are accessible</p>
+                </div>
+
+                <div class="warning-box">
+                    <h5>⚠️ Important Path Considerations:</h5>
+                    <p>Always verify your file paths exist and are accessible. Common issues include spaces in folder names, special characters, or incorrect relative paths. Use <code>file.exists(folder_path)</code> to check if the directory exists before proceeding.</p>
+                </div>
+            </div>
+
+            <div class="note-section fade-in">
+                <h2>3️⃣ Identifying and Reading Excel Files</h2>
+                
+                <h4>Step 1: List All Excel Files</h4>
+                <div class="code-block">
+                    <button class="copy-btn" onclick="copyCode(this)">📋 Copy</button>
+                    <code>
+<span class="r-comment"># List all Excel files in the folder</span><br>
+<span class="r-variable">files</span> <span class="r-operator">&lt;-</span> <span class="r-function">list.files</span><span class="r-bracket">(</span><span class="r-parameter">path</span> <span class="r-operator">=</span> <span class="r-variable">folder_path</span><span class="r-operator">,</span> <span class="r-parameter">pattern</span> <span class="r-operator">=</span> <span class="r-string">"\\.xlsx$"</span><span class="r-operator">,</span> <span class="r-parameter">full.names</span> <span class="r-operator">=</span> <span class="r-boolean">TRUE</span><span class="r-bracket">)</span><br>
+<br>
+<span class="r-comment"># Display found files</span><br>
+<span class="r-function">print</span><span class="r-bracket">(</span><span class="r-variable">files</span><span class="r-bracket">)</span>
+                    </code>
+                </div>
+                
+                <div class="explanation-box">
+                    <h5>🔍 Explanation:</h5>
+                    <p>✔ <code>pattern = "\\.xlsx$"</code> uses regular expressions to find files ending with .xlsx<br>
+                    ✔ <code>full.names = TRUE</code> returns complete file paths, not just filenames<br>
+                    ✔ The <code>$</code> ensures we match files ending with .xlsx, not containing it</p>
+                </div>
+                
+                <h4>Step 2: Include Different Excel Formats</h4>
+                <div class="code-block">
+                    <button class="copy-btn" onclick="copyCode(this)">📋 Copy</button>
+                    <code>
+<span class="r-comment"># Include both .xlsx and .xls files</span><br>
+<span class="r-variable">files</span> <span class="r-operator">&lt;-</span> <span class="r-function">list.files</span><span class="r-bracket">(</span><span class="r-parameter">path</span> <span class="r-operator">=</span> <span class="r-variable">folder_path</span><span class="r-operator">,</span> <br>
+                        <span class="r-parameter">pattern</span> <span class="r-operator">=</span> <span class="r-string">"\\.xlsx?$"</span><span class="r-operator">,</span> <br>
+                        <span class="r-parameter">full.names</span> <span class="r-operator">=</span> <span class="r-boolean">TRUE</span><span class="r-operator">,</span><br>
+                        <span class="r-parameter">ignore.case</span> <span class="r-operator">=</span> <span class="r-boolean">TRUE</span><span class="r-bracket">)</span><br>
+<br>
+<span class="r-comment"># Check how many files were found</span><br>
+<span class="r-function">length</span><span class="r-bracket">(</span><span class="r-variable">files</span><span class="r-bracket">)</span>
+                    </code>
+                </div>
+                
+                <div class="explanation-box">
+                    <h5>🔍 Explanation:</h5>
+                    <p>✔ <code>\\.xlsx?$</code> matches both .xlsx and .xls files (? makes the 'x' optional)<br>
+                    ✔ <code>ignore.case = TRUE</code> matches files regardless of case (XLSX, xlsx, etc.)<br>
+                    ✔ <code>length(files)</code> tells us how many files were found</p>
+                </div>
+            </div>
+
+            <div class="note-section fade-in">
+                <h2>4️⃣ Reading and Combining Multiple Files</h2>
+                
+                <h4>Step 1: Read All Files with Error Handling</h4>
+                <div class="code-block">
+                    <button class="copy-btn" onclick="copyCode(this)">📋 Copy</button>
+                    <code>
+<span class="r-comment"># Function to safely read Excel files</span><br>
+<span class="r-variable">safe_read_excel</span> <span class="r-operator">&lt;-</span> <span class="r-function">function</span><span class="r-bracket">(</span><span class="r-variable">file_path</span><span class="r-bracket">)</span> <span class="r-bracket">{</span><br>
+  <span class="r-function">tryCatch</span><span class="r-bracket">({</span><br>
+    <span class="r-variable">data</span> <span class="r-operator">&lt;-</span> <span class="r-function">read_excel</span><span class="r-bracket">(</span><span class="r-variable">file_path</span><span class="r-bracket">)</span><br>
+    <span class="r-comment"># Add source file column</span><br>
+    <span class="r-variable">data</span><span class="r-operator">$</span><span class="r-variable">source_file</span> <span class="r-operator">&lt;-</span> <span class="r-function">basename</span><span class="r-bracket">(</span><span class="r-variable">file_path</span><span class="r-bracket">)</span><br>
+    <span class="r-function">return</span><span class="r-bracket">(</span><span class="r-variable">data</span><span class="r-bracket">)</span><br>
+  <span class="r-bracket">},</span> <span class="r-parameter">error</span> <span class="r-operator">=</span> <span class="r-function">function</span><span class="r-bracket">(</span><span class="r-variable">e</span><span class="r-bracket">)</span> <span class="r-bracket">{</span><br>
+    <span class="r-function">warning</span><span class="r-bracket">(</span><span class="r-function">paste</span><span class="r-bracket">(</span><span class="r-string">"Failed to read:"</span><span class="r-operator">,</span> <span class="r-variable">file_path</span><span class="r-operator">,</span> <span class="r-string">"-"</span><span class="r-operator">,</span> <span class="r-variable">e</span><span class="r-operator">$</span><span class="r-variable">message</span><span class="r-bracket">))</span><br>
+    <span class="r-function">return</span><span class="r-bracket">(</span><span class="r-function">NULL</span><span class="r-bracket">)</span><br>
+  <span class="r-bracket">})</span><br>
+<span class="r-bracket">}</span>
+                    </code>
+                </div>
+                
+                <div class="explanation-box">
+                    <h5>🔍 Explanation:</h5>
+                    <p>✔ <code>tryCatch()</code> handles errors gracefully without stopping the entire process<br>
+                    ✔ <code>source_file</code> column tracks which file each row came from<br>
+                    ✔ <code>basename()</code> extracts just the filename without the full path<br>
+                    ✔ Returns <code>NULL</code> for files that can't be read, with a warning message</p>
+                </div>
+                
+                <h4>Step 2: Apply Function to All Files</h4>
+                <div class="code-block">
+                    <button class="copy-btn" onclick="copyCode(this)">📋 Copy</button>
+                    <code>
+<span class="r-comment"># Read all files using lapply</span><br>
+<span class="r-variable">data_list</span> <span class="r-operator">&lt;-</span> <span class="r-function">lapply</span><span class="r-bracket">(</span><span class="r-variable">files</span><span class="r-operator">,</span> <span class="r-variable">safe_read_excel</span><span class="r-bracket">)</span><br>
+<br>
+<span class="r-comment"># Remove NULL entries (failed reads)</span><br>
+<span class="r-variable">data_list</span> <span class="r-operator">&lt;-</span> <span class="r-variable">data_list</span><span class="r-bracket">[</span><span class="r-operator">!</span><span class="r-function">sapply</span><span class="r-bracket">(</span><span class="r-variable">data_list</span><span class="r-operator">,</span> <span class="r-function">is.null</span><span class="r-bracket">)</span><span class="r-bracket">]</span><br>
+<br>
+<span class="r-comment"># Check how many files were successfully read</span><br>
+<span class="r-function">length</span><span class="r-bracket">(</span><span class="r-variable">data_list</span><span class="r-bracket">)</span>
+                    </code>
+                </div>
+                
+                <div class="explanation-box">
+                    <h5>🔍 Explanation:</h5>
+                    <p>✔ <code>lapply()</code> applies the reading function to each file<br>
+                    ✔ <code>sapply(data_list, is.null)</code> identifies which files failed to load<br>
+                    ✔ The filtering removes NULL entries, keeping only successful reads</p>
+                </div>
+                
+                <h4>Step 3: Combine All Datasets</h4>
+                <div class="code-block">
+                    <button class="copy-btn" onclick="copyCode(this)">📋 Copy</button>
+                    <code>
+<span class="r-comment"># Combine all datasets into one</span><br>
+<span class="r-variable">combined_data</span> <span class="r-operator">&lt;-</span> <span class="r-variable">data_list</span> <span class="r-operator">%>%</span><br>
+  <span class="r-function">bind_rows</span><span class="r-bracket">()</span><br>
+<br>
+<span class="r-comment"># Display basic information about the combined dataset</span><br>
+<span class="r-function">cat</span><span class="r-bracket">(</span><span class="r-string">"Combined dataset dimensions:"</span><span class="r-operator">,</span> <span class="r-function">nrow</span><span class="r-bracket">(</span><span class="r-variable">combined_data</span><span class="r-bracket">)</span><span class="r-operator">,</span> <span class="r-string">"rows x"</span><span class="r-operator">,</span> <span class="r-function">ncol</span><span class="r-bracket">(</span><span class="r-variable">combined_data</span><span class="r-bracket">)</span><span class="r-operator">,</span> <span class="r-string">"columns\n"</span><span class="r-bracket">)</span>
+                    </code>
+                </div>
+                
+                <div class="explanation-box">
+                    <h5>🔍 Explanation:</h5>
+                    <p>✔ <code>bind_rows()</code> from dplyr combines datasets by stacking rows<br>
+                    ✔ It automatically matches columns with the same names<br>
+                    ✔ Missing columns in some files are filled with NA values<br>
+                    ✔ <code>cat()</code> provides a summary of the resulting dataset dimensions</p>
+                </div>
+            </div>
+
+            <div class="note-section fade-in">
+                <h2>5️⃣ Data Validation and Quality Checks</h2>
+                
+                <h4>Step 1: Examine the Combined Dataset</h4>
+                <div class="code-block">
+                    <button class="copy-btn" onclick="copyCode(this)">📋 Copy</button>
+                    <code>
+<span class="r-comment"># View the structure of combined data</span><br>
+<span class="r-function">str</span><span class="r-bracket">(</span><span class="r-variable">combined_data</span><span class="r-bracket">)</span><br>
+<br>
+<span class="r-comment"># Display first few rows</span><br>
+<span class="r-function">head</span><span class="r-bracket">(</span><span class="r-variable">combined_data</span><span class="r-bracket">)</span><br>
+<br>
+<span class="r-comment"># Check for missing values</span><br>
+<span class="r-function">summary</span><span class="r-bracket">(</span><span class="r-variable">combined_data</span><span class="r-bracket">)</span>
+                    </code>
+                </div>
+                
+                <div class="explanation-box">
+                    <h5>🔍 Explanation:</h5>
+                    <p>✔ <code>str()</code> shows data types and structure of each column<br>
+                    ✔ <code>head()</code> displays the first 6 rows for quick inspection<br>
+                    ✔ <code>summary()</code> provides statistics and counts missing values (NA's)</p>
+                </div>
+                
+                <h4>Step 2: Check Data Consistency</h4>
+                <div class="code-block">
+                    <button class="copy-btn" onclick="copyCode(this)">📋 Copy</button>
+                    <code>
+<span class="r-comment"># Check unique values in key columns</span><br>
+<span class="r-function">table</span><span class="r-bracket">(</span><span class="r-variable">combined_data</span><span class="r-operator">$</span><span class="r-variable">source_file</span><span class="r-bracket">)</span><br>
+<br>
+<span class="r-comment"># Check for duplicate rows</span><br>
+<span class="r-variable">duplicate_count</span> <span class="r-operator">&lt;-</span> <span class="r-function">sum</span><span class="r-bracket">(</span><span class="r-function">duplicated</span><span class="r-bracket">(</span><span class="r-variable">combined_data</span><span class="r-bracket">))</span><br>
+<span class="r-function">cat</span><span class="r-bracket">(</span><span class="r-string">"Number of duplicate rows:"</span><span class="r-operator">,</span> <span class="r-variable">duplicate_count</span><span class="r-operator">,</span> <span class="r-string">"\n"</span><span class="r-bracket">)</span><br>
+<br>
+<span class="r-comment"># Check column names consistency</span><br>
+<span class="r-function">colnames</span><span class="r-bracket">(</span><span class="r-variable">combined_data</span><span class="r-bracket">)</span>
+                    </code>
+                </div>
+                
+                <div class="explanation-box">
+                    <h5>🔍 Explanation:</h5>
+                    <p>✔ <code>table()</code> shows how many rows came from each source file<br>
+                    ✔ <code>duplicated()</code> identifies exact duplicate rows across all columns<br>
+                    ✔ <code>colnames()</code> displays all column names to check for consistency</p>
+                </div>
+            </div>
+
+            <div class="note-section fade-in">
+                <h2>6️⃣ Exporting the Combined Dataset</h2>
+                
+                <h4>Step 1: Save as CSV File</h4>
+                <div class="code-block">
+                    <button class="copy-btn" onclick="copyCode(this)">📋 Copy</button>
+                    <code>
+<span class="r-comment"># Save combined dataset as CSV</span><br>
+<span class="r-function">write.csv</span><span class="r-bracket">(</span><span class="r-variable">combined_data</span><span class="r-operator">,</span> <span class="r-string">"combined_malaria_data.csv"</span><span class="r-operator">,</span> <span class="r-parameter">row.names</span> <span class="r-operator">=</span> <span class="r-boolean">FALSE</span><span class="r-bracket">)</span><br>
+<span class="r-function">cat</span><span class="r-bracket">(</span><span class="r-string">"Data saved as combined_malaria_data.csv\n"</span><span class="r-bracket">)</span>
+                    </code>
+                </div>
+                
+                <div class="explanation-box">
+                    <h5>🔍 Explanation:</h5>
+                    <p>✔ <code>write.csv()</code> exports data to a CSV file<br>
+                    ✔ <code>row.names = FALSE</code> prevents adding row numbers as a column<br>
+                    ✔ CSV format is widely compatible with various analysis tools</p>
+                </div>
+                
+                <h4>Step 2: Save as Excel File</h4>
+                <div class="code-block">
+                    <button class="copy-btn" onclick="copyCode(this)">📋 Copy</button>
+                    <code>
+<span class="r-comment"># Install openxlsx if needed for Excel export</span><br>
+<span class="r-function">if</span><span class="r-bracket">(</span><span class="r-operator">!</span><span class="r-function">require</span><span class="r-bracket">(</span><span class="r-variable">openxlsx</span><span class="r-bracket">))</span> <span class="r-function">install.packages</span><span class="r-bracket">(</span><span class="r-string">"openxlsx"</span><span class="r-bracket">)</span><br>
+<span class="r-function">library</span><span class="r-bracket">(</span><span class="r-variable">openxlsx</span><span class="r-bracket">)</span><br>
+<br>
+<span class="r-comment"># Save combined dataset as Excel file</span><br>
+<span class="r-function">write.xlsx</span><span class="r-bracket">(</span><span class="r-variable">combined_data</span><span class="r-operator">,</span> <span class="r-string">"combined_malaria_data.xlsx"</span><span class="r-bracket">)</span><br>
+<span class="r-function">cat</span><span class="r-bracket">(</span><span class="r-string">"Data saved as combined_malaria_data.xlsx\n"</span><span class="r-bracket">)</span>
+                    </code>
+                </div>
+                
+                <div class="explanation-box">
+                    <h5>🔍 Explanation:</h5>
+                    <p>✔ <code>openxlsx</code> package enables Excel file creation without requiring Excel<br>
+                    ✔ <code>write.xlsx()</code> preserves data types better than CSV format<br>
+                    ✔ Excel format allows for formatted sheets and multiple worksheets</p>
+                </div>
+            </div>
+
+            <div class="note-section fade-in">
+                <h2>7️⃣ Complete Workflow Script</h2>
+                
+                <h3>Putting It All Together</h3>
+                <div class="code-block">
+                    <button class="copy-btn" onclick="copyCode(this)">📋 Copy</button>
+                    <code>
+<span class="r-comment"># Complete script for combining multiple Excel files</span><br>
+<br>
+<span class="r-comment"># 1. Package management</span><br>
+<span class="r-function">if</span><span class="r-bracket">(</span><span class="r-operator">!</span><span class="r-function">require</span><span class="r-bracket">(</span><span class="r-variable">pacman</span><span class="r-bracket">))</span> <span class="r-function">install.packages</span><span class="r-bracket">(</span><span class="r-string">"pacman"</span><span class="r-bracket">)</span><br>
+<span class="r-variable">pacman</span><span class="r-operator">::</span><span class="r-function">p_load</span><span class="r-bracket">(</span><span class="r-variable">readxl</span><span class="r-operator">,</span> <span class="r-variable">dplyr</span><span class="r-operator">,</span> <span class="r-variable">openxlsx</span><span class="r-bracket">)</span><br>
+<br>
+<span class="r-comment"># 2. Set folder path</span><br>
+<span class="r-variable">folder_path</span> <span class="r-operator">&lt;-</span> <span class="r-string">"data/malaria_files"</span>  <span class="r-comment"># Update this path</span><br>
+<br>
+<span class="r-comment"># 3. Verify folder exists</span><br>
+<span class="r-function">if</span><span class="r-bracket">(</span><span class="r-operator">!</span><span class="r-function">file.exists</span><span class="r-bracket">(</span><span class="r-variable">folder_path</span><span class="r-bracket">))</span> <span class="r-bracket">{</span><br>
+  <span class="r-function">stop</span><span class="r-bracket">(</span><span class="r-string">"Folder does not exist: "</span><span class="r-operator">,</span> <span class="r-variable">folder_path</span><span class="r-bracket">)</span><br>
+<span class="r-bracket">}</span><br>
+<br>
+<span class="r-comment"># 4. Find Excel files</span><br>
+<span class="r-variable">files</span> <span class="r-operator">&lt;-</span> <span class="r-function">list.files</span><span class="r-bracket">(</span><span class="r-parameter">path</span> <span class="r-operator">=</span> <span class="r-variable">folder_path</span><span class="r-operator">,</span> <br>
+                        <span class="r-parameter">pattern</span> <span class="r-operator">=</span> <span class="r-string">"\\.xlsx?$"</span><span class="r-operator">,</span> <br>
+                        <span class="r-parameter">full.names</span> <span class="r-operator">=</span> <span class="r-boolean">TRUE</span><span class="r-operator">,</span><br>
+                        <span class="r-parameter">ignore.case</span> <span class="r-operator">=</span> <span class="r-boolean">TRUE</span><span class="r-bracket">)</span><br>
+<br>
+<span class="r-function">cat</span><span class="r-bracket">(</span><span class="r-string">"Found"</span><span class="r-operator">,</span> <span class="r-function">length</span><span class="r-bracket">(</span><span class="r-variable">files</span><span class="r-bracket">)</span><span class="r-operator">,</span> <span class="r-string">"Excel files\n"</span><span class="r-bracket">)</span><br>
+<br>
+<span class="r-comment"># 5. Read and combine files</span><br>
+<span class="r-variable">safe_read_excel</span> <span class="r-operator">&lt;-</span> <span class="r-function">function</span><span class="r-bracket">(</span><span class="r-variable">file_path</span><span class="r-bracket">)</span> <span class="r-bracket">{</span><br>
+  <span class="r-function">tryCatch</span><span class="r-bracket">({</span><br>
+    <span class="r-variable">data</span> <span class="r-operator">&lt;-</span> <span class="r-function">read_excel</span><span class="r-bracket">(</span><span class="r-variable">file_path</span><span class="r-bracket">)</span><br>
+    <span class="r-variable">data</span><span class="r-operator">$</span><span class="r-variable">source_file</span> <span class="r-operator">&lt;-</span> <span class="r-function">basename</span><span class="r-bracket">(</span><span class="r-variable">file_path</span><span class="r-bracket">)</span><br>
+    <span class="r-function">return</span><span class="r-bracket">(</span><span class="r-variable">data</span><span class="r-bracket">)</span><br>
+  <span class="r-bracket">},</span> <span class="r-parameter">error</span> <span class="r-operator">=</span> <span class="r-function">function</span><span class="r-bracket">(</span><span class="r-variable">e</span><span class="r-bracket">)</span> <span class="r-bracket">{</span><br>
+    <span class="r-function">warning</span><span class="r-bracket">(</span><span class="r-string">"Failed to read: "</span><span class="r-operator">,</span> <span class="r-variable">file_path</span><span class="r-bracket">)</span><br>
+    <span class="r-function">return</span><span class="r-bracket">(</span><span class="r-function">NULL</span><span class="r-bracket">)</span><br>
+  <span class="r-bracket">})</span><br>
+<span class="r-bracket">}</span><br>
+<br>
+<span class="r-variable">data_list</span> <span class="r-operator">&lt;-</span> <span class="r-function">lapply</span><span class="r-bracket">(</span><span class="r-variable">files</span><span class="r-operator">,</span> <span class="r-variable">safe_read_excel</span><span class="r-bracket">)</span><br>
+<span class="r-variable">data_list</span> <span class="r-operator">&lt;-</span> <span class="r-variable">data_list</span><span class="r-bracket">[</span><span class="r-operator">!</span><span class="r-function">sapply</span><span class="r-bracket">(</span><span class="r-variable">data_list</span><span class="r-operator">,</span> <span class="r-function">is.null</span><span class="r-bracket">)</span><span class="r-bracket">]</span><br>
+<br>
+<span class="r-comment"># 6. Combine datasets</span><br>
+<span class="r-variable">combined_data</span> <span class="r-operator">&lt;-</span> <span class="r-variable">data_list</span> <span class="r-operator">%>%</span> <span class="r-function">bind_rows</span><span class="r-bracket">()</span><br>
+<br>
+<span class="r-comment"># 7. Display results</span><br>
+<span class="r-function">cat</span><span class="r-bracket">(</span><span class="r-string">"Combined dataset:"</span><span class="r-operator">,</span> <span class="r-function">nrow</span><span class="r-bracket">(</span><span class="r-variable">combined_data</span><span class="r-bracket">)</span><span class="r-operator">,</span> <span class="r-string">"rows x"</span><span class="r-operator">,</span> <span class="r-function">ncol</span><span class="r-bracket">(</span><span class="r-variable">combined_data</span><span class="r-bracket">)</span><span class="r-operator">,</span> <span class="r-string">"columns\n"</span><span class="r-bracket">)</span><br>
+<span class="r-function">print</span><span class="r-bracket">(</span><span class="r-function">head</span><span class="r-bracket">(</span><span class="r-variable">combined_data</span><span class="r-bracket">))</span><br>
+<br>
+<span class="r-comment"># 8. Save results</span><br>
+<span class="r-function">write.csv</span><span class="r-bracket">(</span><span class="r-variable">combined_data</span><span class="r-operator">,</span> <span class="r-string">"combined_malaria_data.csv"</span><span class="r-operator">,</span> <span class="r-parameter">row.names</span> <span class="r-operator">=</span> <span class="r-boolean">FALSE</span><span class="r-bracket">)</span><br>
+<span class="r-function">write.xlsx</span><span class="r-bracket">(</span><span class="r-variable">combined_data</span><span class="r-operator">,</span> <span class="r-string">"combined_malaria_data.xlsx"</span><span class="r-bracket">)</span><br>
+<br>
+<span class="r-function">cat</span><span class="r-bracket">(</span><span class="r-string">"Files saved successfully!\n"</span><span class="r-bracket">)</span>
+                    </code>
+                </div>
+                
+                <div class="explanation-box">
+                    <h5>🔍 Complete Workflow Explanation:</h5>
+                    <p>✔ This script automates the entire process from package installation to file export<br>
+                    ✔ Includes error checking and informative output messages<br>
+                    ✔ Can be saved as an .R file and run with minimal modifications<br>
+                    ✔ Only requires updating the folder path to match your data location</p>
+                </div>
+            </div>
+
+            <div class="summary-section fade-in">
+                <h2>✅ Summary of Week 4</h2>
+                <p>By the end of this week, you should:<br>
+                ✔ <strong>Use pacman for efficient package management</strong><br>
+                ✔ <strong>Navigate file systems and work with multiple files programmatically</strong><br>
+                ✔ <strong>Combine multiple Excel datasets with error handling</strong><br>
+                ✔ <strong>Validate merged datasets and export in multiple formats</strong><br>
+                ✔ <strong>Create robust, reusable scripts for data combination workflows</strong></p>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        function copyCode(button) {
+            const codeBlock = button.nextElementSibling;
+            const code = codeBlock.textContent;
+            
+            navigator.clipboard.writeText(code).then(() => {
+                button.textContent = '✅ Copied!';
+                setTimeout(() => {
+                    button.textContent = '📋 Copy';
+                }, 2000);
+            }).catch(err => {
+                console.error('Failed to copy code: ', err);
+                button.textContent = '❌ Failed';
+                setTimeout(() => {
+                    button.textContent = '📋 Copy';
+                }, 2000);
+            });
+        }
+
+        // Add fade-in animation on scroll
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        // Apply to all sections within the malaria module
+        document.querySelectorAll('.malaria-module .note-section, .malaria-module .summary-section').forEach(section => {
+            section.style.opacity = '0';
+            section.style.transform = 'translateY(20px)';
+            section.style.transition = 'all 0.6s ease';
+            observer.observe(section);
+        });
+
+        // Animate progress bar on load
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                const progressFill = document.querySelector('.malaria-module .progress-fill');
+                if (progressFill) {
+                    progressFill.style.width = '75%';
+                }
+            }, 500);
+        });
+    </script>
+</body>
+</html>

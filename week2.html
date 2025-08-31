@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Week 2: Data Structures & Basic Operations for Malaria Data Analysis</title>
+    <style>
+        .malaria-module {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #e2e8f0;
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            min-height: 100vh;
+        }
+
+        .malaria-module .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #1e293b;
+            margin-top: 20px;
+            margin-bottom: 20px;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+            border: 1px solid #334155;
+        }
+
+        .malaria-module .header {
+            background: linear-gradient(135deg, #1e40af, #1d4ed8);
+            color: white;
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(30,64,175,0.3);
+        }
+
+        .malaria-module .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .malaria-module .objectives {
+            background: linear-gradient(135deg, #1e40af, #2563eb);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+        }
+
+        .malaria-module .note-section {
+            background: #334155;
+            padding: 25px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            border-left: 5px solid #3b82f6;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .malaria-module .note-section h2 {
+            color: #60a5fa;
+            margin-bottom: 20px;
+            font-size: 1.8em;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .malaria-module .note-section h3 {
+            color: #93c5fd;
+            margin: 25px 0 15px 0;
+            font-size: 1.4em;
+            border-bottom: 2px solid #3b82f6;
+            padding-bottom: 5px;
+        }
+
+        .malaria-module .note-section h4 {
+            color: #3b82f6;
+            margin: 20px 0 10px 0;
+            font-size: 1.2em;
+        }
+
+        .malaria-module .note-section h5 {
+            color: #10b981;
+            margin: 15px 0 8px 0;
+            font-size: 1.1em;
+        }
+
+        .malaria-module .note-section p {
+            color: #cbd5e1;
+        }
+
+        .malaria-module .code-block {
+            background: #0f172a;
+            color: #e2e8f0;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 15px 0;
+            position: relative;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            overflow-x: auto;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            border: 1px solid #1e293b;
+        }
+
+        .malaria-module .copy-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: #475569;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.8em;
+            transition: all 0.3s ease;
+        }
+
+        .malaria-module .copy-btn:hover {
+            background: #1e293b;
+            transform: translateY(-2px);
+        }
+
+        .malaria-module .r-comment { color: #34d399; }
+        .malaria-module .r-variable { color: #60a5fa; }
+        .malaria-module .r-function { color: #fbbf24; }
+        .malaria-module .r-operator { color: #f87171; }
+        .malaria-module .r-bracket { color: #e2e8f0; }
+        .malaria-module .r-string { color: #a78bfa; }
+        .malaria-module .r-parameter { color: #2dd4bf; }
+        .malaria-module .r-boolean { color: #fb7185; }
+        .malaria-module .r-number { color: #fbbf24; }
+
+        .malaria-module .explanation-box {
+            background: linear-gradient(135deg, #0f172a, #1e293b);
+            border-left: 4px solid #10b981;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 0 8px 8px 0;
+            box-shadow: 0 2px 8px rgba(16,185,129,0.2);
+        }
+
+        .malaria-module .explanation-box h5 {
+            color: #10b981;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .malaria-module .explanation-box p {
+            margin: 0;
+            color: #cbd5e1;
+        }
+
+        .malaria-module .summary-section {
+            background: linear-gradient(135deg, #1e40af, #1d4ed8);
+            color: white;
+            padding: 25px;
+            border-radius: 12px;
+            margin: 30px 0;
+            box-shadow: 0 10px 25px rgba(30,64,175,0.3);
+        }
+
+        .malaria-module .progress-bar {
+            background: #374151;
+            height: 8px;
+            border-radius: 4px;
+            margin: 20px 0;
+            overflow: hidden;
+        }
+
+        .malaria-module .progress-fill {
+            background: linear-gradient(90deg, #3b82f6, #60a5fa);
+            height: 100%;
+            width: 50%;
+            border-radius: 4px;
+            transition: width 0.5s ease;
+        }
+
+        @media (max-width: 768px) {
+            .malaria-module .container {
+                margin: 10px;
+                padding: 15px;
+            }
+            
+            .malaria-module .header h1 {
+                font-size: 2em;
+            }
+            
+            .malaria-module .code-block {
+                font-size: 0.9em;
+            }
+        }
+
+        /* Animated elements */
+        .malaria-module .fade-in {
+            animation: fadeIn 0.6s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .malaria-module .note-section:hover {
+            transform: translateY(-2px);
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+        }
+    </style>
+</head>
+<body>
+    <div class="malaria-module">
+        <div class="container">
+            <div class="header fade-in">
+                <h1>📊 Week 2: Data Structures & Basic Operations</h1>
+                <p>Building foundations for effective malaria data analysis</p>
+                <div class="progress-bar">
+                    <div class="progress-fill"></div>
+                </div>
+            </div>
+
+            <div class="objectives fade-in">
+                <p><strong>This week, we will:</strong><br>
+                ✅ <strong>Explore basic data structures</strong>: Vectors, matrices, lists, and data frames<br>
+                ✅ <strong>Learn indexing and subsetting</strong> for malaria data<br>
+                ✅ <strong>Use basic functions</strong>: <code>mean()</code>, <code>sum()</code>, <code>table()</code>, <code>summary()</code><br>
+                ✅ <strong>Clean data with dplyr</strong>: <code>filter()</code>, <code>select()</code>, <code>mutate()</code></p>
+            </div>
+
+            <div class="note-section fade-in">
+                <h2>1️⃣ Vectors, Matrices, Lists, and Data Frames</h2>
+                
+                <h3>What are Data Structures?</h3>
+                <p>📌 <strong>Data structures</strong> are how data is organized and stored in R. Understanding these is key to effective data analysis.</p>
+                
+                <h4>Step 1: Vectors</h4>
+                <div class="code-block">
+                    <button class="copy-btn" onclick="copyCode(this)">📋 Copy</button>
+                    <code>
+<span class="r-comment"># Creating a vector of malaria cases per region</span><br>
+<span class="r-variable">cases_per_region</span> <span class="r-operator">&lt;-</span> <span class="r-function">c</span><span class="r-bracket">(</span><span class="r-number">150</span><span class="r-operator">,</span> <span class="r-number">200</span><span class="r-operator">,</span> <span class="r-number">250</span><span class="r-operator">,</span> <span class="r-number">300</span><span class="r-bracket">)</span>
+                    </code>
+                </div>
+                
+                <div class="explanation-box">
+                    <h5>🔍 Explanation:</h5>
+                    <p>✔ <code>c()</code> creates a <strong>vector</strong>—a basic data structure in R<br>
+                    ✔ <code>cases_per_region</code> stores the number of malaria cases in four different regions</p>
+                </div>
+                
+                <h4>Step 2: Matrices</h4>
+                <div class="code-block">
+                    <button class="copy-btn" onclick="copyCode(this)">📋 Copy</button>
+                    <code>
+<span class="r-comment"># Creating a matrix of malaria cases (rows = regions, columns = years)</span><br>
+<span class="r-variable">malaria_matrix</span> <span class="r-operator">&lt;-</span> <span class="r-function">matrix</span><span class="r-bracket">(</span><span class="r-function">c</span><span class="r-bracket">(</span><span class="r-number">150</span><span class="r-operator">,</span> <span class="r-number">200</span><span class="r-operator">,</span> <span class="r-number">250</span><span class="r-operator">,</span> <span class="r-number">300</span><span class="r-operator">,</span> <span class="r-number">120</span><span class="r-operator">,</span> <span class="r-number">180</span><span class="r-operator">,</span> <span class="r-number">220</span><span class="r-operator">,</span> <span class="r-number">260</span><span class="r-bracket">)</span><span class="r-operator">,</span> <span class="r-parameter">nrow</span> <span class="r-operator">=</span> <span class="r-number">2</span><span class="r-operator">,</span> <span class="r-parameter">ncol</span> <span class="r-operator">=</span> <span class="r-number">4</span><span class="r-bracket">)</span>
+                    </code>
+                </div>
+                
+                <div class="explanation-box">
+                    <h5>🔍 Explanation:</h5>
+                    <p>✔ <code>matrix()</code> creates a <strong>matrix</strong> with a specified number of rows (<code>nrow</code>) and columns (<code>ncol</code>)<br>
+                    ✔ <code>malaria_matrix</code> holds the malaria case data in a 2x4 format</p>
+                </div>
+                
+                <h4>Step 3: Lists</h4>
+                <div class="code-block">
+                    <button class="copy-btn" onclick="copyCode(this)">📋 Copy</button>
+                    <code>
+<span class="r-comment"># Creating a list of malaria data</span><br>
+<span class="r-variable">malaria_list</span> <span class="r-operator">&lt;-</span> <span class="r-function">list</span><span class="r-bracket">(</span><span class="r-variable">cases_per_region</span><span class="r-operator">,</span> <span class="r-variable">malaria_matrix</span><span class="r-operator">,</span> <span class="r-parameter">region</span> <span class="r-operator">=</span> <span class="r-string">"West"</span><span class="r-bracket">)</span>
+                    </code>
+                </div>
+                
+                <div class="explanation-box">
+                    <h5>🔍 Explanation:</h5>
+                    <p>✔ <code>list()</code> creates a <strong>list</strong>, which can store multiple types of data (vectors, matrices, etc.)<br>
+                    ✔ <code>malaria_list</code> contains both the vector, matrix, and a text string "West"</p>
+                </div>
+                
+                <h4>Step 4: Data Frames</h4>
+                <div class="code-block">
+                    <button class="copy-btn" onclick="copyCode(this)">📋 Copy</button>
+                    <code>
+<span class="r-comment"># Creating a data frame for malaria cases per region</span><br>
+<span class="r-variable">malaria_df</span> <span class="r-operator">&lt;-</span> <span class="r-function">data.frame</span><span class="r-bracket">(</span><span class="r-parameter">region</span> <span class="r-operator">=</span> <span class="r-function">c</span><span class="r-bracket">(</span><span class="r-string">"West"</span><span class="r-operator">,</span> <span class="r-string">"East"</span><span class="r-operator">,</span> <span class="r-string">"North"</span><span class="r-operator">,</span> <span class="r-string">"South"</span><span class="r-bracket">)</span><span class="r-operator">,</span> <span class="r-parameter">cases</span> <span class="r-operator">=</span> <span class="r-variable">cases_per_region</span><span class="r-bracket">)</span>
+                    </code>
+                </div>
+                
+                <div class="explanation-box">
+                    <h5>🔍 Explanation:</h5>
+                    <p>✔ <code>data.frame()</code> creates a <strong>data frame</strong>, which is used to store tabular data<br>
+                    ✔ <code>malaria_df</code> is a data frame where <code>region</code> is a column of text and <code>cases</code> is a column of numbers</p>
+                </div>
+            </div>
+
+            <div class="note-section fade-in">
+                <h2>2️⃣ Indexing & Subsetting Malaria Data</h2>
+                
+                <h4>Step 1: Accessing Data in Vectors</h4>
+                <div class="code-block">
+                    <button class="copy-btn" onclick="copyCode(this)">📋 Copy</button>
+                    <code>
+<span class="r-comment"># Accessing the first value in the vector</span><br>
+<span class="r-variable">cases_per_region</span><span class="r-bracket">[</span><span class="r-number">1</span><span class="r-bracket">]</span>
+                    </code>
+                </div>
+                
+                <div class="explanation-box">
+                    <h5>🔍 Explanation:</h5>
+                    <p>✔ <code>cases_per_region[1]</code> accesses the <strong>first element</strong> of the vector</p>
+                </div>
+                
+                <h4>Step 2: Accessing Data in Matrices</h4>
+                <div class="code-block">
+                    <button class="copy-btn" onclick="copyCode(this)">📋 Copy</button>
+                    <code>
+<span class="r-comment"># Accessing the element in the 1st row and 2nd column</span><br>
+<span class="r-variable">malaria_matrix</span><span class="r-bracket">[</span><span class="r-number">1</span><span class="r-operator">,</span> <span class="r-number">2</span><span class="r-bracket">]</span>
+                    </code>
+                </div>
+                
+                <div class="explanation-box">
+                    <h5>🔍 Explanation:</h5>
+                    <p>✔ <code>malaria_matrix[1, 2]</code> accesses the element in the <strong>1st row and 2nd column</strong> of the matrix</p>
+                </div>
+                
+                <h4>Step 3: Accessing Data in Data Frames</h4>
+                <div class="code-block">
+                    <button class="copy-btn" onclick="copyCode(this)">📋 Copy</button>
+                    <code>
+<span class="r-comment"># Accessing the 'cases' column</span><br>
+<span class="r-variable">malaria_df</span><span class="r-operator">$</span><span class="r-variable">cases</span>
+                    </code>
+                </div>
+                
+                <div class="explanation-box">
+                    <h5>🔍 Explanation:</h5>
+                    <p>✔ <code>malaria_df$cases</code> accesses the <strong>'cases'</strong> column of the data frame</p>
+                </div>
+                
+                <h4>Step 4: Subsetting Data with Conditions</h4>
+                <div class="code-block">
+                    <button class="copy-btn" onclick="copyCode(this)">📋 Copy</button>
+                    <code>
+<span class="r-comment"># Subsetting the data to find cases greater than 200</span><br>
+<span class="r-variable">subset_df</span> <span class="r-operator">&lt;-</span> <span class="r-variable">malaria_df</span><span class="r-bracket">[</span><span class="r-variable">malaria_df</span><span class="r-operator">$</span><span class="r-variable">cases</span> <span class="r-operator">&gt;</span> <span class="r-number">200</span><span class="r-operator">,</span> <span class="r-bracket">]</span>
+                    </code>
+                </div>
+                
+                <div class="explanation-box">
+                    <h5>🔍 Explanation:</h5>
+                    <p>✔ <code>malaria_df[malaria_df$cases > 200, ]</code> subsets rows where <strong>cases are greater than 200</strong></p>
+                </div>
+            </div>
+
+            <div class="note-section fade-in">
+                <h2>3️⃣ Basic Functions for Malaria Data Analysis</h2>
+                
+                <h4>Step 1: mean()</h4>
+                <div class="code-block">
+                    <button class="copy-btn" onclick="copyCode(this)">📋 Copy</button>
+                    <code>
+<span class="r-comment"># Calculating the mean number of cases</span><br>
+<span class="r-variable">mean_cases</span> <span class="r-operator">&lt;-</span> <span class="r-function">mean</span><span class="r-bracket">(</span><span class="r-variable">malaria_df</span><span class="r-operator">$</span><span class="r-variable">cases</span><span class="r-bracket">)</span>
+                    </code>
+                </div>
+                
+                <div class="explanation-box">
+                    <h5>🔍 Explanation:</h5>
+                    <p>✔ <code>mean()</code> calculates the <strong>average</strong> of the <code>cases</code> column<br>
+                    ✔ <code>mean_cases</code> stores the result of the average malaria cases</p>
+                </div>
+                
+                <h4>Step 2: sum()</h4>
+                <div class="code-block">
+                    <button class="copy-btn" onclick="copyCode(this)">📋 Copy</button>
+                    <code>
+<span class="r-comment"># Calculating the total number of malaria cases</span><br>
+<span class="r-variable">total_cases</span> <span class="r-operator">&lt;-</span> <span class="r-function">sum</span><span class="r-bracket">(</span><span class="r-variable">malaria_df</span><span class="r-operator">$</span><span class="r-variable">cases</span><span class="r-bracket">)</span>
+                    </code>
+                </div>
+                
+                <div class="explanation-box">
+                    <h5>🔍 Explanation:</h5>
+                    <p>✔ <code>sum()</code> calculates the <strong>sum</strong> of the <code>cases</code> column<br>
+                    ✔ <code>total_cases</code> stores the result of the total malaria cases</p>
+                </div>
+                
+                <h4>Step 3: table()</h4>
+                <div class="code-block">
+                    <button class="copy-btn" onclick="copyCode(this)">📋 Copy</button>
+                    <code>
+<span class="r-comment"># Counting the occurrences of each unique value in the region column</span><br>
+<span class="r-variable">region_counts</span> <span class="r-operator">&lt;-</span> <span class="r-function">table</span><span class="r-bracket">(</span><span class="r-variable">malaria_df</span><span class="r-operator">$</span><span class="r-variable">region</span><span class="r-bracket">)</span>
+                    </code>
+                </div>
+                
+                <div class="explanation-box">
+                    <h5>🔍 Explanation:</h5>
+                    <p>✔ <code>table()</code> counts the <strong>frequency</strong> of each value in the specified column (e.g., <code>region</code>)<br>
+                    ✔ <code>region_counts</code> stores the count of malaria cases per region</p>
+                </div>
+                
+                <h4>Step 4: summary()</h4>
+                <div class="code-block">
+                    <button class="copy-btn" onclick="copyCode(this)">📋 Copy</button>
+                    <code>
+<span class="r-comment"># Generating summary statistics of the data frame</span><br>
+<span class="r-variable">summary_stats</span> <span class="r-operator">&lt;-</span> <span class="r-function">summary</span><span class="r-bracket">(</span><span class="r-variable">malaria_df</span><span class="r-bracket">)</span>
+                    </code>
+                </div>
+                
+                <div class="explanation-box">
+                    <h5>🔍 Explanation:</h5>
+                    <p>✔ <code>summary()</code> generates <strong>summary statistics</strong> for each column (min, max, mean, etc.) in the data frame<br>
+                    ✔ <code>summary_stats</code> stores the resulting statistics</p>
+                </div>
+            </div>
+
+            <div class="note-section fade-in">
+                <h2>4️⃣ Data Cleaning with dplyr</h2>
+                
+                <h4>Step 1: Installing and Loading dplyr</h4>
+                <div class="code-block">
+                    <button class="copy-btn" onclick="copyCode(this)">📋 Copy</button>
+                    <code>
+<span class="r-comment"># Install dplyr package</span><br>
+<span class="r-function">install.packages</span><span class="r-bracket">(</span><span class="r-string">"dplyr"</span><span class="r-bracket">)</span><br>
+<br>
+<span class="r-comment"># Load the dplyr package</span><br>
+<span class="r-function">library</span><span class="r-bracket">(</span><span class="r-variable">dplyr</span><span class="r-bracket">)</span>
+                    </code>
+                </div>
+                
+                <div class="explanation-box">
+                    <h5>🔍 Explanation:</h5>
+                    <p>✔ <code>install.packages("dplyr")</code> installs the <code>dplyr</code> package, which simplifies data manipulation<br>
+                    ✔ <code>library(dplyr)</code> loads the package into the R environment</p>
+                </div>
+                
+                <h4>Step 2: filter() – Filtering Rows</h4>
+                <div class="code-block">
+                    <button class="copy-btn" onclick="copyCode(this)">📋 Copy</button>
+                    <code>
+<span class="r-comment"># Filter rows where cases are greater than 200</span><br>
+<span class="r-variable">filtered_df</span> <span class="r-operator">&lt;-</span> <span class="r-function">filter</span><span class="r-bracket">(</span><span class="r-variable">malaria_df</span><span class="r-operator">,</span> <span class="r-variable">cases</span> <span class="r-operator">&gt;</span> <span class="r-number">200</span><span class="r-bracket">)</span>
+                    </code>
+                </div>
+                
+                <div class="explanation-box">
+                    <h5>🔍 Explanation:</h5>
+                    <p>✔ <code>filter()</code> selects <strong>rows</strong> that meet the condition (cases > 200)<br>
+                    ✔ <code>filtered_df</code> stores the filtered dataset</p>
+                </div>
+                
+                <h4>Step 3: select() – Selecting Columns</h4>
+                <div class="code-block">
+                    <button class="copy-btn" onclick="copyCode(this)">📋 Copy</button>
+                    <code>
+<span class="r-comment"># Select only the 'region' and 'cases' columns</span><br>
+<span class="r-variable">selected_df</span> <span class="r-operator">&lt;-</span> <span class="r-function">select</span><span class="r-bracket">(</span><span class="r-variable">malaria_df</span><span class="r-operator">,</span> <span class="r-variable">region</span><span class="r-operator">,</span> <span class="r-variable">cases</span><span class="r-bracket">)</span>
+                    </code>
+                </div>
+                
+                <div class="explanation-box">
+                    <h5>🔍 Explanation:</h5>
+                    <p>✔ <code>select()</code> picks specific <strong>columns</strong> from the data frame<br>
+                    ✔ <code>selected_df</code> contains only the <code>region</code> and <code>cases</code> columns</p>
+                </div>
+                
+                <h4>Step 4: mutate() – Adding/Modifying Columns</h4>
+                <div class="code-block">
+                    <button class="copy-btn" onclick="copyCode(this)">📋 Copy</button>
+                    <code>
+<span class="r-comment"># Create a new column 'cases_per_1000' by dividing cases by 1000</span><br>
+<span class="r-variable">malaria_df</span> <span class="r-operator">&lt;-</span> <span class="r-function">mutate</span><span class="r-bracket">(</span><span class="r-variable">malaria_df</span><span class="r-operator">,</span> <span class="r-parameter">cases_per_1000</span> <span class="r-operator">=</span> <span class="r-variable">cases</span> <span class="r-operator">/</span> <span class="r-number">1000</span><span class="r-bracket">)</span>
+                    </code>
+                </div>
+                
+                <div class="explanation-box">
+                    <h5>🔍 Explanation:</h5>
+                    <p>✔ <code>mutate()</code> creates or modifies a <strong>column</strong> in the data frame<br>
+                    ✔ <code>cases_per_1000</code> is a new column showing cases per 1000 people</p>
+                </div>
+            </div>
+
+            <div class="summary-section fade-in">
+                <h2>✅ Summary of Week 2</h2>
+                <p>By the end of this week, you should:<br>
+                ✔ <strong>Understand basic R data structures</strong>: vectors, matrices, lists, and data frames<br>
+                ✔ <strong>Know how to index and subset data</strong><br>
+                ✔ <strong>Be able to apply basic functions</strong>: <code>mean()</code>, <code>sum()</code>, <code>table()</code>, <code>summary()</code><br>
+                ✔ <strong>Have learned to clean data with dplyr</strong>: <code>filter()</code>, <code>select()</code>, <code>mutate()</code></p>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        function copyCode(button) {
+            const codeBlock = button.nextElementSibling;
+            const code = codeBlock.textContent;
+            
+            navigator.clipboard.writeText(code).then(() => {
+                button.textContent = '✅ Copied!';
+                setTimeout(() => {
+                    button.textContent = '📋 Copy';
+                }, 2000);
+            }).catch(err => {
+                console.error('Failed to copy code: ', err);
+                button.textContent = '❌ Failed';
+                setTimeout(() => {
+                    button.textContent = '📋 Copy';
+                }, 2000);
+            });
+        }
+
+        // Add fade-in animation on scroll
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        // Apply to all sections within the malaria module
+        document.querySelectorAll('.malaria-module .note-section, .malaria-module .summary-section').forEach(section => {
+            section.style.opacity = '0';
+            section.style.transform = 'translateY(20px)';
+            section.style.transition = 'all 0.6s ease';
+            observer.observe(section);
+        });
+
+        // Animate progress bar on load
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                const progressFill = document.querySelector('.malaria-module .progress-fill');
+                if (progressFill) {
+                    progressFill.style.width = '50%';
+                }
+            }, 500);
+        });
+    </script>
+</body>
+</html>

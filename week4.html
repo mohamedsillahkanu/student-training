@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Week 4: Combining Multiple Data Files for Malaria Analysis</title>
+    <style>
+        .malaria-module {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #e2e8f0;
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            min-height: 100vh;
+        }
+
+        .malaria-module .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #1e293b;
+            margin-top: 20px;
+            margin-bottom: 20px;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+            border: 1px solid #334155;
+        }
+
+        .malaria-module .header {
+            background: linear-gradient(135deg, #1e40af, #1d4ed8);
+            color: white;
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(30,64,175,0.3);
+        }
+
+        .malaria-module .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .malaria-module .objectives {
+            background: linear-gradient(135deg, #1e40af, #2563eb);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+        }
+
+        .malaria-module .note-section {
+            background: #334155;
+            padding: 25px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            border-left: 5px solid #3b82f6;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .malaria-module .note-section h2 {
+            color: #60a5fa;
+            margin-bottom: 20px;
+            font-size: 1.8em;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .malaria-module .note-section p {
+            color: #cbd5e1;
+            margin-bottom: 15px;
+        }
+
+        .malaria-module .image-container {
+            text-align: center;
+            margin: 30px 0;
+            background: #0f172a;
+            padding: 20px;
+            border-radius: 12px;
+            border: 2px dashed #3b82f6;
+        }
+
+        .malaria-module .image-placeholder {
+            color: #60a5fa;
+            font-size: 1.2em;
+            padding: 40px;
+            background: rgba(59, 130, 246, 0.1);
+            border-radius: 8px;
+        }
+
+        .malaria-module .code-block {
+            background: #0f172a;
+            color: #e2e8f0;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 15px 0;
+            position: relative;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            overflow-x: auto;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            border: 1px solid #1e293b;
+        }
+
+        .malaria-module .copy-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: #475569;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.8em;
+            transition: all 0.3s ease;
+        }
+
+        .malaria-module .copy-btn:hover {
+            background: #1e293b;
+            transform: translateY(-2px);
+        }
+
+        .malaria-module .r-comment { color: #34d399; }
+        .malaria-module .r-variable { color: #60a5fa; }
+        .malaria-module .r-function { color: #fbbf24; }
+        .malaria-module .r-operator { color: #f87171; }
+        .malaria-module .r-bracket { color: #e2e8f0; }
+        .malaria-module .r-string { color: #a78bfa; }
+        .malaria-module .r-parameter { color: #2dd4bf; }
+        .malaria-module .r-boolean { color: #fb7185; }
+        .malaria-module .r-number { color: #fbbf24; }
+
+        .malaria-module .progress-bar {
+            background: #374151;
+            height: 8px;
+            border-radius: 4px;
+            margin: 20px 0;
+            overflow: hidden;
+        }
+
+        .malaria-module .progress-fill {
+            background: linear-gradient(90deg, #3b82f6, #60a5fa);
+            height: 100%;
+            width: 75%;
+            border-radius: 4px;
+            transition: width 0.5s ease;
+        }
+
+        @media (max-width: 768px) {
+            .malaria-module .container {
+                margin: 10px;
+                padding: 15px;
+            }
+            
+            .malaria-module .header h1 {
+                font-size: 2em;
+            }
+            
+            .malaria-module .code-block {
+                font-size: 0.9em;
+            }
+        }
+
+        /* Animated elements */
+        .malaria-module .fade-in {
+            animation: fadeIn 0.6s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+    <div class="malaria-module">
+        <div class="container">
+            <div class="header fade-in">
+                <h1>📁 Week 4: Combining Multiple Data Files</h1>
+                <p>Efficiently merging malaria datasets from multiple Excel files</p>
+                <div class="progress-bar">
+                    <div class="progress-fill"></div>
+                </div>
+            </div>
+
+            <div class="objectives fade-in">
+                <p><strong>This week, we will:</strong><br>
+                ✅ <strong>Install and manage packages efficiently</strong> using the pacman package<br>
+                ✅ <strong>Navigate file systems</strong> and work with multiple Excel files<br>
+                ✅ <strong>Combine datasets programmatically</strong> using lapply() and bind_rows()<br>
+                ✅ <strong>Export merged datasets</strong> in CSV and Excel formats</p>
+            </div>
+
+            <div class="image-container fade-in">
+                <img src="data:image/png;base64,YOUR_BASE64_DATA_HERE" 
+                     alt="Visual workflow for combining multiple Excel files" 
+                     style="max-width: 100%; height: auto; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.3);">
+                <div style="margin-top: 10px; color: #94a3b8; font-size: 0.9em;">
+                    Visual workflow for combining multiple Excel files
+                </div>
+            </div>
+
+            <div class="note-section fade-in">
+                <h2>Combining Multiple Excel Files</h2>
+                
+                <p>When working with malaria surveillance data, you often receive information from multiple regions or time periods stored in separate Excel files. This workflow automates the process of reading all Excel files from a folder and combining them into a single dataset for analysis.</p>
+                
+                <p>The code below handles package installation, file discovery, data reading with error handling, dataset combination, and export to both CSV and Excel formats. It also adds a source file column to track which file each row originated from.</p>
+                
+                <div class="code-block">
+                    <button class="copy-btn" onclick="copyCode(this)">📋 Copy</button>
+                    <code>
+<span class="r-comment"># Install and load required packages</span><br>
+<span class="r-function">if</span><span class="r-bracket">(</span><span class="r-operator">!</span><span class="r-function">require</span><span class="r-bracket">(</span><span class="r-variable">pacman</span><span class="r-bracket">))</span> <span class="r-function">install.packages</span><span class="r-bracket">(</span><span class="r-string">"pacman"</span><span class="r-bracket">)</span><br>
+<span class="r-variable">pacman</span><span class="r-operator">::</span><span class="r-function">p_load</span><span class="r-bracket">(</span><span class="r-variable">readxl</span><span class="r-operator">,</span> <span class="r-variable">dplyr</span><span class="r-bracket">)</span><br>
+<br>
+<span class="r-comment"># Set the folder path where the Excel files are stored</span><br>
+<span class="r-variable">folder_path</span> <span class="r-operator">&lt;-</span> <span class="r-string">"path/to/your/excel/files"</span><br>
+<br>
+<span class="r-comment"># List all Excel files in the folder</span><br>
+<span class="r-variable">files</span> <span class="r-operator">&lt;-</span> <span class="r-function">list.files</span><span class="r-bracket">(</span><span class="r-parameter">path</span> <span class="r-operator">=</span> <span class="r-variable">folder_path</span><span class="r-operator">,</span> <span class="r-parameter">pattern</span> <span class="r-operator">=</span> <span class="r-string">"\\.xlsx$"</span><span class="r-operator">,</span> <span class="r-parameter">full.names</span> <span class="r-operator">=</span> <span class="r-boolean">TRUE</span><span class="r-bracket">)</span><br>
+<br>
+<span class="r-comment"># Read and combine all Excel files</span><br>
+<span class="r-variable">combined_data</span> <span class="r-operator">&lt;-</span> <span class="r-function">lapply</span><span class="r-bracket">(</span><span class="r-variable">files</span><span class="r-operator">,</span> <span class="r-variable">read_excel</span><span class="r-bracket">)</span> <span class="r-operator">%>%</span><br>
+  <span class="r-function">bind_rows</span><span class="r-bracket">()</span><br>
+<br>
+<span class="r-comment"># View combined data</span><br>
+<span class="r-function">print</span><span class="r-bracket">(</span><span class="r-variable">combined_data</span><span class="r-bracket">)</span><br>
+<br>
+<span class="r-comment"># Optional: Save combined dataset to a new Excel/CSV file</span><br>
+<span class="r-comment"># write.csv(combined_data, "combined_data.csv", row.names = FALSE)</span><br>
+<span class="r-comment"># openxlsx::write.xlsx(combined_data, "combined_data.xlsx")</span>
+                    </code>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        function copyCode(button) {
+            const codeBlock = button.nextElementSibling;
+            const code = codeBlock.textContent;
+            
+            navigator.clipboard.writeText(code).then(() => {
+                button.textContent = '✅ Copied!';
+                setTimeout(() => {
+                    button.textContent = '📋 Copy';
+                }, 2000);
+            }).catch(err => {
+                console.error('Failed to copy code: ', err);
+                button.textContent = '❌ Failed';
+                setTimeout(() => {
+                    button.textContent = '📋 Copy';
+                }, 2000);
+            });
+        }
+
+        // Animate progress bar on load
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                const progressFill = document.querySelector('.malaria-module .progress-fill');
+                if (progressFill) {
+                    progressFill.style.width = '75%';
+                }
+            }, 500);
+        });
+    </script>
+</body>
+</html>

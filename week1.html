@@ -5,66 +5,64 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Week 3: Exploratory Data Analysis & Visualization for Malaria Data</title>
     <style>
-        * {
+        .malaria-module {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-        }
-
-        body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             line-height: 1.6;
-            color: #333;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #e2e8f0;
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
             min-height: 100vh;
         }
 
-        .container {
+        .malaria-module .container {
             max-width: 1200px;
             margin: 0 auto;
             padding: 20px;
-            background: white;
+            background: #1e293b;
             margin-top: 20px;
             margin-bottom: 20px;
             border-radius: 15px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+            border: 1px solid #334155;
         }
 
-        .header {
-            background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+        .malaria-module .header {
+            background: linear-gradient(135deg, #1e40af, #1d4ed8);
             color: white;
             padding: 30px;
             border-radius: 15px;
             margin-bottom: 30px;
             text-align: center;
-            box-shadow: 0 10px 30px rgba(255,107,107,0.3);
+            box-shadow: 0 10px 30px rgba(30,64,175,0.3);
         }
 
-        .header h1 {
+        .malaria-module .header h1 {
             font-size: 2.5em;
             margin-bottom: 10px;
             text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
         }
 
-        .objectives {
-            background: linear-gradient(135deg, #4ecdc4, #44a08d);
+        .malaria-module .objectives {
+            background: linear-gradient(135deg, #1e40af, #2563eb);
             color: white;
             padding: 20px;
             border-radius: 10px;
             margin-bottom: 30px;
         }
 
-        .note-section {
-            background: #f8f9fa;
+        .malaria-module .note-section {
+            background: #334155;
             padding: 25px;
             border-radius: 12px;
             margin-bottom: 30px;
-            border-left: 5px solid #007bff;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            border-left: 5px solid #3b82f6;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
         }
 
-        .note-section h2 {
-            color: #2c3e50;
+        .malaria-module .note-section h2 {
+            color: #60a5fa;
             margin-bottom: 20px;
             font-size: 1.8em;
             display: flex;
@@ -72,28 +70,32 @@
             gap: 10px;
         }
 
-        .note-section h3 {
-            color: #34495e;
+        .malaria-module .note-section h3 {
+            color: #93c5fd;
             margin: 25px 0 15px 0;
             font-size: 1.4em;
-            border-bottom: 2px solid #3498db;
+            border-bottom: 2px solid #3b82f6;
             padding-bottom: 5px;
         }
 
-        .note-section h4 {
-            color: #2980b9;
+        .malaria-module .note-section h4 {
+            color: #3b82f6;
             margin: 20px 0 10px 0;
             font-size: 1.2em;
         }
 
-        .note-section h5 {
-            color: #27ae60;
+        .malaria-module .note-section h5 {
+            color: #10b981;
             margin: 15px 0 8px 0;
             font-size: 1.1em;
         }
 
-        .code-block {
-            background: #2d3748;
+        .malaria-module .note-section p {
+            color: #cbd5e1;
+        }
+
+        .malaria-module .code-block {
+            background: #0f172a;
             color: #e2e8f0;
             padding: 20px;
             border-radius: 8px;
@@ -101,14 +103,15 @@
             position: relative;
             font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
             overflow-x: auto;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            border: 1px solid #1e293b;
         }
 
-        .copy-btn {
+        .malaria-module .copy-btn {
             position: absolute;
             top: 10px;
             right: 10px;
-            background: #4a5568;
+            background: #475569;
             color: white;
             border: none;
             padding: 5px 10px;
@@ -118,94 +121,98 @@
             transition: all 0.3s ease;
         }
 
-        .copy-btn:hover {
-            background: #2d3748;
+        .malaria-module .copy-btn:hover {
+            background: #1e293b;
             transform: translateY(-2px);
         }
 
-        .r-comment { color: #68d391; }
-        .r-variable { color: #90cdf4; }
-        .r-function { color: #f6ad55; }
-        .r-operator { color: #fc8181; }
-        .r-bracket { color: #e2e8f0; }
-        .r-string { color: #b794f6; }
-        .r-parameter { color: #81e6d9; }
-        .r-boolean { color: #fbb6ce; }
-        .r-number { color: #f687b3; }
+        .malaria-module .r-comment { color: #34d399; }
+        .malaria-module .r-variable { color: #60a5fa; }
+        .malaria-module .r-function { color: #fbbf24; }
+        .malaria-module .r-operator { color: #f87171; }
+        .malaria-module .r-bracket { color: #e2e8f0; }
+        .malaria-module .r-string { color: #a78bfa; }
+        .malaria-module .r-parameter { color: #2dd4bf; }
+        .malaria-module .r-boolean { color: #fb7185; }
+        .malaria-module .r-number { color: #fbbf24; }
 
-        .explanation-box {
-            background: linear-gradient(135deg, #e8f5e8, #f0f8f0);
-            border-left: 4px solid #27ae60;
+        .malaria-module .explanation-box {
+            background: linear-gradient(135deg, #0f172a, #1e293b);
+            border-left: 4px solid #10b981;
             padding: 15px;
             margin: 15px 0;
             border-radius: 0 8px 8px 0;
-            box-shadow: 0 2px 8px rgba(39,174,96,0.1);
+            box-shadow: 0 2px 8px rgba(16,185,129,0.2);
         }
 
-        .explanation-box h5 {
-            color: #27ae60;
+        .malaria-module .explanation-box h5 {
+            color: #10b981;
             margin-bottom: 10px;
             display: flex;
             align-items: center;
             gap: 8px;
         }
 
-        .explanation-box p {
+        .malaria-module .explanation-box p {
             margin: 0;
-            color: #2d3748;
+            color: #cbd5e1;
         }
 
-        .summary-section {
-            background: linear-gradient(135deg, #667eea, #764ba2);
+        .malaria-module .summary-section {
+            background: linear-gradient(135deg, #1e40af, #1d4ed8);
             color: white;
             padding: 25px;
             border-radius: 12px;
             margin: 30px 0;
-            box-shadow: 0 10px 25px rgba(102,126,234,0.3);
+            box-shadow: 0 10px 25px rgba(30,64,175,0.3);
         }
 
-        .exercises-section {
-            background: linear-gradient(135deg, #ffecd2, #fcb69f);
+        .malaria-module .exercises-section {
+            background: linear-gradient(135deg, #1e293b, #334155);
             padding: 25px;
             border-radius: 12px;
             margin: 30px 0;
-            border: 2px solid #f39c12;
+            border: 2px solid #3b82f6;
         }
 
-        .exercises-section h2 {
-            color: #d35400;
+        .malaria-module .exercises-section h2 {
+            color: #60a5fa;
             margin-bottom: 20px;
         }
 
-        .exercises-section h3 {
-            color: #e67e22;
+        .malaria-module .exercises-section h3 {
+            color: #93c5fd;
             margin: 20px 0 15px 0;
-            border-bottom: 2px solid #f39c12;
+            border-bottom: 2px solid #3b82f6;
             padding-bottom: 5px;
         }
 
-        .exercises-section h4 {
-            color: #c0392b;
+        .malaria-module .exercises-section h4 {
+            color: #3b82f6;
             margin: 15px 0 10px 0;
         }
 
-        .exercises-section ol {
+        .malaria-module .exercises-section p {
+            color: #cbd5e1;
+        }
+
+        .malaria-module .exercises-section ol {
             margin: 10px 0 10px 20px;
         }
 
-        .exercises-section li {
+        .malaria-module .exercises-section li {
             margin: 8px 0;
-            color: #2c3e50;
+            color: #cbd5e1;
         }
 
-        .nav-buttons {
+        .malaria-module .nav-buttons {
             display: flex;
             justify-content: space-between;
             margin: 30px 0;
         }
 
-        .nav-btn {
-            background: linear-gradient(135deg, #3498db, #2980b9);
+        .malaria-module .nav-btn {
+            background: linear-gradient(135deg, #1e40af, #1d4ed8);
             color: white;
             padding: 12px 24px;
             border: none;
@@ -217,21 +224,21 @@
             display: inline-block;
         }
 
-        .nav-btn:hover {
+        .malaria-module .nav-btn:hover {
             transform: translateY(-3px);
-            box-shadow: 0 10px 20px rgba(52,152,219,0.3);
+            box-shadow: 0 10px 20px rgba(30,64,175,0.3);
         }
 
-        .progress-bar {
-            background: #ecf0f1;
+        .malaria-module .progress-bar {
+            background: #374151;
             height: 8px;
             border-radius: 4px;
             margin: 20px 0;
             overflow: hidden;
         }
 
-        .progress-fill {
-            background: linear-gradient(90deg, #27ae60, #2ecc71);
+        .malaria-module .progress-fill {
+            background: linear-gradient(90deg, #3b82f6, #60a5fa);
             height: 100%;
             width: 60%;
             border-radius: 4px;
@@ -239,27 +246,27 @@
         }
 
         @media (max-width: 768px) {
-            .container {
+            .malaria-module .container {
                 margin: 10px;
                 padding: 15px;
             }
             
-            .header h1 {
+            .malaria-module .header h1 {
                 font-size: 2em;
             }
             
-            .nav-buttons {
+            .malaria-module .nav-buttons {
                 flex-direction: column;
                 gap: 15px;
             }
             
-            .code-block {
+            .malaria-module .code-block {
                 font-size: 0.9em;
             }
         }
 
         /* Animated elements */
-        .fade-in {
+        .malaria-module .fade-in {
             animation: fadeIn 0.6s ease-in;
         }
 
@@ -268,228 +275,54 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
-        .note-section:hover {
+        .malaria-module .note-section:hover {
             transform: translateY(-2px);
             transition: all 0.3s ease;
-            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.3);
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="header fade-in">
-            <h1>📊 Week 3: Exploratory Data Analysis & Visualization</h1>
-            <p>Mastering EDA and Visualization Techniques for Malaria Data Analysis</p>
-            <div class="progress-bar">
-                <div class="progress-fill"></div>
+    <div class="malaria-module">
+        <div class="container">
+            <div class="header fade-in">
+                <h1>📊 Week 3: Exploratory Data Analysis & Visualization</h1>
+                <p>Mastering EDA and Visualization Techniques for Malaria Data Analysis</p>
+                <div class="progress-bar">
+                    <div class="progress-fill"></div>
+                </div>
             </div>
-        </div>
 
-        <div class="objectives fade-in">
-            <p><strong>This week, we will:</strong><br>
-            ✅ <strong>Master descriptive statistics & summary tables</strong> for malaria datasets<br>
-            ✅ <strong>Learn to handle missing values</strong> with <code>na.omit()</code> and <code>tidyr::replace_na()</code><br>
-            ✅ <strong>Create effective visualizations with <code>ggplot2</code></strong> for malaria data analysis</p>
-        </div>
+            <div class="objectives fade-in">
+                <p><strong>This week, we will:</strong><br>
+                ✅ <strong>Master descriptive statistics & summary tables</strong> for malaria datasets<br>
+                ✅ <strong>Learn to handle missing values</strong> with <code>na.omit()</code> and <code>tidyr::replace_na()</code><br>
+                ✅ <strong>Create effective visualizations with <code>ggplot2</code></strong> for malaria data analysis</p>
+            </div>
 
-        <div class="note-section fade-in">
-            <h2>1️⃣ Descriptive Statistics & Summary Tables</h2>
-            
-            <h4>What is Exploratory Data Analysis (EDA)?</h4>
-            <p>📌 <strong>EDA</strong> is the process of analyzing data sets to summarize their main characteristics, often using visual methods. It's a critical first step before building complex models.</p>
-            
-            <h4>Step 1: Basic Summary Statistics</h4>
-            <div class="code-block">
-                <button class="copy-btn" onclick="copyCode(this)">📋 Copy</button>
-                <code>
-<span class="r-comment"># Load our malaria dataset</span><br>
-<span class="r-variable">malaria_data</span> <span class="r-operator">&lt;-</span> <span class="r-function">read.csv</span><span class="r-bracket">(</span><span class="r-string">"malaria_dataset.csv"</span><span class="r-bracket">)</span><br>
-<span class="r-comment"># Generate basic summary statistics</span><br>
-<span class="r-variable">summary_stats</span> <span class="r-operator">&lt;-</span> <span class="r-function">summary</span><span class="r-bracket">(</span><span class="r-variable">malaria_data</span><span class="r-bracket">)</span><br>
-<span class="r-function">print</span><span class="r-bracket">(</span><span class="r-variable">summary_stats</span><span class="r-bracket">)</span>
-                </code>
-            </div>
-            
-            <div class="explanation-box">
-                <h5>🔍 Explanation:</h5>
-                <p>✔ <code>summary()</code> provides basic statistics for each column: min, max, mean, median, and quartiles<br>
-                ✔ For categorical variables, it shows counts of each level</p>
-            </div>
-            
-            <h4>Step 2: Group-wise Statistics</h4>
-            <div class="code-block">
-                <button class="copy-btn" onclick="copyCode(this)">📋 Copy</button>
-                <code>
-<span class="r-comment"># Load dplyr for data manipulation</span><br>
-<span class="r-function">library</span><span class="r-bracket">(</span><span class="r-variable">dplyr</span><span class="r-bracket">)</span><br>
-<span class="r-comment"># Calculate mean malaria cases by region</span><br>
-<span class="r-variable">region_stats</span> <span class="r-operator">&lt;-</span> <span class="r-variable">malaria_data</span> <span class="r-operator">%&gt;%</span><br>
-  <span class="r-function">group_by</span><span class="r-bracket">(</span><span class="r-variable">region</span><span class="r-bracket">)</span> <span class="r-operator">%&gt;%</span><br>
-  <span class="r-function">summarize</span><span class="r-bracket">(</span><br>
-    <span class="r-parameter">mean_cases</span> <span class="r-operator">=</span> <span class="r-function">mean</span><span class="r-bracket">(</span><span class="r-variable">cases</span><span class="r-operator">,</span> <span class="r-parameter">na.rm</span> <span class="r-operator">=</span> <span class="r-boolean">TRUE</span><span class="r-bracket">)</span><span class="r-operator">,</span><br>
-    <span class="r-parameter">median_cases</span> <span class="r-operator">=</span> <span class="r-function">median</span><span class="r-bracket">(</span><span class="r-variable">cases</span><span class="r-operator">,</span> <span class="r-parameter">na.rm</span> <span class="r-operator">=</span> <span class="r-boolean">TRUE</span><span class="r-bracket">)</span><span class="r-operator">,</span><br>
-    <span class="r-parameter">min_cases</span> <span class="r-operator">=</span> <span class="r-function">min</span><span class="r-bracket">(</span><span class="r-variable">cases</span><span class="r-operator">,</span> <span class="r-parameter">na.rm</span> <span class="r-operator">=</span> <span class="r-boolean">TRUE</span><span class="r-bracket">)</span><span class="r-operator">,</span><br>
-    <span class="r-parameter">max_cases</span> <span class="r-operator">=</span> <span class="r-function">max</span><span class="r-bracket">(</span><span class="r-variable">cases</span><span class="r-operator">,</span> <span class="r-parameter">na.rm</span> <span class="r-operator">=</span> <span class="r-boolean">TRUE</span><span class="r-bracket">)</span><br>
-  <span class="r-bracket">)</span>
-                </code>
-            </div>
-            
-            <div class="explanation-box">
-                <h5>🔍 Explanation:</h5>
-                <p>✔ <code>group_by()</code> allows us to perform operations by group (e.g., region)<br>
-                ✔ <code>summarize()</code> computes summary statistics for each group<br>
-                ✔ <code>na.rm = TRUE</code> ensures we ignore missing values in our calculations</p>
-            </div>
-            
-            <h4>Step 3: Frequency Tables</h4>
-            <div class="code-block">
-                <button class="copy-btn" onclick="copyCode(this)">📋 Copy</button>
-                <code>
-<span class="r-comment"># Create frequency table for severity levels</span><br>
-<span class="r-variable">severity_table</span> <span class="r-operator">&lt;-</span> <span class="r-function">table</span><span class="r-bracket">(</span><span class="r-variable">malaria_data$severity</span><span class="r-bracket">)</span><br>
-<span class="r-function">print</span><span class="r-bracket">(</span><span class="r-variable">severity_table</span><span class="r-bracket">)</span><br>
-<span class="r-comment"># Calculate proportion table</span><br>
-<span class="r-variable">severity_prop</span> <span class="r-operator">&lt;-</span> <span class="r-function">prop.table</span><span class="r-bracket">(</span><span class="r-variable">severity_table</span><span class="r-bracket">)</span> <span class="r-operator">*</span> <span class="r-number">100</span><br>
-<span class="r-function">print</span><span class="r-bracket">(</span><span class="r-variable">severity_prop</span><span class="r-bracket">)</span>
-                </code>
-            </div>
-            
-            <div class="explanation-box">
-                <h5>🔍 Explanation:</h5>
-                <p>✔ <code>table()</code> counts occurrences of each category in a variable<br>
-                ✔ <code>prop.table()</code> converts counts to proportions (multiplied by 100 for percentages)</p>
-            </div>
-            
-            <h4>Step 4: Cross-tabulation</h4>
-            <div class="code-block">
-                <button class="copy-btn" onclick="copyCode(this)">📋 Copy</button>
-                <code>
-<span class="r-comment"># Create cross-tabulation of region and severity</span><br>
-<span class="r-variable">region_severity_table</span> <span class="r-operator">&lt;-</span> <span class="r-function">table</span><span class="r-bracket">(</span><span class="r-variable">malaria_data$region</span><span class="r-operator">,</span> <span class="r-variable">malaria_data$severity</span><span class="r-bracket">)</span><br>
-<span class="r-function">print</span><span class="r-bracket">(</span><span class="r-variable">region_severity_table</span><span class="r-bracket">)</span><br>
-<span class="r-comment"># Calculate chi-square test for association</span><br>
-<span class="r-variable">chisq_test</span> <span class="r-operator">&lt;-</span> <span class="r-function">chisq.test</span><span class="r-bracket">(</span><span class="r-variable">region_severity_table</span><span class="r-bracket">)</span><br>
-<span class="r-function">print</span><span class="r-bracket">(</span><span class="r-variable">chisq_test</span><span class="r-bracket">)</span>
-                </code>
-            </div>
-            
-            <div class="explanation-box">
-                <h5>🔍 Explanation:</h5>
-                <p>✔ Cross-tabulation shows the relationship between two categorical variables<br>
-                ✔ <code>chisq.test()</code> tests whether there's a significant association between region and severity</p>
-            </div>
-        </div>
-
-        <div class="note-section fade-in">
-            <h2>2️⃣ Handling Missing Values in Malaria Data</h2>
-            
-            <h4>Step 1: Identifying Missing Values</h4>
-            <div class="code-block">
-                <button class="copy-btn" onclick="copyCode(this)">📋 Copy</button>
-                <code>
-<span class="r-comment"># Check for missing values in the dataset</span><br>
-<span class="r-variable">missing_values</span> <span class="r-operator">&lt;-</span> <span class="r-function">colSums</span><span class="r-bracket">(</span><span class="r-function">is.na</span><span class="r-bracket">(</span><span class="r-variable">malaria_data</span><span class="r-bracket">))</span><br>
-<span class="r-function">print</span><span class="r-bracket">(</span><span class="r-variable">missing_values</span><span class="r-bracket">)</span><br>
-<span class="r-comment"># Calculate the percentage of missing values</span><br>
-<span class="r-variable">missing_percentage</span> <span class="r-operator">&lt;-</span> <span class="r-function">colMeans</span><span class="r-bracket">(</span><span class="r-function">is.na</span><span class="r-bracket">(</span><span class="r-variable">malaria_data</span><span class="r-bracket">))</span> <span class="r-operator">*</span> <span class="r-number">100</span><br>
-<span class="r-function">print</span><span class="r-bracket">(</span><span class="r-variable">missing_percentage</span><span class="r-bracket">)</span>
-                </code>
-            </div>
-            
-            <div class="explanation-box">
-                <h5>🔍 Explanation:</h5>
-                <p>✔ <code>is.na()</code> identifies missing values in the dataset<br>
-                ✔ <code>colSums()</code> sums the missing values in each column<br>
-                ✔ <code>colMeans()</code> calculates the proportion of missing values in each column</p>
-            </div>
-            
-            <h4>Step 2: Removing Rows with Missing Values</h4>
-            <div class="code-block">
-                <button class="copy-btn" onclick="copyCode(this)">📋 Copy</button>
-                <code>
-<span class="r-comment"># Remove rows with any missing values</span><br>
-<span class="r-variable">complete_data</span> <span class="r-operator">&lt;-</span> <span class="r-function">na.omit</span><span class="r-bracket">(</span><span class="r-variable">malaria_data</span><span class="r-bracket">)</span><br>
-<span class="r-comment"># Check how many rows were removed</span><br>
-<span class="r-variable">original_rows</span> <span class="r-operator">&lt;-</span> <span class="r-function">nrow</span><span class="r-bracket">(</span><span class="r-variable">malaria_data</span><span class="r-bracket">)</span><br>
-<span class="r-variable">complete_rows</span> <span class="r-operator">&lt;-</span> <span class="r-function">nrow</span><span class="r-bracket">(</span><span class="r-variable">complete_data</span><span class="r-bracket">)</span><br>
-<span class="r-variable">removed_rows</span> <span class="r-operator">&lt;-</span> <span class="r-variable">original_rows</span> <span class="r-operator">-</span> <span class="r-variable">complete_rows</span><br>
-<span class="r-function">print</span><span class="r-bracket">(</span><span class="r-function">paste</span><span class="r-bracket">(</span><span class="r-string">"Removed"</span><span class="r-operator">,</span> <span class="r-variable">removed_rows</span><span class="r-operator">,</span> <span class="r-string">"rows with missing data"</span><span class="r-bracket">))</span>
-                </code>
-            </div>
-            
-            <div class="explanation-box">
-                <h5>🔍 Explanation:</h5>
-                <p>✔ <code>na.omit()</code> removes any row that contains at least one missing value<br>
-                ✔ This is a simple approach but may remove too much data if missing values are common</p>
-            </div>
-            
-            <h4>Step 3: Replacing Missing Values with tidyr</h4>
-            <div class="code-block">
-                <button class="copy-btn" onclick="copyCode(this)">📋 Copy</button>
-                <code>
-<span class="r-comment"># Load tidyr package</span><br>
-<span class="r-function">library</span><span class="r-bracket">(</span><span class="r-variable">tidyr</span><span class="r-bracket">)</span><br>
-<span class="r-comment"># Replace missing values in 'cases' with the mean</span><br>
-<span class="r-variable">malaria_data_imputed</span> <span class="r-operator">&lt;-</span> <span class="r-variable">malaria_data</span> <span class="r-operator">%&gt;%</span><br>
-  <span class="r-function">mutate</span><span class="r-bracket">(</span><span class="r-parameter">cases</span> <span class="r-operator">=</span> <span class="r-function">replace_na</span><span class="r-bracket">(</span><span class="r-variable">cases</span><span class="r-operator">,</span> <span class="r-function">mean</span><span class="r-bracket">(</span><span class="r-variable">cases</span><span class="r-operator">,</span> <span class="r-parameter">na.rm</span> <span class="r-operator">=</span> <span class="r-boolean">TRUE</span><span class="r-bracket">)))</span><br>
-<span class="r-comment"># Replace missing values in 'severity' with "Unknown"</span><br>
-<span class="r-variable">malaria_data_imputed</span> <span class="r-operator">&lt;-</span> <span class="r-variable">malaria_data_imputed</span> <span class="r-operator">%&gt;%</span><br>
-  <span class="r-function">mutate</span><span class="r-bracket">(</span><span class="r-parameter">severity</span> <span class="r-operator">=</span> <span class="r-function">replace_na</span><span class="r-bracket">(</span><span class="r-variable">severity</span><span class="r-operator">,</span> <span class="r-string">"Unknown"</span><span class="r-bracket">))</span>
-                </code>
-            </div>
-            
-            <div class="explanation-box">
-                <h5>🔍 Explanation:</h5>
-                <p>✔ <code>tidyr::replace_na()</code> replaces NA values with specified replacements<br>
-                ✔ For numeric columns, we often replace with mean, median, or zero<br>
-                ✔ For categorical columns, we may replace with a new category like "Unknown"</p>
-            </div>
-            
-            <h4>Step 4: Missing Value Visualization</h4>
-            <div class="code-block">
-                <button class="copy-btn" onclick="copyCode(this)">📋 Copy</button>
-                <code>
-<span class="r-comment"># Install and load packages for missing data visualization</span><br>
-<span class="r-function">install.packages</span><span class="r-bracket">(</span><span class="r-string">"naniar"</span><span class="r-bracket">)</span><br>
-<span class="r-function">library</span><span class="r-bracket">(</span><span class="r-variable">naniar</span><span class="r-bracket">)</span><br>
-<span class="r-comment"># Create a visualization of missing data patterns</span><br>
-<span class="r-function">gg_miss_var</span><span class="r-bracket">(</span><span class="r-variable">malaria_data</span><span class="r-bracket">)</span><br>
-<span class="r-comment"># Create a matrix of missing data patterns</span><br>
-<span class="r-function">vis_miss</span><span class="r-bracket">(</span><span class="r-variable">malaria_data</span><span class="r-bracket">)</span>
-                </code>
-            </div>
-            
-            <div class="explanation-box">
-                <h5>🔍 Explanation:</h5>
-                <p>✔ <code>naniar</code> package provides specialized tools for exploring missing data<br>
-                ✔ <code>gg_miss_var()</code> creates a plot showing the count of missing values by variable<br>
-                ✔ <code>vis_miss()</code> creates a matrix visualization of missing values throughout the dataset</p>
-            </div>
-        </div>
-
-        <div class="note-section fade-in">
-            <h2>3️⃣ Data Visualization with ggplot2 for Malaria Analysis</h2>
-            
-            <h4>Step 1: Installing and Loading ggplot2</h4>
-            <div class="code-block">
-                <button class="copy-btn" onclick="copyCode(this)">📋 Copy</button>
-                <code>
+            <div class="note-section fade-in">
+                <h2>3️⃣ Data Visualization with ggplot2 for Malaria Analysis</h2>
+                
+                <h4>Step 1: Installing and Loading ggplot2</h4>
+                <div class="code-block">
+                    <button class="copy-btn" onclick="copyCode(this)">📋 Copy</button>
+                    <code>
 <span class="r-comment"># Install and load ggplot2</span><br>
 <span class="r-function">install.packages</span><span class="r-bracket">(</span><span class="r-string">"ggplot2"</span><span class="r-bracket">)</span><br>
 <span class="r-function">library</span><span class="r-bracket">(</span><span class="r-variable">ggplot2</span><span class="r-bracket">)</span>
-                </code>
-            </div>
-            
-            <div class="explanation-box">
-                <h5>🔍 Explanation:</h5>
-                <p>✔ <code>ggplot2</code> is a powerful visualization package based on the Grammar of Graphics<br>
-                ✔ It creates visualizations by layering components (data, aesthetics, geometries)</p>
-            </div>
-            
-            <h4>Step 2: Creating Histograms</h4>
-            <div class="code-block">
-                <button class="copy-btn" onclick="copyCode(this)">📋 Copy</button>
-                <code>
+                    </code>
+                </div>
+                
+                <div class="explanation-box">
+                    <h5>🔍 Explanation:</h5>
+                    <p>✔ <code>ggplot2</code> is a powerful visualization package based on the Grammar of Graphics<br>
+                    ✔ It creates visualizations by layering components (data, aesthetics, geometries)</p>
+                </div>
+                
+                <h4>Step 2: Creating Histograms</h4>
+                <div class="code-block">
+                    <button class="copy-btn" onclick="copyCode(this)">📋 Copy</button>
+                    <code>
 <span class="r-comment"># Create a histogram of malaria cases</span><br>
 <span class="r-function">ggplot</span><span class="r-bracket">(</span><span class="r-variable">malaria_data</span><span class="r-operator">,</span> <span class="r-function">aes</span><span class="r-bracket">(</span><span class="r-parameter">x</span> <span class="r-operator">=</span> <span class="r-variable">cases</span><span class="r-bracket">))</span> <span class="r-operator">+</span><br>
   <span class="r-function">geom_histogram</span><span class="r-bracket">(</span><span class="r-parameter">binwidth</span> <span class="r-operator">=</span> <span class="r-number">50</span><span class="r-operator">,</span> <span class="r-parameter">fill</span> <span class="r-operator">=</span> <span class="r-string">"steelblue"</span><span class="r-operator">,</span> <span class="r-parameter">color</span> <span class="r-operator">=</span> <span class="r-string">"white"</span><span class="r-bracket">)</span> <span class="r-operator">+</span><br>
@@ -499,21 +332,21 @@
     <span class="r-parameter">y</span> <span class="r-operator">=</span> <span class="r-string">"Frequency"</span><br>
   <span class="r-bracket">)</span> <span class="r-operator">+</span><br>
   <span class="r-function">theme_minimal</span><span class="r-bracket">()</span>
-                </code>
-            </div>
-            
-            <div class="explanation-box">
-                <h5>🔍 Explanation:</h5>
-                <p>✔ <code>ggplot()</code> initializes the plot with data and aesthetic mappings<br>
-                ✔ <code>geom_histogram()</code> adds a histogram layer with specified bin width<br>
-                ✔ <code>labs()</code> adds titles and labels<br>
-                ✔ <code>theme_minimal()</code> applies a clean, minimal theme</p>
-            </div>
-            
-            <h4>Step 3: Creating Boxplots</h4>
-            <div class="code-block">
-                <button class="copy-btn" onclick="copyCode(this)">📋 Copy</button>
-                <code>
+                    </code>
+                </div>
+                
+                <div class="explanation-box">
+                    <h5>🔍 Explanation:</h5>
+                    <p>✔ <code>ggplot()</code> initializes the plot with data and aesthetic mappings<br>
+                    ✔ <code>geom_histogram()</code> adds a histogram layer with specified bin width<br>
+                    ✔ <code>labs()</code> adds titles and labels<br>
+                    ✔ <code>theme_minimal()</code> applies a clean, minimal theme</p>
+                </div>
+                
+                <h4>Step 3: Creating Boxplots</h4>
+                <div class="code-block">
+                    <button class="copy-btn" onclick="copyCode(this)">📋 Copy</button>
+                    <code>
 <span class="r-comment"># Create boxplots of cases by region</span><br>
 <span class="r-function">ggplot</span><span class="r-bracket">(</span><span class="r-variable">malaria_data</span><span class="r-operator">,</span> <span class="r-function">aes</span><span class="r-bracket">(</span><span class="r-parameter">x</span> <span class="r-operator">=</span> <span class="r-variable">region</span><span class="r-operator">,</span> <span class="r-parameter">y</span> <span class="r-operator">=</span> <span class="r-variable">cases</span><span class="r-operator">,</span> <span class="r-parameter">fill</span> <span class="r-operator">=</span> <span class="r-variable">region</span><span class="r-bracket">))</span> <span class="r-operator">+</span><br>
   <span class="r-function">geom_boxplot</span><span class="r-bracket">()</span> <span class="r-operator">+</span><br>
@@ -524,20 +357,20 @@
   <span class="r-bracket">)</span> <span class="r-operator">+</span><br>
   <span class="r-function">theme_minimal</span><span class="r-bracket">()</span> <span class="r-operator">+</span><br>
   <span class="r-function">theme</span><span class="r-bracket">(</span><span class="r-parameter">legend.position</span> <span class="r-operator">=</span> <span class="r-string">"none"</span><span class="r-bracket">)</span> <span class="r-comment"># Remove legend as it's redundant</span>
-                </code>
-            </div>
-            
-            <div class="explanation-box">
-                <h5>🔍 Explanation:</h5>
-                <p>✔ <code>geom_boxplot()</code> creates box-and-whisker plots showing distribution quartiles<br>
-                ✔ <code>fill = region</code> colors each box by region<br>
-                ✔ Box plots are excellent for comparing distributions across groups</p>
-            </div>
-            
-            <h4>Step 4: Creating Bar Charts</h4>
-            <div class="code-block">
-                <button class="copy-btn" onclick="copyCode(this)">📋 Copy</button>
-                <code>
+                    </code>
+                </div>
+                
+                <div class="explanation-box">
+                    <h5>🔍 Explanation:</h5>
+                    <p>✔ <code>geom_boxplot()</code> creates box-and-whisker plots showing distribution quartiles<br>
+                    ✔ <code>fill = region</code> colors each box by region<br>
+                    ✔ Box plots are excellent for comparing distributions across groups</p>
+                </div>
+                
+                <h4>Step 4: Creating Bar Charts</h4>
+                <div class="code-block">
+                    <button class="copy-btn" onclick="copyCode(this)">📋 Copy</button>
+                    <code>
 <span class="r-comment"># First, aggregate the data</span><br>
 <span class="r-variable">district_totals</span> <span class="r-operator">&lt;-</span> <span class="r-variable">malaria_data</span> <span class="r-operator">%&gt;%</span><br>
   <span class="r-function">group_by</span><span class="r-bracket">(</span><span class="r-variable">district</span><span class="r-bracket">)</span> <span class="r-operator">%&gt;%</span><br>
@@ -553,24 +386,24 @@
   <span class="r-bracket">)</span> <span class="r-operator">+</span><br>
   <span class="r-function">theme_minimal</span><span class="r-bracket">()</span> <span class="r-operator">+</span><br>
   <span class="r-function">theme</span><span class="r-bracket">(</span><span class="r-parameter">axis.text.x</span> <span class="r-operator">=</span> <span class="r-function">element_text</span><span class="r-bracket">(</span><span class="r-parameter">angle</span> <span class="r-operator">=</span> <span class="r-number">45</span><span class="r-operator">,</span> <span class="r-parameter">hjust</span> <span class="r-operator">=</span> <span class="r-number">1</span><span class="r-bracket">))</span>
-                </code>
-            </div>
-            
-            <div class="explanation-box">
-                <h5>🔍 Explanation:</h5>
-                <p>✔ <code>geom_col()</code> creates bars with heights proportional to values<br>
-                ✔ <code>reorder()</code> sorts districts by total cases in descending order<br>
-                ✔ First we aggregate the data, then visualize the aggregated stats</p>
-            </div>
-            
-            <h4>Step 5: Time Series Line Plots</h4>
-            <div class="code-block">
-                <button class="copy-btn" onclick="copyCode(this)">📋 Copy</button>
-                <code>
+                    </code>
+                </div>
+                
+                <div class="explanation-box">
+                    <h5>🔍 Explanation:</h5>
+                    <p>✔ <code>geom_col()</code> creates bars with heights proportional to values<br>
+                    ✔ <code>reorder()</code> sorts districts by total cases in descending order<br>
+                    ✔ First we aggregate the data, then visualize the aggregated stats</p>
+                </div>
+                
+                <h4>Step 5: Time Series Line Plots</h4>
+                <div class="code-block">
+                    <button class="copy-btn" onclick="copyCode(this)">📋 Copy</button>
+                    <code>
 <span class="r-comment"># Create a time series plot of malaria cases</span><br>
 <span class="r-function">ggplot</span><span class="r-bracket">(</span><span class="r-variable">malaria_data</span><span class="r-operator">,</span> <span class="r-function">aes</span><span class="r-bracket">(</span><span class="r-parameter">x</span> <span class="r-operator">=</span> <span class="r-variable">date</span><span class="r-operator">,</span> <span class="r-parameter">y</span> <span class="r-operator">=</span> <span class="r-variable">cases</span><span class="r-bracket">))</span> <span class="r-operator">+</span><br>
-  <span class="r-function">geom_line</span><span class="r-bracket">(</span><span class="r-parameter">color</span> <span class="r-operator">=</span> <span class="r-string">"darkred"</span><span class="r-bracket">)</span> <span class="r-operator">+</span><br>
-  <span class="r-function">geom_point</span><span class="r-bracket">(</span><span class="r-parameter">color</span> <span class="r-operator">=</span> <span class="r-string">"darkred"</span><span class="r-bracket">)</span> <span class="r-operator">+</span><br>
+  <span class="r-function">geom_line</span><span class="r-bracket">(</span><span class="r-parameter">color</span> <span class="r-operator">=</span> <span class="r-string">"#60a5fa"</span><span class="r-bracket">)</span> <span class="r-operator">+</span><br>
+  <span class="r-function">geom_point</span><span class="r-bracket">(</span><span class="r-parameter">color</span> <span class="r-operator">=</span> <span class="r-string">"#3b82f6"</span><span class="r-bracket">)</span> <span class="r-operator">+</span><br>
   <span class="r-function">labs</span><span class="r-bracket">(</span><br>
     <span class="r-parameter">title</span> <span class="r-operator">=</span> <span class="r-string">"Malaria Cases Over Time"</span><span class="r-operator">,</span><br>
     <span class="r-parameter">x</span> <span class="r-operator">=</span> <span class="r-string">"Date"</span><span class="r-operator">,</span><br>
@@ -578,24 +411,24 @@
   <span class="r-bracket">)</span> <span class="r-operator">+</span><br>
   <span class="r-function">theme_minimal</span><span class="r-bracket">()</span> <span class="r-operator">+</span><br>
   <span class="r-function">scale_x_date</span><span class="r-bracket">(</span><span class="r-parameter">date_breaks</span> <span class="r-operator">=</span> <span class="r-string">"1 month"</span><span class="r-operator">,</span> <span class="r-parameter">date_labels</span> <span class="r-operator">=</span> <span class="r-string">"%b %Y"</span><span class="r-bracket">)</span>
-                </code>
-            </div>
-            
-            <div class="explanation-box">
-                <h5>🔍 Explanation:</h5>
-                <p>✔ <code>geom_line()</code> connects points with lines to show trends over time<br>
-                ✔ <code>geom_point()</code> adds points at each observation<br>
-                ✔ <code>scale_x_date()</code> formats the x-axis for date data</p>
-            </div>
-            
-            <h4>Step 6: Faceted Plots</h4>
-            <div class="code-block">
-                <button class="copy-btn" onclick="copyCode(this)">📋 Copy</button>
-                <code>
+                    </code>
+                </div>
+                
+                <div class="explanation-box">
+                    <h5>🔍 Explanation:</h5>
+                    <p>✔ <code>geom_line()</code> connects points with lines to show trends over time<br>
+                    ✔ <code>geom_point()</code> adds points at each observation<br>
+                    ✔ <code>scale_x_date()</code> formats the x-axis for date data</p>
+                </div>
+                
+                <h4>Step 6: Faceted Plots</h4>
+                <div class="code-block">
+                    <button class="copy-btn" onclick="copyCode(this)">📋 Copy</button>
+                    <code>
 <span class="r-comment"># Create faceted plots by region</span><br>
 <span class="r-function">ggplot</span><span class="r-bracket">(</span><span class="r-variable">malaria_data</span><span class="r-operator">,</span> <span class="r-function">aes</span><span class="r-bracket">(</span><span class="r-parameter">x</span> <span class="r-operator">=</span> <span class="r-variable">date</span><span class="r-operator">,</span> <span class="r-parameter">y</span> <span class="r-operator">=</span> <span class="r-variable">cases</span><span class="r-bracket">))</span> <span class="r-operator">+</span><br>
-  <span class="r-function">geom_line</span><span class="r-bracket">()</span> <span class="r-operator">+</span><br>
-  <span class="r-function">geom_point</span><span class="r-bracket">()</span> <span class="r-operator">+</span><br>
+  <span class="r-function">geom_line</span><span class="r-bracket">(</span><span class="r-parameter">color</span> <span class="r-operator">=</span> <span class="r-string">"#60a5fa"</span><span class="r-bracket">)</span> <span class="r-operator">+</span><br>
+  <span class="r-function">geom_point</span><span class="r-bracket">(</span><span class="r-parameter">color</span> <span class="r-operator">=</span> <span class="r-string">"#3b82f6"</span><span class="r-bracket">)</span> <span class="r-operator">+</span><br>
   <span class="r-function">facet_wrap</span><span class="r-bracket">(</span><span class="r-operator">~</span><span class="r-variable">region</span><span class="r-operator">,</span> <span class="r-parameter">scales</span> <span class="r-operator">=</span> <span class="r-string">"free_y"</span><span class="r-bracket">)</span> <span class="r-operator">+</span><br>
   <span class="r-function">labs</span><span class="r-bracket">(</span><br>
     <span class="r-parameter">title</span> <span class="r-operator">=</span> <span class="r-string">"Malaria Cases Over Time by Region"</span><span class="r-operator">,</span><br>
@@ -604,20 +437,20 @@
   <span class="r-bracket">)</span> <span class="r-operator">+</span><br>
   <span class="r-function">theme_minimal</span><span class="r-bracket">()</span> <span class="r-operator">+</span><br>
   <span class="r-function">theme</span><span class="r-bracket">(</span><span class="r-parameter">axis.text.x</span> <span class="r-operator">=</span> <span class="r-function">element_text</span><span class="r-bracket">(</span><span class="r-parameter">angle</span> <span class="r-operator">=</span> <span class="r-number">45</span><span class="r-operator">,</span> <span class="r-parameter">hjust</span> <span class="r-operator">=</span> <span class="r-number">1</span><span class="r-bracket">))</span>
-                </code>
-            </div>
-            
-            <div class="explanation-box">
-                <h5>🔍 Explanation:</h5>
-                <p>✔ <code>facet_wrap()</code> creates separate panels for each region<br>
-                ✔ <code>scales = "free_y"</code> allows each panel to have its own y-axis scale<br>
-                ✔ The angled x-axis text improves readability when dates are displayed</p>
-            </div>
-            
-            <h4>Step 7: Advanced Visualization with Interactive Elements</h4>
-            <div class="code-block">
-                <button class="copy-btn" onclick="copyCode(this)">📋 Copy</button>
-                <code>
+                    </code>
+                </div>
+                
+                <div class="explanation-box">
+                    <h5>🔍 Explanation:</h5>
+                    <p>✔ <code>facet_wrap()</code> creates separate panels for each region<br>
+                    ✔ <code>scales = "free_y"</code> allows each panel to have its own y-axis scale<br>
+                    ✔ The angled x-axis text improves readability when dates are displayed</p>
+                </div>
+                
+                <h4>Step 7: Advanced Visualization with Interactive Elements</h4>
+                <div class="code-block">
+                    <button class="copy-btn" onclick="copyCode(this)">📋 Copy</button>
+                    <code>
 <span class="r-comment"># Install and load packages for interactive plots</span><br>
 <span class="r-function">install.packages</span><span class="r-bracket">(</span><span class="r-string">"plotly"</span><span class="r-bracket">)</span><br>
 <span class="r-function">library</span><span class="r-bracket">(</span><span class="r-variable">plotly</span><span class="r-bracket">)</span><br>
@@ -627,7 +460,7 @@
                                                <span class="r-parameter">y</span> <span class="r-operator">=</span> <span class="r-variable">total_cases</span><span class="r-operator">,</span><br>
                                                <span class="r-parameter">text</span> <span class="r-operator">=</span> <span class="r-function">paste</span><span class="r-bracket">(</span><span class="r-string">"District:"</span><span class="r-operator">,</span> <span class="r-variable">district</span><span class="r-operator">,</span><br>
                                                            <span class="r-string">"&lt;br&gt;Cases:"</span><span class="r-operator">,</span> <span class="r-variable">total_cases</span><span class="r-bracket">)))</span> <span class="r-operator">+</span><br>
-  <span class="r-function">geom_col</span><span class="r-bracket">(</span><span class="r-parameter">fill</span> <span class="r-operator">=</span> <span class="r-string">"steelblue"</span><span class="r-bracket">)</span> <span class="r-operator">+</span><br>
+  <span class="r-function">geom_col</span><span class="r-bracket">(</span><span class="r-parameter">fill</span> <span class="r-operator">=</span> <span class="r-string">"#3b82f6"</span><span class="r-bracket">)</span> <span class="r-operator">+</span><br>
   <span class="r-function">labs</span><span class="r-bracket">(</span><span class="r-parameter">title</span> <span class="r-operator">=</span> <span class="r-string">"Total Malaria Cases by District"</span><span class="r-operator">,</span> <span class="r-parameter">x</span> <span class="r-operator">=</span> <span class="r-string">"District"</span><span class="r-operator">,</span> <span class="r-parameter">y</span> <span class="r-operator">=</span> <span class="r-string">"Total Cases"</span><span class="r-bracket">)</span> <span class="r-operator">+</span><br>
   <span class="r-function">theme_minimal</span><span class="r-bracket">()</span> <span class="r-operator">+</span><br>
   <span class="r-function">theme</span><span class="r-bracket">(</span><span class="r-parameter">axis.text.x</span> <span class="r-operator">=</span> <span class="r-function">element_text</span><span class="r-bracket">(</span><span class="r-parameter">angle</span> <span class="r-operator">=</span> <span class="r-number">45</span><span class="r-operator">,</span> <span class="r-parameter">hjust</span> <span class="r-operator">=</span> <span class="r-number">1</span><span class="r-bracket">))</span>
@@ -635,101 +468,102 @@
 <span class="r-comment"># Convert to interactive plot</span><br>
 <span class="r-variable">interactive_plot</span> <span class="r-operator">&lt;-</span> <span class="r-function">ggplotly</span><span class="r-bracket">(</span><span class="r-variable">cases_by_district</span><span class="r-operator">,</span> <span class="r-parameter">tooltip</span> <span class="r-operator">=</span> <span class="r-string">"text"</span><span class="r-bracket">)</span><br>
 <span class="r-variable">interactive_plot</span>
-                </code>
+                    </code>
+                </div>
+                
+                <div class="explanation-box">
+                    <h5>🔍 Explanation:</h5>
+                    <p>✔ <code>plotly</code> converts static ggplot2 visualizations to interactive plots<br>
+                    ✔ Interactive elements include tooltips, zooming, and panning<br>
+                    ✔ The <code>tooltip</code> parameter controls what information appears when hovering</p>
+                </div>
             </div>
-            
-            <div class="explanation-box">
-                <h5>🔍 Explanation:</h5>
-                <p>✔ <code>plotly</code> converts static ggplot2 visualizations to interactive plots<br>
-                ✔ Interactive elements include tooltips, zooming, and panning<br>
-                ✔ The <code>tooltip</code> parameter controls what information appears when hovering</p>
+
+            <div class="summary-section fade-in">
+                <h2>✅ Summary of Week 3</h2>
+                <p>By the end of this week, you should:<br>
+                ✔ <strong>Know how to generate descriptive statistics</strong> for malaria data<br>
+                ✔ <strong>Understand methods for handling missing values</strong> in datasets<br>
+                ✔ <strong>Be able to create effective visualizations</strong> using ggplot2<br>
+                ✔ <strong>Interpret visual patterns</strong> to identify trends in malaria data</p>
             </div>
-        </div>
 
-        <div class="summary-section fade-in">
-            <h2>✅ Summary of Week 3</h2>
-            <p>By the end of this week, you should:<br>
-            ✔ <strong>Know how to generate descriptive statistics</strong> for malaria data<br>
-            ✔ <strong>Understand methods for handling missing values</strong> in datasets<br>
-            ✔ <strong>Be able to create effective visualizations</strong> using ggplot2<br>
-            ✔ <strong>Interpret visual patterns</strong> to identify trends in malaria data</p>
-        </div>
+            <div class="exercises-section fade-in">
+                <h2>📌 Week 3: Exercises – Exploratory Data Analysis & Visualization</h2>
+                
+                <p>This week's exercises focus on applying descriptive statistics, handling missing values, and creating insightful visualizations of malaria data.</p>
+                
+                <h3>1️⃣ Descriptive Statistics & Summary Tables</h3>
+                
+                <h4>Exercise 1.1: Basic Summary Statistics</h4>
+                <p>You have a dataset called <code>malaria_surveillance</code> with columns: <code>district</code>, <code>month</code>, <code>year</code>, <code>cases</code>, <code>deaths</code>, <code>population</code></p>
+                
+                <p><strong>Write R code to:</strong></p>
+                <ol>
+                    <li>Load the dataset and display its structure using <code>str()</code></li>
+                    <li>Calculate summary statistics for all numeric variables</li>
+                    <li>Find the district with the highest number of cases</li>
+                    <li>Calculate the case fatality rate (deaths/cases) for each district</li>
+                </ol>
+                
+                <h4>Exercise 1.2: Group-wise Statistics</h4>
+                <p><strong>Write R code to:</strong></p>
+                <ol>
+                    <li>Calculate the average number of cases per year for each district</li>
+                    <li>Identify the year with the highest total number of cases across all districts</li>
+                    <li>Calculate the incidence rate (cases per 1000 population) for each district-year combination</li>
+                    <li>Create a summary table showing the top 5 district-year combinations with the highest incidence rates</li>
+                </ol>
+                
+                <h3>2️⃣ Handling Missing Values</h3>
+                
+                <h4>Exercise 2.1: Identify Missing Data</h4>
+                <p><strong>Write R code to:</strong></p>
+                <ol>
+                    <li>Count how many values are missing in each column</li>
+                    <li>Calculate the percentage of missing values in each column</li>
+                    <li>Identify districts with the most missing values</li>
+                </ol>
+                
+                <h4>Exercise 2.2: Handle Missing Values</h4>
+                <p><strong>Write R code to:</strong></p>
+                <ol>
+                    <li>Create a new dataset with complete cases only (no missing values)</li>
+                    <li>Create another dataset where missing <code>cases</code> values are replaced with the mean of the district</li>
+                    <li>For missing <code>deaths</code> values, replace with 0 and create a new flag column called <code>deaths_imputed</code></li>
+                </ol>
+                
+                <h3>3️⃣ Data Visualization with ggplot2</h3>
+                
+                <h4>Exercise 3.1: Temporal Trends</h4>
+                <p><strong>Write R code to:</strong></p>
+                <ol>
+                    <li>Create a line plot showing the total cases per month across all years</li>
+                    <li>Make a faceted plot showing yearly trends, with one panel per year</li>
+                    <li>Create a heatmap where x-axis is month, y-axis is year, and color represents number of cases</li>
+                </ol>
+                
+                <h4>Exercise 3.2: Spatial Comparison</h4>
+                <p><strong>Write R code to:</strong></p>
+                <ol>
+                    <li>Create a bar chart showing the total cases by district in descending order</li>
+                    <li>Make boxplots comparing the distribution of monthly cases across districts</li>
+                    <li>Create a scatter plot with population on x-axis and average cases on y-axis, with points colored by district</li>
+                </ol>
+                
+                <h4>Exercise 3.3: Advanced Visualizations</h4>
+                <p><strong>Challenge exercises:</strong></p>
+                <ol>
+                    <li>Create a correlation matrix heatmap showing relationships between cases, deaths, and population</li>
+                    <li>Design a dashboard-style plot combining multiple visualizations in one figure</li>
+                    <li>Build an interactive plot using plotly that shows malaria trends with hover information</li>
+                </ol>
+            </div>
 
-        <div class="exercises-section fade-in">
-            <h2>📌 Week 3: Exercises – Exploratory Data Analysis & Visualization</h2>
-            
-            <p>This week's exercises focus on applying descriptive statistics, handling missing values, and creating insightful visualizations of malaria data.</p>
-            
-            <h3>1️⃣ Descriptive Statistics & Summary Tables</h3>
-            
-            <h4>Exercise 1.1: Basic Summary Statistics</h4>
-            <p>You have a dataset called <code>malaria_surveillance</code> with columns: <code>district</code>, <code>month</code>, <code>year</code>, <code>cases</code>, <code>deaths</code>, <code>population</code></p>
-            
-            <p><strong>Write R code to:</strong></p>
-            <ol>
-                <li>Load the dataset and display its structure using <code>str()</code></li>
-                <li>Calculate summary statistics for all numeric variables</li>
-                <li>Find the district with the highest number of cases</li>
-                <li>Calculate the case fatality rate (deaths/cases) for each district</li>
-            </ol>
-            
-            <h4>Exercise 1.2: Group-wise Statistics</h4>
-            <p><strong>Write R code to:</strong></p>
-            <ol>
-                <li>Calculate the average number of cases per year for each district</li>
-                <li>Identify the year with the highest total number of cases across all districts</li>
-                <li>Calculate the incidence rate (cases per 1000 population) for each district-year combination</li>
-                <li>Create a summary table showing the top 5 district-year combinations with the highest incidence rates</li>
-            </ol>
-            
-            <h3>2️⃣ Handling Missing Values</h3>
-            
-            <h4>Exercise 2.1: Identify Missing Data</h4>
-            <p><strong>Write R code to:</strong></p>
-            <ol>
-                <li>Count how many values are missing in each column</li>
-                <li>Calculate the percentage of missing values in each column</li>
-                <li>Identify districts with the most missing values</li>
-            </ol>
-            
-            <h4>Exercise 2.2: Handle Missing Values</h4>
-            <p><strong>Write R code to:</strong></p>
-            <ol>
-                <li>Create a new dataset with complete cases only (no missing values)</li>
-                <li>Create another dataset where missing <code>cases</code> values are replaced with the mean of the district</li>
-                <li>For missing <code>deaths</code> values, replace with 0 and create a new flag column called <code>deaths_imputed</code></li>
-            </ol>
-            
-            <h3>3️⃣ Data Visualization with ggplot2</h3>
-            
-            <h4>Exercise 3.1: Temporal Trends</h4>
-            <p><strong>Write R code to:</strong></p>
-            <ol>
-                <li>Create a line plot showing the total cases per month across all years</li>
-                <li>Make a faceted plot showing yearly trends, with one panel per year</li>
-                <li>Create a heatmap where x-axis is month, y-axis is year, and color represents number of cases</li>
-            </ol>
-            
-            <h4>Exercise 3.2: Spatial Comparison</h4>
-            <p><strong>Write R code to:</strong></p>
-            <ol>
-                <li>Create a bar chart showing the total cases by district in descending order</li>
-                <li>Make boxplots comparing the distribution of monthly cases across districts</li>
-                <li>Create a scatter plot with population on x-axis and average cases on y-axis, with points colored by district</li>
-            </ol>
-            
-            <h4>Exercise 3.3: Advanced Visualizations</h4>
-            <p><strong>Challenge exercises:</strong></p>
-            <ol>
-                <li>Create a correlation matrix heatmap showing relationships between cases, deaths, and population</li>
-                <li>Design a dashboard-style plot combining multiple visualizations in one figure</li>
-                <li>Build an interactive plot using plotly that shows malaria trends with hover information</li>
-            </ol>
-        </div>
-
-        <div class="nav-buttons">
-            <a href="#" class="nav-btn">← Week 2: Data Import & Cleaning</a>
-            <a href="#" class="nav-btn">Week 4: Statistical Analysis →</a>
+            <div class="nav-buttons">
+                <a href="#" class="nav-btn">← Week 2: Data Import & Cleaning</a>
+                <a href="#" class="nav-btn">Week 4: Statistical Analysis →</a>
+            </div>
         </div>
     </div>
 
@@ -767,8 +601,8 @@
             });
         }, observerOptions);
 
-        // Apply to all sections
-        document.querySelectorAll('.note-section, .summary-section, .exercises-section').forEach(section => {
+        // Apply to all sections within the malaria module
+        document.querySelectorAll('.malaria-module .note-section, .malaria-module .summary-section, .malaria-module .exercises-section').forEach(section => {
             section.style.opacity = '0';
             section.style.transform = 'translateY(20px)';
             section.style.transition = 'all 0.6s ease';
@@ -778,9 +612,187 @@
         // Animate progress bar on load
         window.addEventListener('load', () => {
             setTimeout(() => {
-                document.querySelector('.progress-fill').style.width = '60%';
+                const progressFill = document.querySelector('.malaria-module .progress-fill');
+                if (progressFill) {
+                    progressFill.style.width = '60%';
+                }
             }, 500);
         });
     </script>
 </body>
-</html>
+</html>-section fade-in">
+                <h2>1️⃣ Descriptive Statistics & Summary Tables</h2>
+                
+                <h4>What is Exploratory Data Analysis (EDA)?</h4>
+                <p>📌 <strong>EDA</strong> is the process of analyzing data sets to summarize their main characteristics, often using visual methods. It's a critical first step before building complex models.</p>
+                
+                <h4>Step 1: Basic Summary Statistics</h4>
+                <div class="code-block">
+                    <button class="copy-btn" onclick="copyCode(this)">📋 Copy</button>
+                    <code>
+<span class="r-comment"># Load our malaria dataset</span><br>
+<span class="r-variable">malaria_data</span> <span class="r-operator">&lt;-</span> <span class="r-function">read.csv</span><span class="r-bracket">(</span><span class="r-string">"malaria_dataset.csv"</span><span class="r-bracket">)</span><br>
+<span class="r-comment"># Generate basic summary statistics</span><br>
+<span class="r-variable">summary_stats</span> <span class="r-operator">&lt;-</span> <span class="r-function">summary</span><span class="r-bracket">(</span><span class="r-variable">malaria_data</span><span class="r-bracket">)</span><br>
+<span class="r-function">print</span><span class="r-bracket">(</span><span class="r-variable">summary_stats</span><span class="r-bracket">)</span>
+                    </code>
+                </div>
+                
+                <div class="explanation-box">
+                    <h5>🔍 Explanation:</h5>
+                    <p>✔ <code>summary()</code> provides basic statistics for each column: min, max, mean, median, and quartiles<br>
+                    ✔ For categorical variables, it shows counts of each level</p>
+                </div>
+                
+                <h4>Step 2: Group-wise Statistics</h4>
+                <div class="code-block">
+                    <button class="copy-btn" onclick="copyCode(this)">📋 Copy</button>
+                    <code>
+<span class="r-comment"># Load dplyr for data manipulation</span><br>
+<span class="r-function">library</span><span class="r-bracket">(</span><span class="r-variable">dplyr</span><span class="r-bracket">)</span><br>
+<span class="r-comment"># Calculate mean malaria cases by region</span><br>
+<span class="r-variable">region_stats</span> <span class="r-operator">&lt;-</span> <span class="r-variable">malaria_data</span> <span class="r-operator">%&gt;%</span><br>
+  <span class="r-function">group_by</span><span class="r-bracket">(</span><span class="r-variable">region</span><span class="r-bracket">)</span> <span class="r-operator">%&gt;%</span><br>
+  <span class="r-function">summarize</span><span class="r-bracket">(</span><br>
+    <span class="r-parameter">mean_cases</span> <span class="r-operator">=</span> <span class="r-function">mean</span><span class="r-bracket">(</span><span class="r-variable">cases</span><span class="r-operator">,</span> <span class="r-parameter">na.rm</span> <span class="r-operator">=</span> <span class="r-boolean">TRUE</span><span class="r-bracket">)</span><span class="r-operator">,</span><br>
+    <span class="r-parameter">median_cases</span> <span class="r-operator">=</span> <span class="r-function">median</span><span class="r-bracket">(</span><span class="r-variable">cases</span><span class="r-operator">,</span> <span class="r-parameter">na.rm</span> <span class="r-operator">=</span> <span class="r-boolean">TRUE</span><span class="r-bracket">)</span><span class="r-operator">,</span><br>
+    <span class="r-parameter">min_cases</span> <span class="r-operator">=</span> <span class="r-function">min</span><span class="r-bracket">(</span><span class="r-variable">cases</span><span class="r-operator">,</span> <span class="r-parameter">na.rm</span> <span class="r-operator">=</span> <span class="r-boolean">TRUE</span><span class="r-bracket">)</span><span class="r-operator">,</span><br>
+    <span class="r-parameter">max_cases</span> <span class="r-operator">=</span> <span class="r-function">max</span><span class="r-bracket">(</span><span class="r-variable">cases</span><span class="r-operator">,</span> <span class="r-parameter">na.rm</span> <span class="r-operator">=</span> <span class="r-boolean">TRUE</span><span class="r-bracket">)</span><br>
+  <span class="r-bracket">)</span>
+                    </code>
+                </div>
+                
+                <div class="explanation-box">
+                    <h5>🔍 Explanation:</h5>
+                    <p>✔ <code>group_by()</code> allows us to perform operations by group (e.g., region)<br>
+                    ✔ <code>summarize()</code> computes summary statistics for each group<br>
+                    ✔ <code>na.rm = TRUE</code> ensures we ignore missing values in our calculations</p>
+                </div>
+                
+                <h4>Step 3: Frequency Tables</h4>
+                <div class="code-block">
+                    <button class="copy-btn" onclick="copyCode(this)">📋 Copy</button>
+                    <code>
+<span class="r-comment"># Create frequency table for severity levels</span><br>
+<span class="r-variable">severity_table</span> <span class="r-operator">&lt;-</span> <span class="r-function">table</span><span class="r-bracket">(</span><span class="r-variable">malaria_data$severity</span><span class="r-bracket">)</span><br>
+<span class="r-function">print</span><span class="r-bracket">(</span><span class="r-variable">severity_table</span><span class="r-bracket">)</span><br>
+<span class="r-comment"># Calculate proportion table</span><br>
+<span class="r-variable">severity_prop</span> <span class="r-operator">&lt;-</span> <span class="r-function">prop.table</span><span class="r-bracket">(</span><span class="r-variable">severity_table</span><span class="r-bracket">)</span> <span class="r-operator">*</span> <span class="r-number">100</span><br>
+<span class="r-function">print</span><span class="r-bracket">(</span><span class="r-variable">severity_prop</span><span class="r-bracket">)</span>
+                    </code>
+                </div>
+                
+                <div class="explanation-box">
+                    <h5>🔍 Explanation:</h5>
+                    <p>✔ <code>table()</code> counts occurrences of each category in a variable<br>
+                    ✔ <code>prop.table()</code> converts counts to proportions (multiplied by 100 for percentages)</p>
+                </div>
+                
+                <h4>Step 4: Cross-tabulation</h4>
+                <div class="code-block">
+                    <button class="copy-btn" onclick="copyCode(this)">📋 Copy</button>
+                    <code>
+<span class="r-comment"># Create cross-tabulation of region and severity</span><br>
+<span class="r-variable">region_severity_table</span> <span class="r-operator">&lt;-</span> <span class="r-function">table</span><span class="r-bracket">(</span><span class="r-variable">malaria_data$region</span><span class="r-operator">,</span> <span class="r-variable">malaria_data$severity</span><span class="r-bracket">)</span><br>
+<span class="r-function">print</span><span class="r-bracket">(</span><span class="r-variable">region_severity_table</span><span class="r-bracket">)</span><br>
+<span class="r-comment"># Calculate chi-square test for association</span><br>
+<span class="r-variable">chisq_test</span> <span class="r-operator">&lt;-</span> <span class="r-function">chisq.test</span><span class="r-bracket">(</span><span class="r-variable">region_severity_table</span><span class="r-bracket">)</span><br>
+<span class="r-function">print</span><span class="r-bracket">(</span><span class="r-variable">chisq_test</span><span class="r-bracket">)</span>
+                    </code>
+                </div>
+                
+                <div class="explanation-box">
+                    <h5>🔍 Explanation:</h5>
+                    <p>✔ Cross-tabulation shows the relationship between two categorical variables<br>
+                    ✔ <code>chisq.test()</code> tests whether there's a significant association between region and severity</p>
+                </div>
+            </div>
+
+            <div class="note-section fade-in">
+                <h2>2️⃣ Handling Missing Values in Malaria Data</h2>
+                
+                <h4>Step 1: Identifying Missing Values</h4>
+                <div class="code-block">
+                    <button class="copy-btn" onclick="copyCode(this)">📋 Copy</button>
+                    <code>
+<span class="r-comment"># Check for missing values in the dataset</span><br>
+<span class="r-variable">missing_values</span> <span class="r-operator">&lt;-</span> <span class="r-function">colSums</span><span class="r-bracket">(</span><span class="r-function">is.na</span><span class="r-bracket">(</span><span class="r-variable">malaria_data</span><span class="r-bracket">))</span><br>
+<span class="r-function">print</span><span class="r-bracket">(</span><span class="r-variable">missing_values</span><span class="r-bracket">)</span><br>
+<span class="r-comment"># Calculate the percentage of missing values</span><br>
+<span class="r-variable">missing_percentage</span> <span class="r-operator">&lt;-</span> <span class="r-function">colMeans</span><span class="r-bracket">(</span><span class="r-function">is.na</span><span class="r-bracket">(</span><span class="r-variable">malaria_data</span><span class="r-bracket">))</span> <span class="r-operator">*</span> <span class="r-number">100</span><br>
+<span class="r-function">print</span><span class="r-bracket">(</span><span class="r-variable">missing_percentage</span><span class="r-bracket">)</span>
+                    </code>
+                </div>
+                
+                <div class="explanation-box">
+                    <h5>🔍 Explanation:</h5>
+                    <p>✔ <code>is.na()</code> identifies missing values in the dataset<br>
+                    ✔ <code>colSums()</code> sums the missing values in each column<br>
+                    ✔ <code>colMeans()</code> calculates the proportion of missing values in each column</p>
+                </div>
+                
+                <h4>Step 2: Removing Rows with Missing Values</h4>
+                <div class="code-block">
+                    <button class="copy-btn" onclick="copyCode(this)">📋 Copy</button>
+                    <code>
+<span class="r-comment"># Remove rows with any missing values</span><br>
+<span class="r-variable">complete_data</span> <span class="r-operator">&lt;-</span> <span class="r-function">na.omit</span><span class="r-bracket">(</span><span class="r-variable">malaria_data</span><span class="r-bracket">)</span><br>
+<span class="r-comment"># Check how many rows were removed</span><br>
+<span class="r-variable">original_rows</span> <span class="r-operator">&lt;-</span> <span class="r-function">nrow</span><span class="r-bracket">(</span><span class="r-variable">malaria_data</span><span class="r-bracket">)</span><br>
+<span class="r-variable">complete_rows</span> <span class="r-operator">&lt;-</span> <span class="r-function">nrow</span><span class="r-bracket">(</span><span class="r-variable">complete_data</span><span class="r-bracket">)</span><br>
+<span class="r-variable">removed_rows</span> <span class="r-operator">&lt;-</span> <span class="r-variable">original_rows</span> <span class="r-operator">-</span> <span class="r-variable">complete_rows</span><br>
+<span class="r-function">print</span><span class="r-bracket">(</span><span class="r-function">paste</span><span class="r-bracket">(</span><span class="r-string">"Removed"</span><span class="r-operator">,</span> <span class="r-variable">removed_rows</span><span class="r-operator">,</span> <span class="r-string">"rows with missing data"</span><span class="r-bracket">))</span>
+                    </code>
+                </div>
+                
+                <div class="explanation-box">
+                    <h5>🔍 Explanation:</h5>
+                    <p>✔ <code>na.omit()</code> removes any row that contains at least one missing value<br>
+                    ✔ This is a simple approach but may remove too much data if missing values are common</p>
+                </div>
+                
+                <h4>Step 3: Replacing Missing Values with tidyr</h4>
+                <div class="code-block">
+                    <button class="copy-btn" onclick="copyCode(this)">📋 Copy</button>
+                    <code>
+<span class="r-comment"># Load tidyr package</span><br>
+<span class="r-function">library</span><span class="r-bracket">(</span><span class="r-variable">tidyr</span><span class="r-bracket">)</span><br>
+<span class="r-comment"># Replace missing values in 'cases' with the mean</span><br>
+<span class="r-variable">malaria_data_imputed</span> <span class="r-operator">&lt;-</span> <span class="r-variable">malaria_data</span> <span class="r-operator">%&gt;%</span><br>
+  <span class="r-function">mutate</span><span class="r-bracket">(</span><span class="r-parameter">cases</span> <span class="r-operator">=</span> <span class="r-function">replace_na</span><span class="r-bracket">(</span><span class="r-variable">cases</span><span class="r-operator">,</span> <span class="r-function">mean</span><span class="r-bracket">(</span><span class="r-variable">cases</span><span class="r-operator">,</span> <span class="r-parameter">na.rm</span> <span class="r-operator">=</span> <span class="r-boolean">TRUE</span><span class="r-bracket">)))</span><br>
+<span class="r-comment"># Replace missing values in 'severity' with "Unknown"</span><br>
+<span class="r-variable">malaria_data_imputed</span> <span class="r-operator">&lt;-</span> <span class="r-variable">malaria_data_imputed</span> <span class="r-operator">%&gt;%</span><br>
+  <span class="r-function">mutate</span><span class="r-bracket">(</span><span class="r-parameter">severity</span> <span class="r-operator">=</span> <span class="r-function">replace_na</span><span class="r-bracket">(</span><span class="r-variable">severity</span><span class="r-operator">,</span> <span class="r-string">"Unknown"</span><span class="r-bracket">))</span>
+                    </code>
+                </div>
+                
+                <div class="explanation-box">
+                    <h5>🔍 Explanation:</h5>
+                    <p>✔ <code>tidyr::replace_na()</code> replaces NA values with specified replacements<br>
+                    ✔ For numeric columns, we often replace with mean, median, or zero<br>
+                    ✔ For categorical columns, we may replace with a new category like "Unknown"</p>
+                </div>
+                
+                <h4>Step 4: Missing Value Visualization</h4>
+                <div class="code-block">
+                    <button class="copy-btn" onclick="copyCode(this)">📋 Copy</button>
+                    <code>
+<span class="r-comment"># Install and load packages for missing data visualization</span><br>
+<span class="r-function">install.packages</span><span class="r-bracket">(</span><span class="r-string">"naniar"</span><span class="r-bracket">)</span><br>
+<span class="r-function">library</span><span class="r-bracket">(</span><span class="r-variable">naniar</span><span class="r-bracket">)</span><br>
+<span class="r-comment"># Create a visualization of missing data patterns</span><br>
+<span class="r-function">gg_miss_var</span><span class="r-bracket">(</span><span class="r-variable">malaria_data</span><span class="r-bracket">)</span><br>
+<span class="r-comment"># Create a matrix of missing data patterns</span><br>
+<span class="r-function">vis_miss</span><span class="r-bracket">(</span><span class="r-variable">malaria_data</span><span class="r-bracket">)</span>
+                    </code>
+                </div>
+                
+                <div class="explanation-box">
+                    <h5>🔍 Explanation:</h5>
+                    <p>✔ <code>naniar</code> package provides specialized tools for exploring missing data<br>
+                    ✔ <code>gg_miss_var()</code> creates a plot showing the count of missing values by variable<br>
+                    ✔ <code>vis_miss()</code> creates a matrix visualization of missing values throughout the dataset</p>
+                </div>
+            </div>
+
+            <div class="note

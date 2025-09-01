@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ICF-SL AI Assistant</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            color: #e2e8f0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #1e40af, #3b82f6);
+            color: white;
+            padding: 30px;
+            border-radius: 15px;
+            text-align: center;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(30,64,175,0.3);
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .icf-image {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .icf-image img {
+            max-width: 300px;
+            height: auto;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+
+        .api-setup {
+            background: #334155;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            border-left: 4px solid #f59e0b;
+        }
+
+        .api-setup h3 {
+            color: #f59e0b;
+            margin-bottom: 15px;
+        }
+
+        .api-input {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .api-input input {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #475569;
+            border-radius: 6px;
+            background: #1e293b;
+            color: #e2e8f0;
+            font-size: 14px;
+        }
+
+        .api-input button {
+            padding: 10px 20px;
+            background: #3b82f6;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .api-input button:hover {
+            background: #2563eb;
+        }
+
+        .chat-container {
+            flex: 1;
+            background: #334155;
+            border-radius: 10px;
+            display: flex;
+            flex-direction: column;
+            min-height: 500px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .chat-header {
+            background: #475569;
+            padding: 15px 20px;
+            border-radius: 10px 10px 0 0;
+            border-bottom: 1px solid #64748b;
+        }
+
+        .chat-messages {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            max-height: 400px;
+        }
+
+        .message {
+            margin-bottom: 15px;
+            padding: 12px 16px;
+            border-radius: 10px;
+            max-width: 80%;
+        }
+
+        .message.user {
+            background: #3b82f6;
+            color: white;
+            margin-left: auto;
+            border-bottom-right-radius: 4px;
+        }
+
+        .message.assistant {
+            background: #1e293b;
+            color: #e2e8f0;
+            border: 1px solid #475569;
+            border-bottom-left-radius: 4px;
+        }
+
+        .chat-input-container {
+            padding: 20px;
+            border-top: 1px solid #475569;
+            background: #475569;
+            border-radius: 0 0 10px 10px;
+        }
+
+        .chat-input {
+            display: flex;
+            gap: 10px;
+        }
+
+        .chat-input input {
+            flex: 1;
+            padding: 12px;
+            border: 1px solid #64748b;
+            border-radius: 8px;
+            background: #1e293b;
+            color: #e2e8f0;
+            font-size: 16px;
+        }
+
+        .chat-input input:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+        }
+
+        .send-btn {
+            padding: 12px 24px;
+            background: #3b82f6;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+
+        .send-btn:hover:not(:disabled) {
+            background: #2563eb;
+            transform: translateY(-1px);
+        }
+
+        .send-btn:disabled {
+            background: #64748b;
+            cursor: not-allowed;
+        }
+
+        .loading {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #94a3b8;
+            font-style: italic;
+        }
+
+        .loading::after {
+            content: '';
+            width: 20px;
+            height: 20px;
+            border: 2px solid #475569;
+            border-top: 2px solid #3b82f6;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .error {
+            background: #dc2626;
+            color: white;
+            padding: 12px;
+            border-radius: 6px;
+            margin: 10px 0;
+        }
+
+        .success {
+            background: #059669;
+            color: white;
+            padding: 12px;
+            border-radius: 6px;
+            margin: 10px 0;
+        }
+
+        .suggestions {
+            background: #1e293b;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border: 1px solid #475569;
+        }
+
+        .suggestions h4 {
+            color: #60a5fa;
+            margin-bottom: 10px;
+        }
+
+        .suggestion-btn {
+            display: inline-block;
+            background: #475569;
+            color: #e2e8f0;
+            padding: 8px 12px;
+            margin: 5px 5px 5px 0;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background 0.3s;
+            font-size: 14px;
+        }
+
+        .suggestion-btn:hover {
+            background: #3b82f6;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+            
+            .header h1 {
+                font-size: 2em;
+            }
+            
+            .message {
+                max-width: 95%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🤖 ICF Sierra Leone AI Assistant</h1>
+            <p>Your intelligent companion for public health insights and data analysis</p>
+        </div>
+
+        <div class="icf-image">
+            <img src="https://raw.githubusercontent.com/mohamedsillahkanu/si/726bcf69bf5539d005011a0bfd7ebc91a4b29a06/icf_sl%20(1).jpg" 
+                 alt="ICF Sierra Leone" 
+                 onerror="this.style.display='none'">
+        </div>
+
+        <div class="api-setup" id="apiSetup">
+            <h3>⚙️ Setup Required</h3>
+            <p>To use this AI assistant, you need an OpenAI API key:</p>
+            <ol>
+                <li>Visit <a href="https://platform.openai.com/api-keys" target="_blank" style="color: #60a5fa;">OpenAI API Keys</a></li>
+                <li>Create a new API key</li>
+                <li>Enter it below (it will be stored temporarily in your browser)</li>
+            </ol>
+            <div class="api-input">
+                <input type="password" id="apiKeyInput" placeholder="Enter your OpenAI API key here...">
+                <button onclick="setApiKey()">Connect</button>
+            </div>
+        </div>
+
+        <div class="suggestions" id="suggestions" style="display: none;">
+            <h4>💡 Try asking:</h4>
+            <button class="suggestion-btn" onclick="sendSuggestion('How do I calculate malaria incidence rates?')">Calculate incidence rates</button>
+            <button class="suggestion-btn" onclick="sendSuggestion('What are best practices for survey design?')">Survey design tips</button>
+            <button class="suggestion-btn" onclick="sendSuggestion('Help me analyze demographic data')">Analyze demographics</button>
+            <button class="suggestion-btn" onclick="sendSuggestion('Explain sampling methodology')">Sampling methods</button>
+            <button class="suggestion-btn" onclick="sendSuggestion('How to clean and prepare data in R?')">Data cleaning in R</button>
+        </div>
+
+        <div class="chat-container" id="chatContainer" style="display: none;">
+            <div class="chat-header">
+                <h3>💬 Chat with ICF-SL Assistant</h3>
+                <button onclick="clearChat()" style="float: right; background: #dc2626; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer;">Clear Chat</button>
+            </div>
+            
+            <div class="chat-messages" id="chatMessages">
+                <div class="message assistant">
+                    <strong>ICF-SL Assistant:</strong> Hello! I'm here to help you with questions about public health, data analysis, research methodology, and ICF Sierra Leone programs. How can I assist you today?
+                </div>
+            </div>
+            
+            <div class="chat-input-container">
+                <div class="chat-input">
+                    <input type="text" id="messageInput" placeholder="Ask me anything about ICF-SL programs, data analysis, or public health..." onkeypress="handleKeyPress(event)">
+                    <button class="send-btn" id="sendBtn" onclick="sendMessage()">Send</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let apiKey = '';
+        let isProcessing = false;
+
+        function setApiKey() {
+            const input = document.getElementById('apiKeyInput');
+            apiKey = input.value.trim();
+            
+            if (!apiKey) {
+                showError('Please enter a valid API key');
+                return;
+            }
+
+            // Test the API key
+            testApiKey(apiKey);
+        }
+
+        async function testApiKey(key) {
+            try {
+                const response = await fetch('https://api.openai.com/v1/chat/completions', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${key}`
+                    },
+                    body: JSON.stringify({
+                        model: 'gpt-3.5-turbo',
+                        messages: [{ role: 'user', content: 'test' }],
+                        max_tokens: 1
+                    })
+                });
+
+                if (response.ok) {
+                    document.getElementById('apiSetup').style.display = 'none';
+                    document.getElementById('chatContainer').style.display = 'flex';
+                    document.getElementById('suggestions').style.display = 'block';
+                    showSuccess('API key validated successfully! You can now start chatting.');
+                } else {
+                    showError('Invalid API key. Please check and try again.');
+                }
+            } catch (error) {
+                showError('Error validating API key: ' + error.message);
+            }
+        }
+
+        function sendSuggestion(text) {
+            document.getElementById('messageInput').value = text;
+            sendMessage();
+        }
+
+        function handleKeyPress(event) {
+            if (event.key === 'Enter' && !isProcessing) {
+                sendMessage();
+            }
+        }
+
+        async function sendMessage() {
+            const input = document.getElementById('messageInput');
+            const message = input.value.trim();
+            
+            if (!message || isProcessing) return;
+
+            // Add user message to chat
+            addMessage('user', message);
+            input.value = '';
+            
+            // Show loading state
+            isProcessing = true;
+            document.getElementById('sendBtn').disabled = true;
+            const loadingDiv = addMessage('assistant', '<div class="loading">Thinking</div>');
+
+            try {
+                const response = await fetch('https://api.openai.com/v1/chat/completions', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${apiKey}`
+                    },
+                    body: JSON.stringify({
+                        model: 'gpt-3.5-turbo',
+                        messages: [
+                            {
+                                role: 'system',
+                                content: 'You are an AI assistant for ICF Sierra Leone. You help with questions about public health, development programs, data analysis, research methodology, and survey design. Be helpful, professional, and informative. Focus on practical guidance for health researchers and program implementers in Sierra Leone context.'
+                            },
+                            ...getChatHistory(),
+                            { role: 'user', content: message }
+                        ],
+                        max_tokens: 1000,
+                        temperature: 0.7
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error(`API request failed: ${response.status}`);
+                }
+
+                const data = await response.json();
+                const assistantMessage = data.choices[0].message.content;
+
+                // Remove loading message and add actual response
+                loadingDiv.remove();
+                addMessage('assistant', assistantMessage);
+
+            } catch (error) {
+                loadingDiv.remove();
+                addMessage('assistant', `Error: ${error.message}. Please check your API key and internet connection.`);
+            } finally {
+                isProcessing = false;
+                document.getElementById('sendBtn').disabled = false;
+            }
+        }
+
+        function addMessage(role, content) {
+            const messagesContainer = document.getElementById('chatMessages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${role}`;
+            
+            if (role === 'user') {
+                messageDiv.innerHTML = `<strong>You:</strong> ${content}`;
+            } else {
+                messageDiv.innerHTML = `<strong>ICF-SL Assistant:</strong> ${content}`;
+            }
+            
+            messagesContainer.appendChild(messageDiv);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            
+            return messageDiv;
+        }
+
+        function getChatHistory() {
+            const messages = document.querySelectorAll('.message');
+            const history = [];
+            
+            messages.forEach(msg => {
+                if (msg.classList.contains('user')) {
+                    const content = msg.textContent.replace('You: ', '');
+                    history.push({ role: 'user', content: content });
+                } else if (msg.classList.contains('assistant') && !msg.querySelector('.loading')) {
+                    const content = msg.textContent.replace('ICF-SL Assistant: ', '');
+                    history.push({ role: 'assistant', content: content });
+                }
+            });
+            
+            return history;
+        }
+
+        function clearChat() {
+            const messagesContainer = document.getElementById('chatMessages');
+            messagesContainer.innerHTML = `
+                <div class="message assistant">
+                    <strong>ICF-SL Assistant:</strong> Hello! I'm here to help you with questions about public health, data analysis, research methodology, and ICF Sierra Leone programs. How can I assist you today?
+                </div>
+            `;
+        }
+
+        function showError(message) {
+            const errorDiv = document.createElement('div');
+            errorDiv.className = 'error';
+            errorDiv.textContent = message;
+            document.getElementById('apiSetup').appendChild(errorDiv);
+            
+            setTimeout(() => {
+                errorDiv.remove();
+            }, 5000);
+        }
+
+        function showSuccess(message) {
+            const successDiv = document.createElement('div');
+            successDiv.className = 'success';
+            successDiv.textContent = message;
+            document.getElementById('apiSetup').appendChild(successDiv);
+            
+            setTimeout(() => {
+                successDiv.remove();
+            }, 3000);
+        }
+
+        // Initialize the app
+        document.addEventListener('DOMContentLoaded', function() {
+            // Check if API key is already stored
+            const storedKey = localStorage.getItem('openai_api_key');
+            if (storedKey) {
+                document.getElementById('apiKeyInput').value = storedKey;
+                apiKey = storedKey;
+                testApiKey(apiKey);
+            }
+            
+            // Save API key when set
+            const originalSetApiKey = setApiKey;
+            setApiKey = function() {
+                originalSetApiKey();
+                if (apiKey) {
+                    localStorage.setItem('openai_api_key', apiKey);
+                }
+            };
+        });
+
+        // Add some ICF-SL specific functionality
+        function showAboutICF() {
+            addMessage('assistant', `
+                <strong>About ICF Sierra Leone:</strong><br><br>
+                ICF is a global consulting and digital services company that partners with Sierra Leone on various development initiatives including:<br>
+                • Public health program evaluation<br>
+                • Demographic and health surveys<br>
+                • Malaria prevention and control programs<br>
+                • Health system strengthening<br>
+                • Data collection and analysis<br>
+                • Research methodology and capacity building<br><br>
+                How can I help you with your specific project or research question?
+            `);
+        }
+
+        // Add helpful shortcuts
+        document.addEventListener('keydown', function(event) {
+            // Ctrl/Cmd + Enter to send message
+            if ((event.ctrlKey || event.metaKey) && event.key === 'Enter') {
+                sendMessage();
+            }
+        });
+    </script>
+</body>
+</html>

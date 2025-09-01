@@ -133,18 +133,60 @@
 
         .url-display {
             width: 100%;
-            height: 500px;
+            height: 600px;
             border: 2px solid #475569;
             border-radius: 8px;
-            background: white;
+            background: #1e293b;
             margin-bottom: 20px;
+            overflow: hidden;
+        }
+
+        .browser-header {
+            background: #475569;
+            padding: 10px;
+            border-bottom: 1px solid #64748b;
+        }
+
+        .browser-controls {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .browser-controls button {
+            padding: 6px 12px;
+            background: #1e293b;
+            color: #e2e8f0;
+            border: 1px solid #64748b;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        .browser-controls button:hover {
+            background: #3b82f6;
+            border-color: #3b82f6;
+        }
+
+        .current-url {
+            flex: 1;
+            background: #1e293b;
+            color: #94a3b8;
+            padding: 6px 12px;
+            border: 1px solid #64748b;
+            border-radius: 4px;
+            font-size: 12px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
         }
 
         .url-display iframe {
             width: 100%;
-            height: 100%;
+            height: calc(100% - 50px);
             border: none;
-            border-radius: 6px;
+            background: white;
         }
 
         .api-setup {
@@ -413,35 +455,36 @@
                  onerror="this.style.display='none'">
         </div>
 
-        <!-- NEW URL OPENER SECTION -->
+        <!-- EMBEDDED URL BROWSER -->
         <div class="url-opener">
-            <h3>🌐 Web Browser</h3>
-            <p>Open websites directly within the platform</p>
+            <h3>🌐 Embedded Web Browser</h3>
             
             <div class="url-input">
                 <input type="url" id="urlInput" placeholder="Enter URL (e.g., https://www.google.com)" value="https://www.google.com">
-                <button onclick="openURL()">🔗 Open URL</button>
-            </div>
-
-            <div class="url-controls">
-                <button onclick="goBack()">⬅️ Back</button>
-                <button onclick="goForward()">➡️ Forward</button>
-                <button onclick="refreshURL()">🔄 Refresh</button>
-                <button onclick="goHome()">🏠 Home</button>
-                <button onclick="closeURL()">❌ Close</button>
+                <button onclick="embedURL()">🔗 Embed & Open</button>
+                <button onclick="toggleBrowser()" id="toggleBtn">📱 Show Browser</button>
             </div>
 
             <div class="quick-links">
-                <button class="quick-link-btn" onclick="openQuickURL('https://www.google.com')">Google</button>
-                <button class="quick-link-btn" onclick="openQuickURL('https://www.who.int')">WHO</button>
-                <button class="quick-link-btn" onclick="openQuickURL('https://www.unicef.org')">UNICEF</button>
-                <button class="quick-link-btn" onclick="openQuickURL('https://dhsprogram.com')">DHS Program</button>
-                <button class="quick-link-btn" onclick="openQuickURL('https://www.icf.com')">ICF</button>
+                <button class="quick-link-btn" onclick="embedQuickURL('https://www.google.com')">Google</button>
+                <button class="quick-link-btn" onclick="embedQuickURL('https://www.who.int')">WHO</button>
+                <button class="quick-link-btn" onclick="embedQuickURL('https://scholar.google.com')">Scholar</button>
+                <button class="quick-link-btn" onclick="embedQuickURL('https://www.dhsprogram.com')">DHS Program</button>
             </div>
+        </div>
 
-            <div class="url-display" id="urlDisplay" style="display: none;">
-                <iframe id="urlFrame" src="about:blank"></iframe>
+        <!-- EMBEDDED BROWSER DISPLAY -->
+        <div class="url-display" id="urlDisplay" style="display: none;">
+            <div class="browser-header">
+                <div class="browser-controls">
+                    <button onclick="goBack()">⬅️</button>
+                    <button onclick="goForward()">➡️</button>
+                    <button onclick="refreshURL()">🔄</button>
+                    <span class="current-url" id="currentUrl">about:blank</span>
+                    <button onclick="closeBrowser()">❌</button>
+                </div>
             </div>
+            <iframe id="urlFrame" src="about:blank"></iframe>
         </div>
 
         <div class="suggestions">
@@ -461,7 +504,7 @@
             
             <div class="chat-messages" id="chatMessages">
                 <div class="message assistant">
-                    <strong>ICF-SL Assistant:</strong> Hello! I'm here to help you with questions about public health, data analysis, research methodology, and ICF Sierra Leone programs. You can also use the web browser above to open websites within the platform. How can I assist you today?
+                    <strong>ICF-SL Assistant:</strong> Hello! I'm here to help you with questions about public health, data analysis, research methodology, and ICF Sierra Leone programs. You can also embed websites directly in the platform using the browser above. How can I assist you today?
                 </div>
             </div>
             
@@ -482,13 +525,13 @@
         let urlHistory = [];
         let currentUrlIndex = -1;
 
-        // URL OPENER FUNCTIONS
-        function openURL() {
+        // EMBEDDED URL BROWSER FUNCTIONS
+        function embedURL() {
             const urlInput = document.getElementById('urlInput');
             const url = urlInput.value.trim();
             
             if (!url) {
-                showError('Please enter a URL');
+                showError('Please enter a URL to embed');
                 return;
             }
             
@@ -498,20 +541,24 @@
                 formattedUrl = 'https://' + url;
             }
             
-            loadURLInFrame(formattedUrl);
+            embedURLInFrame(formattedUrl);
         }
 
-        function openQuickURL(url) {
+        function embedQuickURL(url) {
             document.getElementById('urlInput').value = url;
-            loadURLInFrame(url);
+            embedURLInFrame(url);
         }
 
-        function loadURLInFrame(url) {
+        function embedURLInFrame(url) {
             const urlFrame = document.getElementById('urlFrame');
             const urlDisplay = document.getElementById('urlDisplay');
+            const currentUrlSpan = document.getElementById('currentUrl');
+            const toggleBtn = document.getElementById('toggleBtn');
             
-            // Show the iframe container
+            // Show the embedded browser
             urlDisplay.style.display = 'block';
+            toggleBtn.textContent = '📱 Hide Browser';
+            toggleBtn.onclick = toggleBrowser;
             
             // Add to history
             if (currentUrlIndex === -1 || urlHistory[currentUrlIndex] !== url) {
@@ -520,13 +567,45 @@
                 currentUrlIndex = urlHistory.length - 1;
             }
             
-            // Load the URL
+            // Load the URL in embedded frame
             urlFrame.src = url;
+            currentUrlSpan.textContent = url;
             
             // Update input field
             document.getElementById('urlInput').value = url;
             
-            showSuccess(`Loading: ${url}`);
+            showSuccess(`Embedded: ${url}`);
+            
+            // Add message to chat
+            addMessage('assistant', `🌐 <strong>Website Embedded:</strong> ${url}<br>The website is now embedded above. You can continue chatting while browsing!`);
+        }
+
+        function toggleBrowser() {
+            const urlDisplay = document.getElementById('urlDisplay');
+            const toggleBtn = document.getElementById('toggleBtn');
+            
+            if (urlDisplay.style.display === 'none') {
+                urlDisplay.style.display = 'block';
+                toggleBtn.textContent = '📱 Hide Browser';
+            } else {
+                urlDisplay.style.display = 'none';
+                toggleBtn.textContent = '📱 Show Browser';
+            }
+        }
+
+        function closeBrowser() {
+            const urlDisplay = document.getElementById('urlDisplay');
+            const urlFrame = document.getElementById('urlFrame');
+            const toggleBtn = document.getElementById('toggleBtn');
+            const currentUrlSpan = document.getElementById('currentUrl');
+            
+            urlDisplay.style.display = 'none';
+            urlFrame.src = 'about:blank';
+            currentUrlSpan.textContent = 'about:blank';
+            toggleBtn.textContent = '📱 Show Browser';
+            document.getElementById('urlInput').value = '';
+            
+            addMessage('assistant', '🌐 <strong>Browser closed.</strong> Feel free to embed another website or continue our conversation!');
         }
 
         function goBack() {
@@ -535,6 +614,8 @@
                 const url = urlHistory[currentUrlIndex];
                 document.getElementById('urlFrame').src = url;
                 document.getElementById('urlInput').value = url;
+                document.getElementById('currentUrl').textContent = url;
+                showSuccess('Navigated back');
             }
         }
 
@@ -544,6 +625,8 @@
                 const url = urlHistory[currentUrlIndex];
                 document.getElementById('urlFrame').src = url;
                 document.getElementById('urlInput').value = url;
+                document.getElementById('currentUrl').textContent = url;
+                showSuccess('Navigated forward');
             }
         }
 
@@ -557,24 +640,17 @@
         }
 
         function goHome() {
-            openQuickURL('https://www.google.com');
+            embedQuickURL('https://www.google.com');
         }
 
         function closeURL() {
-            const urlDisplay = document.getElementById('urlDisplay');
-            const urlFrame = document.getElementById('urlFrame');
-            
-            urlDisplay.style.display = 'none';
-            urlFrame.src = 'about:blank';
-            document.getElementById('urlInput').value = '';
-            
-            showSuccess('Browser closed');
+            closeBrowser();
         }
 
-        // Allow Enter key to open URL
+        // Allow Enter key to embed URL
         document.getElementById('urlInput').addEventListener('keypress', function(e) {
             if (e.key === 'Enter') {
-                openURL();
+                embedURL();
             }
         });
 
@@ -691,7 +767,7 @@
             const messagesContainer = document.getElementById('chatMessages');
             messagesContainer.innerHTML = `
                 <div class="message assistant">
-                    <strong>ICF-SL Assistant:</strong> Hello! I'm here to help you with questions about public health, data analysis, research methodology, and ICF Sierra Leone programs. You can also use the web browser above to open websites within the platform. How can I assist you today?
+                    <strong>ICF-SL Assistant:</strong> Hello! I'm here to help you with questions about public health, data analysis, research methodology, and ICF Sierra Leone programs. You can also embed websites directly in the platform using the browser above. How can I assist you today?
                 </div>
             `;
         }

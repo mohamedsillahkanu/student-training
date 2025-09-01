@@ -5,13 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ICF-SL AI Assistant</title>
     <style>
-        .icf-chatbot * {
+        * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
 
-        .icf-chatbot {
+        body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
             color: #e2e8f0;
@@ -20,8 +20,8 @@
             flex-direction: column;
         }
 
-        .icf-chatbot .container {
-            max-width: 1000px;
+        .container {
+            max-width: 1200px;
             margin: 0 auto;
             padding: 20px;
             flex: 1;
@@ -29,7 +29,7 @@
             flex-direction: column;
         }
 
-        .icf-chatbot .header {
+        .header {
             background: linear-gradient(135deg, #1e40af, #3b82f6);
             color: white;
             padding: 30px;
@@ -39,30 +39,158 @@
             box-shadow: 0 10px 30px rgba(30,64,175,0.3);
         }
 
-        .icf-chatbot .header h1 {
+        .header h1 {
             font-size: 2.5em;
             margin-bottom: 10px;
             text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
         }
 
-        .icf-chatbot .header p {
+        .header p {
             font-size: 1.1em;
             opacity: 0.9;
         }
 
-        .icf-chatbot .icf-image {
+        .icf-image {
             text-align: center;
             margin-bottom: 20px;
         }
 
-        .icf-chatbot .icf-image img {
+        .icf-image img {
             max-width: 300px;
             height: auto;
             border-radius: 10px;
             box-shadow: 0 5px 15px rgba(0,0,0,0.3);
         }
 
-        .icf-chatbot .chat-container {
+        /* URL Opener Section */
+        .url-opener {
+            background: #334155;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            border-left: 4px solid #10b981;
+        }
+
+        .url-opener h3 {
+            color: #10b981;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .url-input {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .url-input input {
+            flex: 1;
+            padding: 12px;
+            border: 1px solid #475569;
+            border-radius: 6px;
+            background: #1e293b;
+            color: #e2e8f0;
+            font-size: 14px;
+        }
+
+        .url-input button {
+            padding: 12px 20px;
+            background: #10b981;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background 0.3s;
+            font-weight: 500;
+        }
+
+        .url-input button:hover {
+            background: #059669;
+        }
+
+        .url-controls {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .url-controls button {
+            padding: 8px 16px;
+            background: #475569;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background 0.3s;
+            font-size: 14px;
+        }
+
+        .url-controls button:hover {
+            background: #3b82f6;
+        }
+
+        .url-display {
+            width: 100%;
+            height: 500px;
+            border: 2px solid #475569;
+            border-radius: 8px;
+            background: white;
+            margin-bottom: 20px;
+        }
+
+        .url-display iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+            border-radius: 6px;
+        }
+
+        .api-setup {
+            background: #334155;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            border-left: 4px solid #f59e0b;
+        }
+
+        .api-setup h3 {
+            color: #f59e0b;
+            margin-bottom: 15px;
+        }
+
+        .api-input {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .api-input input {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #475569;
+            border-radius: 6px;
+            background: #1e293b;
+            color: #e2e8f0;
+            font-size: 14px;
+        }
+
+        .api-input button {
+            padding: 10px 20px;
+            background: #3b82f6;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .api-input button:hover {
+            background: #2563eb;
+        }
+
+        .chat-container {
             flex: 1;
             background: #334155;
             border-radius: 10px;
@@ -72,75 +200,54 @@
             box-shadow: 0 5px 15px rgba(0,0,0,0.2);
         }
 
-        .icf-chatbot .chat-header {
+        .chat-header {
             background: #475569;
             padding: 15px 20px;
             border-radius: 10px 10px 0 0;
             border-bottom: 1px solid #64748b;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
         }
 
-        .icf-chatbot .chat-header h3 {
-            color: #e2e8f0;
-        }
-
-        .icf-chatbot .chat-header button {
-            background: #dc2626;
-            color: white;
-            border: none;
-            padding: 5px 10px;
-            border-radius: 4px;
-            cursor: pointer;
-            transition: background 0.3s;
-        }
-
-        .icf-chatbot .chat-header button:hover {
-            background: #b91c1c;
-        }
-
-        .icf-chatbot .chat-messages {
+        .chat-messages {
             flex: 1;
             padding: 20px;
             overflow-y: auto;
             max-height: 400px;
         }
 
-        .icf-chatbot .message {
+        .message {
             margin-bottom: 15px;
             padding: 12px 16px;
             border-radius: 10px;
             max-width: 80%;
         }
 
-        .icf-chatbot .message.user {
+        .message.user {
             background: #3b82f6;
             color: white;
             margin-left: auto;
             border-bottom-right-radius: 4px;
         }
 
-        .icf-chatbot .message.assistant {
+        .message.assistant {
             background: #1e293b;
             color: #e2e8f0;
             border: 1px solid #475569;
             border-bottom-left-radius: 4px;
         }
 
-        .icf-chatbot .chat-input-container {
+        .chat-input-container {
             padding: 20px;
             border-top: 1px solid #475569;
             background: #475569;
             border-radius: 0 0 10px 10px;
         }
 
-        .icf-chatbot .chat-input {
+        .chat-input {
             display: flex;
             gap: 10px;
         }
 
-        .icf-chatbot .chat-input input {
+        .chat-input input {
             flex: 1;
             padding: 12px;
             border: 1px solid #64748b;
@@ -150,13 +257,13 @@
             font-size: 16px;
         }
 
-        .icf-chatbot .chat-input input:focus {
+        .chat-input input:focus {
             outline: none;
             border-color: #3b82f6;
             box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
         }
 
-        .icf-chatbot .send-btn {
+        .send-btn {
             padding: 12px 24px;
             background: #3b82f6;
             color: white;
@@ -167,17 +274,17 @@
             transition: all 0.3s;
         }
 
-        .icf-chatbot .send-btn:hover:not(:disabled) {
+        .send-btn:hover:not(:disabled) {
             background: #2563eb;
             transform: translateY(-1px);
         }
 
-        .icf-chatbot .send-btn:disabled {
+        .send-btn:disabled {
             background: #64748b;
             cursor: not-allowed;
         }
 
-        .icf-chatbot .loading {
+        .loading {
             display: flex;
             align-items: center;
             gap: 8px;
@@ -185,35 +292,38 @@
             font-style: italic;
         }
 
-        .icf-chatbot .loading::after {
+        .loading::after {
             content: '';
             width: 20px;
             height: 20px;
             border: 2px solid #475569;
             border-top: 2px solid #3b82f6;
             border-radius: 50%;
-            animation: icf-spin 1s linear infinite;
+            animation: spin 1s linear infinite;
         }
 
-        @keyframes icf-spin {
+        @keyframes spin {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
 
-        .icf-chatbot .error {
+        .error {
             background: #dc2626;
             color: white;
             padding: 12px;
             border-radius: 6px;
             margin: 10px 0;
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            z-index: 1000;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
         }
 
-        .icf-chatbot .suggestions {
+        .success {
+            background: #059669;
+            color: white;
+            padding: 12px;
+            border-radius: 6px;
+            margin: 10px 0;
+        }
+
+        .suggestions {
             background: #1e293b;
             padding: 15px;
             border-radius: 8px;
@@ -221,12 +331,12 @@
             border: 1px solid #475569;
         }
 
-        .icf-chatbot .suggestions h4 {
+        .suggestions h4 {
             color: #60a5fa;
             margin-bottom: 10px;
         }
 
-        .icf-chatbot .suggestion-btn {
+        .suggestion-btn {
             display: inline-block;
             background: #475569;
             color: #e2e8f0;
@@ -239,22 +349,54 @@
             font-size: 14px;
         }
 
-        .icf-chatbot .suggestion-btn:hover {
+        .suggestion-btn:hover {
             background: #3b82f6;
         }
 
+        /* Responsive Design */
         @media (max-width: 768px) {
-            .icf-chatbot .container {
+            .container {
                 padding: 10px;
             }
             
-            .icf-chatbot .header h1 {
+            .header h1 {
                 font-size: 2em;
             }
             
-            .icf-chatbot .message {
+            .message {
                 max-width: 95%;
             }
+
+            .url-input {
+                flex-direction: column;
+            }
+
+            .url-controls {
+                flex-wrap: wrap;
+            }
+        }
+
+        .quick-links {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 10px;
+        }
+
+        .quick-link-btn {
+            padding: 6px 12px;
+            background: #1e293b;
+            color: #10b981;
+            border: 1px solid #10b981;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.3s;
+        }
+
+        .quick-link-btn:hover {
+            background: #10b981;
+            color: white;
         }
     </style>
 </head>
@@ -269,6 +411,37 @@
             <img src="https://raw.githubusercontent.com/mohamedsillahkanu/si/726bcf69bf5539d005011a0bfd7ebc91a4b29a06/icf_sl%20(1).jpg" 
                  alt="ICF Sierra Leone" 
                  onerror="this.style.display='none'">
+        </div>
+
+        <!-- NEW URL OPENER SECTION -->
+        <div class="url-opener">
+            <h3>🌐 Web Browser</h3>
+            <p>Open websites directly within the platform</p>
+            
+            <div class="url-input">
+                <input type="url" id="urlInput" placeholder="Enter URL (e.g., https://www.google.com)" value="https://www.google.com">
+                <button onclick="openURL()">🔗 Open URL</button>
+            </div>
+
+            <div class="url-controls">
+                <button onclick="goBack()">⬅️ Back</button>
+                <button onclick="goForward()">➡️ Forward</button>
+                <button onclick="refreshURL()">🔄 Refresh</button>
+                <button onclick="goHome()">🏠 Home</button>
+                <button onclick="closeURL()">❌ Close</button>
+            </div>
+
+            <div class="quick-links">
+                <button class="quick-link-btn" onclick="openQuickURL('https://www.google.com')">Google</button>
+                <button class="quick-link-btn" onclick="openQuickURL('https://www.who.int')">WHO</button>
+                <button class="quick-link-btn" onclick="openQuickURL('https://www.unicef.org')">UNICEF</button>
+                <button class="quick-link-btn" onclick="openQuickURL('https://dhsprogram.com')">DHS Program</button>
+                <button class="quick-link-btn" onclick="openQuickURL('https://www.icf.com')">ICF</button>
+            </div>
+
+            <div class="url-display" id="urlDisplay" style="display: none;">
+                <iframe id="urlFrame" src="about:blank"></iframe>
+            </div>
         </div>
 
         <div class="suggestions">
@@ -288,7 +461,7 @@
             
             <div class="chat-messages" id="chatMessages">
                 <div class="message assistant">
-                    <strong>ICF-SL Assistant:</strong> Hello! I'm here to help you with questions about public health, data analysis, research methodology, and ICF Sierra Leone programs. How can I assist you today?
+                    <strong>ICF-SL Assistant:</strong> Hello! I'm here to help you with questions about public health, data analysis, research methodology, and ICF Sierra Leone programs. You can also use the web browser above to open websites within the platform. How can I assist you today?
                 </div>
             </div>
             
@@ -306,7 +479,106 @@
         const apiKey = 'YOUR_API_KEY_HERE';
         
         let isProcessing = false;
+        let urlHistory = [];
+        let currentUrlIndex = -1;
 
+        // URL OPENER FUNCTIONS
+        function openURL() {
+            const urlInput = document.getElementById('urlInput');
+            const url = urlInput.value.trim();
+            
+            if (!url) {
+                showError('Please enter a URL');
+                return;
+            }
+            
+            // Add https:// if not present
+            let formattedUrl = url;
+            if (!url.startsWith('http://') && !url.startsWith('https://')) {
+                formattedUrl = 'https://' + url;
+            }
+            
+            loadURLInFrame(formattedUrl);
+        }
+
+        function openQuickURL(url) {
+            document.getElementById('urlInput').value = url;
+            loadURLInFrame(url);
+        }
+
+        function loadURLInFrame(url) {
+            const urlFrame = document.getElementById('urlFrame');
+            const urlDisplay = document.getElementById('urlDisplay');
+            
+            // Show the iframe container
+            urlDisplay.style.display = 'block';
+            
+            // Add to history
+            if (currentUrlIndex === -1 || urlHistory[currentUrlIndex] !== url) {
+                urlHistory = urlHistory.slice(0, currentUrlIndex + 1);
+                urlHistory.push(url);
+                currentUrlIndex = urlHistory.length - 1;
+            }
+            
+            // Load the URL
+            urlFrame.src = url;
+            
+            // Update input field
+            document.getElementById('urlInput').value = url;
+            
+            showSuccess(`Loading: ${url}`);
+        }
+
+        function goBack() {
+            if (currentUrlIndex > 0) {
+                currentUrlIndex--;
+                const url = urlHistory[currentUrlIndex];
+                document.getElementById('urlFrame').src = url;
+                document.getElementById('urlInput').value = url;
+            }
+        }
+
+        function goForward() {
+            if (currentUrlIndex < urlHistory.length - 1) {
+                currentUrlIndex++;
+                const url = urlHistory[currentUrlIndex];
+                document.getElementById('urlFrame').src = url;
+                document.getElementById('urlInput').value = url;
+            }
+        }
+
+        function refreshURL() {
+            const urlFrame = document.getElementById('urlFrame');
+            const currentSrc = urlFrame.src;
+            if (currentSrc && currentSrc !== 'about:blank') {
+                urlFrame.src = currentSrc;
+                showSuccess('Page refreshed');
+            }
+        }
+
+        function goHome() {
+            openQuickURL('https://www.google.com');
+        }
+
+        function closeURL() {
+            const urlDisplay = document.getElementById('urlDisplay');
+            const urlFrame = document.getElementById('urlFrame');
+            
+            urlDisplay.style.display = 'none';
+            urlFrame.src = 'about:blank';
+            document.getElementById('urlInput').value = '';
+            
+            showSuccess('Browser closed');
+        }
+
+        // Allow Enter key to open URL
+        document.getElementById('urlInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                openURL();
+            }
+        });
+
+        // EXISTING CHAT FUNCTIONS
         function sendSuggestion(text) {
             document.getElementById('messageInput').value = text;
             sendMessage();
@@ -381,7 +653,6 @@
             }
         }
 
-        // Remove unused functions and clean up
         function addMessage(role, content) {
             const messagesContainer = document.getElementById('chatMessages');
             const messageDiv = document.createElement('div');
@@ -420,7 +691,7 @@
             const messagesContainer = document.getElementById('chatMessages');
             messagesContainer.innerHTML = `
                 <div class="message assistant">
-                    <strong>ICF-SL Assistant:</strong> Hello! I'm here to help you with questions about public health, data analysis, research methodology, and ICF Sierra Leone programs. How can I assist you today?
+                    <strong>ICF-SL Assistant:</strong> Hello! I'm here to help you with questions about public health, data analysis, research methodology, and ICF Sierra Leone programs. You can also use the web browser above to open websites within the platform. How can I assist you today?
                 </div>
             `;
         }
@@ -429,25 +700,33 @@
             const errorDiv = document.createElement('div');
             errorDiv.className = 'error';
             errorDiv.textContent = message;
-            document.body.appendChild(errorDiv);
+            document.querySelector('.container').appendChild(errorDiv);
             
             setTimeout(() => {
                 errorDiv.remove();
             }, 5000);
         }
 
+        function showSuccess(message) {
+            const successDiv = document.createElement('div');
+            successDiv.className = 'success';
+            successDiv.textContent = message;
+            document.querySelector('.container').appendChild(successDiv);
+            
+            setTimeout(() => {
+                successDiv.remove();
+            }, 3000);
+        }
+
         // Initialize the app
         document.addEventListener('DOMContentLoaded', function() {
-            // ADD YOUR OPENAI API KEY BELOW (replace YOUR_API_KEY_HERE with your actual key):
-            
             // Check if API key has been set
             if (apiKey === 'YOUR_API_KEY_HERE' || !apiKey) {
                 showError('Please add your OpenAI API key to the code first!');
                 return;
             }
             
-            // If API key is set, the chat is ready to use
-            console.log('ICF-SL Chatbot initialized successfully');
+            console.log('ICF-SL Chatbot with URL opener initialized successfully');
         });
 
         // Add some ICF-SL specific functionality

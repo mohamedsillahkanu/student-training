@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Week 5: Data Reshaping & Advanced EDA for Malaria Data</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #e2e8f0;
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #1e293b;
+            margin-top: 20px;
+            margin-bottom: 20px;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+            border: 1px solid #334155;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #1e40af, #1d4ed8);
+            color: white;
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(30,64,175,0.3);
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .objectives {
+            background: linear-gradient(135deg, #1e40af, #2563eb);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+        }
+
+        .note-section, .exercises-section {
+            background: #334155;
+            padding: 25px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            border-left: 5px solid #3b82f6;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .note-section h2, .exercises-section h2 {
+            color: #60a5fa;
+            margin-bottom: 20px;
+            font-size: 1.8em;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .note-section h3, .exercises-section h3 {
+            color: #93c5fd;
+            margin: 25px 0 15px 0;
+            font-size: 1.4em;
+            border-bottom: 2px solid #3b82f6;
+            padding-bottom: 5px;
+        }
+
+        .note-section h4, .exercises-section h4 {
+            color: #3b82f6;
+            margin: 20px 0 10px 0;
+            font-size: 1.2em;
+        }
+
+        .note-section h5, .exercises-section h5 {
+            color: #10b981;
+            margin: 15px 0 8px 0;
+            font-size: 1.1em;
+        }
+
+        .code-block {
+            background: #0f172a;
+            color: #e2e8f0;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 15px 0;
+            position: relative;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            overflow-x: auto;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            border: 1px solid #1e293b;
+        }
+
+        .copy-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: #475569;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.8em;
+            transition: all 0.3s ease;
+        }
+
+        .copy-btn:hover {
+            background: #1e293b;
+            transform: translateY(-2px);
+        }
+
+        .r-comment { color: #34d399; }
+        .r-variable { color: #60a5fa; }
+        .r-function { color: #fbbf24; }
+        .r-operator { color: #f87171; }
+        .r-bracket { color: #e2e8f0; }
+        .r-string { color: #a78bfa; }
+        .r-parameter { color: #2dd4bf; }
+        .r-boolean { color: #fb7185; }
+        .r-number { color: #fbbf24; }
+
+        .explanation-box {
+            background: linear-gradient(135deg, #0f172a, #1e293b);
+            border-left: 4px solid #10b981;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 0 8px 8px 0;
+            box-shadow: 0 2px 8px rgba(16,185,129,0.2);
+        }
+
+        .explanation-box h5 {
+            color: #10b981;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .explanation-box p {
+            margin: 0;
+            color: #cbd5e1;
+        }
+
+        .summary-section {
+            background: linear-gradient(135deg, #1e40af, #1d4ed8);
+            color: white;
+            padding: 25px;
+            border-radius: 12px;
+            margin: 30px 0;
+            box-shadow: 0 10px 25px rgba(30,64,175,0.3);
+        }
+
+        .progress-bar {
+            background: #374151;
+            height: 8px;
+            border-radius: 4px;
+            margin: 20px 0;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            background: linear-gradient(90deg, #3b82f6, #60a5fa);
+            height: 100%;
+            width: 80%;
+            border-radius: 4px;
+            transition: width 0.5s ease;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                margin: 10px;
+                padding: 15px;
+            }
+            
+            .header h1 {
+                font-size: 2em;
+            }
+            
+            .code-block {
+                font-size: 0.9em;
+            }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.6s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .note-section:hover, .exercises-section:hover {
+            transform: translateY(-2px);
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header fade-in">
+            <h1>🔄 Week 5: Data Reshaping & Advanced EDA</h1>
+            <p>Mastering data transformation and advanced exploratory techniques for malaria analysis</p>
+            <div class="progress-bar">
+                <div class="progress-fill"></div>
+            </div>
+        </div>
+
+        <div class="objectives fade-in">
+            <p><strong>This week, we will:</strong><br>
+            ✅ <strong>Reshape malaria data</strong> using <code>pivot_longer()</code> and <code>pivot_wider()</code><br>
+            ✅ <strong>Join and merge datasets</strong> with <code>left_join()</code>, <code>inner_join()</code>, and more<br>
+            ✅ <strong>Detect outliers</strong> using boxplots, scatterplots, and statistical methods</p>
+        </div>
+
+        <div class="note-section fade-in">
+            <h2>1️⃣ Pivoting Malaria Data</h2>
+            
+            <h3>Why Pivot Data?</h3>
+            <p>Data pivoting transforms data between "wide" and "long" formats. This is crucial for visualization, analysis, and making data compatible with different R functions.</p>
+            
+            <h4>Understanding Data Formats</h4>
+            <div class="code-block">
+                <button class="copy-btn" onclick="copyCode(this)">📋 Copy</button>
+                <code>
+<span class="r-comment"># Load required packages</span><br>
+<span class="r-function">library</span><span class="r-bracket">(</span><span class="r-variable">tidyr</span><span class="r-bracket">)</span><br>
+<span class="r-function">library</span><span class="r-bracket">(</span><span class="r-variable">dplyr</span><span class="r-bracket">)</span><br>
+<span class="r-function">library</span><span class="r-bracket">(</span><span class="r-variable">ggplot2</span><span class="r-bracket">)</span><br>
+<br>
+<span class="r-comment"># Example data: Monthly malaria cases by region (wide format)</span><br>
+<span class="r-variable">malaria_wide</span> <span class="r-operator">&lt;-</span> <span class="r-function">data.frame</span><span class="r-bracket">(</span><br>
+  <span class="r-parameter">region</span> <span class="r-operator">=</span> <span class="r-function">c</span><span class="r-bracket">(</span><span class="r-string">"Central"</span><span class="r-operator">,</span> <span class="r-string">"North"</span><span class="r-operator">,</span> <span class="r-string">"South"</span><span class="r-operator">,</span> <span class="r-string">"East"</span><span class="r-operator">,</span> <span class="r-string">"West"</span><span class="r-bracket">)</span><span class="r-operator">,</span><br>
+  <span class="r-parameter">Jan</span> <span class="r-operator">=</span> <span class="r-function">c</span><span class="r-bracket">(</span><span class="r-number">245</span><span class="r-operator">,</span> <span class="r-number">189</span><span class="r-operator">,</span> <span class="r-number">324</span><span class="r-operator">,</span> <span class="r-number">176</span><span class="r-operator">,</span> <span class="r-number">221</span><span class="r-bracket">)</span><span class="r-operator">,</span><br>
+  <span class="r-parameter">Feb</span> <span class="r-operator">=</span> <span class="r-function">c</span><span class="r-bracket">(</span><span class="r-number">231</span><span class="r-operator">,</span> <span class="r-number">192</span><span class="r-operator">,</span> <span class="r-number">298</span><span class="r-operator">,</span> <span class="r-number">153</span><span class="r-operator">,</span> <span class="r-number">187</span><span class="r-bracket">)</span><span class="r-operator">,</span><br>
+  <span class="r-parameter">Mar</span> <span class="r-operator">=</span> <span class="r-function">c</span><span class="r-bracket">(</span><span class="r-number">264</span><span class="r-operator">,</span> <span class="r-number">205</span><span class="r-operator">,</span> <span class="r-number">310</span><span class="r-operator">,</span> <span class="r-number">162</span><span class="r-operator">,</span> <span class="r-number">192</span><span class="r-bracket">)</span><span class="r-operator">,</span><br>
+  <span class="r-parameter">Apr</span> <span class="r-operator">=</span> <span class="r-function">c</span><span class="r-bracket">(</span><span class="r-number">312</span><span class="r-operator">,</span> <span class="r-number">227</span><span class="r-operator">,</span> <span class="r-number">346</span><span class="r-operator">,</span> <span class="r-number">185</span><span class="r-operator">,</span> <span class="r-number">219</span><span class="r-bracket">)</span><br>
+<span class="r-bracket">)</span><br>
+<br>
+<span class="r-function">print</span><span class="r-bracket">(</span><span class="r-variable">malaria_wide</span><span class="r-bracket">)</span>
+                </code>
+            </div>
+            
+            <div class="explanation-box">
+                <h5>🔍 Explanation:</h5>
+                <p>"Wide format" has variables spread across columns (each month is a separate column). This format is often how data is initially recorded and is human-readable. However, many R functions (especially in ggplot2) work better with "long format" data.</p>
+            </div>
+            
+            <h4>Pivot Longer (Wide to Long)</h4>
+            <div class="code-block">
+                <button class="copy-btn" onclick="copyCode(this)">📋 Copy</button>
+                <code>
+<span class="r-comment"># Convert from wide to long format</span><br>
+<span class="r-variable">malaria_long</span> <span class="r-operator">&lt;-</span> <span class="r-variable">malaria_wide</span> <span class="r-operator">%>%</span><br>
+  <span class="r-function">pivot_longer</span><span class="r-bracket">(</span><br>
+    <span class="r-parameter">cols</span> <span class="r-operator">=</span> <span class="r-variable">Jan</span><span class="r-operator">:</span><span class="r-variable">Apr</span><span class="r-operator">,</span>         <span class="r-comment"># Columns to pivot</span><br>
+    <span class="r-parameter">names_to</span> <span class="r-operator">=</span> <span class="r-string">"month"</span><span class="r-operator">,</span>     <span class="r-comment"># Name of the new column for variable names</span><br>
+    <span class="r-parameter">values_to</span> <span class="r-operator">=</span> <span class="r-string">"cases"</span>     <span class="r-comment"># Name of the new column for values</span><br>
+  <span class="r-bracket">)</span><br>
+<br>
+<span class="r-function">print</span><span class="r-bracket">(</span><span class="r-variable">malaria_long</span><span class="r-bracket">)</span><br>
+<br>
+<span class="r-comment"># Visualize the long data</span><br>
+<span class="r-function">ggplot</span><span class="r-bracket">(</span><span class="r-variable">malaria_long</span><span class="r-operator">,</span> <span class="r-function">aes</span><span class="r-bracket">(</span><span class="r-parameter">x</span> <span class="r-operator">=</span> <span class="r-variable">month</span><span class="r-operator">,</span> <span class="r-parameter">y</span> <span class="r-operator">=</span> <span class="r-variable">cases</span><span class="r-operator">,</span> <span class="r-parameter">fill</span> <span class="r-operator">=</span> <span class="r-variable">region</span><span class="r-bracket">))</span> <span class="r-operator">+</span><br>
+  <span class="r-function">geom_bar</span><span class="r-bracket">(</span><span class="r-parameter">stat</span> <span class="r-operator">=</span> <span class="r-string">"identity"</span><span class="r-operator">,</span> <span class="r-parameter">position</span> <span class="r-operator">=</span> <span class="r-string">"dodge"</span><span class="r-bracket">)</span> <span class="r-operator">+</span><br>
+  <span class="r-function">labs</span><span class="r-bracket">(</span><br>
+    <span class="r-parameter">title</span> <span class="r-operator">=</span> <span class="r-string">"Malaria Cases by Region and Month"</span><span class="r-operator">,</span><br>
+    <span class="r-parameter">x</span> <span class="r-operator">=</span> <span class="r-string">"Month"</span><span class="r-operator">,</span><br>
+    <span class="r-parameter">y</span> <span class="r-operator">=</span> <span class="r-string">"Number of Cases"</span><br>
+  <span class="r-bracket">)</span> <span class="r-operator">+</span><br>
+  <span class="r-function">theme_minimal</span><span class="r-bracket">()</span>
+                </code>
+            </div>
+            
+            <div class="explanation-box">
+                <h5>🔍 Explanation:</h5>
+                <p><code>pivot_longer()</code> transforms data from wide to long format. <code>cols</code> specifies which columns to pivot, <code>names_to</code> creates a new column for the original column names, and <code>values_to</code> creates a new column for the values. Long data is ideal for visualizations with ggplot2.</p>
+            </div>
+        </div>
+
+        <div class="note-section fade-in">
+            <h2>2️⃣ Joining and Merging Malaria Datasets</h2>
+            
+            <h3>Why Join Datasets?</h3>
+            <p>Joining datasets combines information from different sources, enriching your analysis with additional variables like demographics, environmental factors, or intervention data.</p>
+            
+            <h4>Understanding Join Types</h4>
+            <div class="code-block">
+                <button class="copy-btn" onclick="copyCode(this)">📋 Copy</button>
+                <code>
+<span class="r-comment"># Create example datasets</span><br>
+<span class="r-variable">malaria_cases</span> <span class="r-operator">&lt;-</span> <span class="r-function">data.frame</span><span class="r-bracket">(</span><br>
+  <span class="r-parameter">district_id</span> <span class="r-operator">=</span> <span class="r-function">c</span><span class="r-bracket">(</span><span class="r-number">101</span><span class="r-operator">,</span> <span class="r-number">102</span><span class="r-operator">,</span> <span class="r-number">103</span><span class="r-operator">,</span> <span class="r-number">104</span><span class="r-operator">,</span> <span class="r-number">105</span><span class="r-operator">,</span> <span class="r-number">106</span><span class="r-bracket">)</span><span class="r-operator">,</span><br>
+  <span class="r-parameter">district_name</span> <span class="r-operator">=</span> <span class="r-function">c</span><span class="r-bracket">(</span><span class="r-string">"Metro"</span><span class="r-operator">,</span> <span class="r-string">"River"</span><span class="r-operator">,</span> <span class="r-string">"Hill"</span><span class="r-operator">,</span> <span class="r-string">"Lake"</span><span class="r-operator">,</span> <span class="r-string">"Mount"</span><span class="r-operator">,</span> <span class="r-string">"Valley"</span><span class="r-bracket">)</span><span class="r-operator">,</span><br>
+  <span class="r-parameter">cases</span> <span class="r-operator">=</span> <span class="r-function">c</span><span class="r-bracket">(</span><span class="r-number">423</span><span class="r-operator">,</span> <span class="r-number">251</span><span class="r-operator">,</span> <span class="r-number">387</span><span class="r-operator">,</span> <span class="r-number">142</span><span class="r-operator">,</span> <span class="r-number">195</span><span class="r-operator">,</span> <span class="r-number">326</span><span class="r-bracket">)</span><br>
+<span class="r-bracket">)</span><br>
+<br>
+<span class="r-variable">population_data</span> <span class="r-operator">&lt;-</span> <span class="r-function">data.frame</span><span class="r-bracket">(</span><br>
+  <span class="r-parameter">district_id</span> <span class="r-operator">=</span> <span class="r-function">c</span><span class="r-bracket">(</span><span class="r-number">101</span><span class="r-operator">,</span> <span class="r-number">102</span><span class="r-operator">,</span> <span class="r-number">103</span><span class="r-operator">,</span> <span class="r-number">105</span><span class="r-operator">,</span> <span class="r-number">107</span><span class="r-operator">,</span> <span class="r-number">108</span><span class="r-bracket">)</span><span class="r-operator">,</span><br>
+  <span class="r-parameter">population</span> <span class="r-operator">=</span> <span class="r-function">c</span><span class="r-bracket">(</span><span class="r-number">54200</span><span class="r-operator">,</span> <span class="r-number">32500</span><span class="r-operator">,</span> <span class="r-number">41800</span><span class="r-operator">,</span> <span class="r-number">23700</span><span class="r-operator">,</span> <span class="r-number">29400</span><span class="r-operator">,</span> <span class="r-number">18700</span><span class="r-bracket">)</span><span class="r-operator">,</span><br>
+  <span class="r-parameter">urban_pct</span> <span class="r-operator">=</span> <span class="r-function">c</span><span class="r-bracket">(</span><span class="r-number">78</span><span class="r-operator">,</span> <span class="r-number">45</span><span class="r-operator">,</span> <span class="r-number">32</span><span class="r-operator">,</span> <span class="r-number">12</span><span class="r-operator">,</span> <span class="r-number">35</span><span class="r-operator">,</span> <span class="r-number">22</span><span class="r-bracket">)</span><br>
+<span class="r-bracket">)</span><br>
+<br>
+<span class="r-comment"># Left join: Keep all rows from the left dataset</span><br>
+<span class="r-variable">left_joined</span> <span class="r-operator">&lt;-</span> <span class="r-variable">malaria_cases</span> <span class="r-operator">%>%</span><br>
+  <span class="r-function">left_join</span><span class="r-bracket">(</span><span class="r-variable">population_data</span><span class="r-operator">,</span> <span class="r-parameter">by</span> <span class="r-operator">=</span> <span class="r-string">"district_id"</span><span class="r-bracket">)</span><br>
+<br>
+<span class="r-function">print</span><span class="r-bracket">(</span><span class="r-variable">left_joined</span><span class="r-bracket">)</span>
+                </code>
+            </div>
+            
+            <div class="explanation-box">
+                <h5>🔍 Explanation:</h5>
+                <p><code>left_join()</code> keeps all rows from the first dataset, adding data where available. Missing values are filled with NA when there's no match. Notice district 104 and 106 have NA values for population data.</p>
+            </div>
+        </div>
+
+        <div class="note-section fade-in">
+            <h2>3️⃣ Detecting Outliers in Malaria Data</h2>
+            
+            <h3>Why Detect Outliers?</h3>
+            <p>Outlier detection helps identify unusual values that may represent data entry errors, special events (outbreaks), or important patterns requiring attention.</p>
+            
+            <h4>Statistical Outlier Detection</h4>
+            <div class="code-block">
+                <button class="copy-btn" onclick="copyCode(this)">📋 Copy</button>
+                <code>
+<span class="r-comment"># Create example dataset with outliers</span><br>
+<span class="r-variable">district_data</span> <span class="r-operator">&lt;-</span> <span class="r-function">data.frame</span><span class="r-bracket">(</span><br>
+  <span class="r-parameter">district_id</span> <span class="r-operator">=</span> <span class="r-number">1</span><span class="r-operator">:</span><span class="r-number">20</span><span class="r-operator">,</span><br>
+  <span class="r-parameter">cases</span> <span class="r-operator">=</span> <span class="r-function">c</span><span class="r-bracket">(</span><span class="r-number">124</span><span class="r-operator">,</span> <span class="r-number">156</span><span class="r-operator">,</span> <span class="r-number">98</span><span class="r-operator">,</span> <span class="r-number">145</span><span class="r-operator">,</span> <span class="r-number">543</span><span class="r-operator">,</span> <span class="r-number">132</span><span class="r-operator">,</span> <span class="r-number">118</span><span class="r-operator">,</span> <span class="r-number">159</span><span class="r-operator">,</span> <span class="r-number">142</span><span class="r-operator">,</span> <span class="r-number">106</span><span class="r-operator">,</span><br>
+            <span class="r-number">128</span><span class="r-operator">,</span> <span class="r-number">35</span><span class="r-operator">,</span> <span class="r-number">137</span><span class="r-operator">,</span> <span class="r-number">164</span><span class="r-operator">,</span> <span class="r-number">115</span><span class="r-operator">,</span> <span class="r-number">143</span><span class="r-operator">,</span> <span class="r-number">129</span><span class="r-operator">,</span> <span class="r-number">151</span><span class="r-operator">,</span> <span class="r-number">147</span><span class="r-operator">,</span> <span class="r-number">136</span><span class="r-bracket">)</span><span class="r-operator">,</span><br>
+  <span class="r-parameter">population</span> <span class="r-operator">=</span> <span class="r-function">c</span><span class="r-bracket">(</span><span class="r-number">15000</span><span class="r-operator">,</span> <span class="r-number">20000</span><span class="r-operator">,</span> <span class="r-number">19000</span><span class="r-operator">,</span> <span class="r-number">21000</span><span class="r-operator">,</span> <span class="r-number">21400</span><span class="r-operator">,</span> <span class="r-number">20900</span><span class="r-operator">,</span> <span class="r-number">20300</span><span class="r-operator">,</span> <span class="r-number">22100</span><span class="r-operator">,</span> <span class="r-number">21800</span><span class="r-operator">,</span> <span class="r-number">20400</span><span class="r-operator">,</span><br>
+                <span class="r-number">19800</span><span class="r-operator">,</span> <span class="r-number">12000</span><span class="r-operator">,</span> <span class="r-number">21100</span><span class="r-operator">,</span> <span class="r-number">21900</span><span class="r-operator">,</span> <span class="r-number">20100</span><span class="r-operator">,</span> <span class="r-number">21400</span><span class="r-operator">,</span> <span class="r-number">20800</span><span class="r-operator">,</span> <span class="r-number">22000</span><span class="r-operator">,</span> <span class="r-number">21500</span><span class="r-operator">,</span> <span class="r-number">20600</span><span class="r-bracket">)</span><br>
+<span class="r-bracket">)</span><br>
+<br>
+<span class="r-comment"># Calculate incidence rates</span><br>
+<span class="r-variable">district_data</span><span class="r-operator">$</span><span class="r-variable">incidence_per_1000</span> <span class="r-operator">&lt;-</span> <span class="r-bracket">(</span><span class="r-variable">district_data</span><span class="r-operator">$</span><span class="r-variable">cases</span> <span class="r-operator">/</span> <span class="r-variable">district_data</span><span class="r-operator">$</span><span class="r-variable">population</span><span class="r-bracket">)</span> <span class="r-operator">*</span> <span class="r-number">1000</span><br>
+<br>
+<span class="r-comment"># Function to identify outliers using IQR method</span><br>
+<span class="r-variable">identify_outliers</span> <span class="r-operator">&lt;-</span> <span class="r-function">function</span><span class="r-bracket">(</span><span class="r-variable">x</span><span class="r-bracket">)</span> <span class="r-bracket">{</span><br>
+  <span class="r-variable">q1</span> <span class="r-operator">&lt;-</span> <span class="r-function">quantile</span><span class="r-bracket">(</span><span class="r-variable">x</span><span class="r-operator">,</span> <span class="r-number">0.25</span><span class="r-bracket">)</span><br>
+  <span class="r-variable">q3</span> <span class="r-operator">&lt;-</span> <span class="r-function">quantile</span><span class="r-bracket">(</span><span class="r-variable">x</span><span class="r-operator">,</span> <span class="r-number">0.75</span><span class="r-bracket">)</span><br>
+  <span class="r-variable">iqr</span> <span class="r-operator">&lt;-</span> <span class="r-variable">q3</span> <span class="r-operator">-</span> <span class="r-variable">q1</span><br>
+  <span class="r-variable">lower_bound</span> <span class="r-operator">&lt;-</span> <span class="r-variable">q1</span> <span class="r-operator">-</span> <span class="r-number">1.5</span> <span class="r-operator">*</span> <span class="r-variable">iqr</span><br>
+  <span class="r-variable">upper_bound</span> <span class="r-operator">&lt;-</span> <span class="r-variable">q3</span> <span class="r-operator">+</span> <span class="r-number">1.5</span> <span class="r-operator">*</span> <span class="r-variable">iqr</span><br>
+  <span class="r-function">return</span><span class="r-bracket">(</span><span class="r-variable">x</span> <span class="r-operator">&lt;</span> <span class="r-variable">lower_bound</span> <span class="r-operator">|</span> <span class="r-variable">x</span> <span class="r-operator">&gt;</span> <span class="r-variable">upper_bound</span><span class="r-bracket">)</span><br>
+<span class="r-bracket">}</span><br>
+<br>
+<span class="r-comment"># Add outlier indicators</span><br>
+<span class="r-variable">district_data</span><span class="r-operator">$</span><span class="r-variable">cases_outlier</span> <span class="r-operator">&lt;-</span> <span class="r-function">identify_outliers</span><span class="r-bracket">(</span><span class="r-variable">district_data</span><span class="r-operator">$</span><span class="r-variable">cases</span><span class="r-bracket">)</span><br>
+<br>
+<span class="r-comment"># Create boxplot to visualize outliers</span><br>
+<span class="r-function">ggplot</span><span class="r-bracket">(</span><span class="r-variable">district_data</span><span class="r-operator">,</span> <span class="r-function">aes</span><span class="r-bracket">(</span><span class="r-parameter">y</span> <span class="r-operator">=</span> <span class="r-variable">cases</span><span class="r-bracket">))</span> <span class="r-operator">+</span><br>
+  <span class="r-function">geom_boxplot</span><span class="r-bracket">(</span><span class="r-parameter">fill</span> <span class="r-operator">=</span> <span class="r-string">"lightblue"</span><span class="r-operator">,</span> <span class="r-parameter">alpha</span> <span class="r-operator">=</span> <span class="r-number">0.7</span><span class="r-bracket">)</span> <span class="r-operator">+</span><br>
+  <span class="r-function">labs</span><span class="r-bracket">(</span><br>
+    <span class="r-parameter">title</span> <span class="r-operator">=</span> <span class="r-string">"Distribution of Malaria Cases by District"</span><span class="r-operator">,</span><br>
+    <span class="r-parameter">y</span> <span class="r-operator">=</span> <span class="r-string">"Number of Cases"</span><br>
+  <span class="r-bracket">)</span> <span class="r-operator">+</span><br>
+  <span class="r-function">theme_minimal</span><span class="r-bracket">()</span>
+                </code>
+            </div>
+            
+            <div class="explanation-box">
+                <h5>🔍 Explanation:</h5>
+                <p>The IQR method is a common approach for detecting outliers. Values beyond 1.5 × IQR from the quartiles are flagged as outliers. Boxplots show the distribution and highlight potential outliers as points beyond the whiskers.</p>
+            </div>
+            
+            <h4>Handling Outliers</h4>
+            <div class="code-block">
+                <button class="copy-btn" onclick="copyCode(this)">📋 Copy</button>
+                <code>
+<span class="r-comment"># Method 1: Remove outliers</span><br>
+<span class="r-variable">data_without_outliers</span> <span class="r-operator">&lt;-</span> <span class="r-variable">district_data</span> <span class="r-operator">%>%</span><br>
+  <span class="r-function">filter</span><span class="r-bracket">(</span><span class="r-operator">!</span><span class="r-variable">cases_outlier</span><span class="r-bracket">)</span><br>
+<br>
+<span class="r-comment"># Method 2: Cap outliers (winsorization)</span><br>
+<span class="r-variable">cap_outliers</span> <span class="r-operator">&lt;-</span> <span class="r-function">function</span><span class="r-bracket">(</span><span class="r-variable">x</span><span class="r-operator">,</span> <span class="r-parameter">percentiles</span> <span class="r-operator">=</span> <span class="r-function">c</span><span class="r-bracket">(</span><span class="r-number">0.05</span><span class="r-operator">,</span> <span class="r-number">0.95</span><span class="r-bracket">))</span> <span class="r-bracket">{</span><br>
+  <span class="r-variable">limits</span> <span class="r-operator">&lt;-</span> <span class="r-function">quantile</span><span class="r-bracket">(</span><span class="r-variable">x</span><span class="r-operator">,</span> <span class="r-variable">percentiles</span><span class="r-bracket">)</span><br>
+  <span class="r-variable">x</span><span class="r-bracket">[</span><span class="r-variable">x</span> <span class="r-operator">&lt;</span> <span class="r-variable">limits</span><span class="r-bracket">[</span><span class="r-number">1</span><span class="r-bracket">]</span><span class="r-bracket">]</span> <span class="r-operator">&lt;-</span> <span class="r-variable">limits</span><span class="r-bracket">[</span><span class="r-number">1</span><span class="r-bracket">]</span><br>
+  <span class="r-variable">x</span><span class="r-bracket">[</span><span class="r-variable">x</span> <span class="r-operator">&gt;</span> <span class="r-variable">limits</span><span class="r-bracket">[</span><span class="r-number">2</span><span class="r-bracket">]</span><span class="r-bracket">]</span> <span class="r-operator">&lt;-</span> <span class="r-variable">limits</span><span class="r-bracket">[</span><span class="r-number">2</span><span class="r-bracket">]</span><br>
+  <span class="r-function">return</span><span class="r-bracket">(</span><span class="r-variable">x</span><span class="r-bracket">)</span><br>
+<span class="r-bracket">}</span><br>
+<br>
+<span class="r-variable">district_data</span><span class="r-operator">$</span><span class="r-variable">cases_capped</span> <span class="r-operator">&lt;-</span> <span class="r-function">cap_outliers</span><span class="r-bracket">(</span><span class="r-variable">district_data</span><span class="r-operator">$</span><span class="r-variable">cases</span><span class="r-bracket">)</span><br>
+<br>
+<span class="r-comment"># Method 3: Log transformation</span><br>
+<span class="r-variable">district_data</span><span class="r-operator">$</span><span class="r-variable">cases_log</span> <span class="r-operator">&lt;-</span> <span class="r-function">log</span><span class="r-bracket">(</span><span class="r-variable">district_data</span><span class="r-operator">$</span><span class="r-variable">cases</span> <span class="r-operator">+</span> <span class="r-number">1</span><span class="r-bracket">)</span><br>
+<br>
+<span class="r-comment"># Compare distributions</span><br>
+<span class="r-function">par</span><span class="r-bracket">(</span><span class="r-parameter">mfrow</span> <span class="r-operator">=</span> <span class="r-function">c</span><span class="r-bracket">(</span><span class="r-number">2</span><span class="r-operator">,</span> <span class="r-number">2</span><span class="r-bracket">))</span><br>
+<span class="r-function">hist</span><span class="r-bracket">(</span><span class="r-variable">district_data</span><span class="r-operator">$</span><span class="r-variable">cases</span><span class="r-operator">,</span> <span class="r-parameter">main</span> <span class="r-operator">=</span> <span class="r-string">"Original Data"</span><span class="r-bracket">)</span><br>
+<span class="r-function">hist</span><span class="r-bracket">(</span><span class="r-variable">data_without_outliers</span><span class="r-operator">$</span><span class="r-variable">cases</span><span class="r-operator">,</span> <span class="r-parameter">main</span> <span class="r-operator">=</span> <span class="r-string">"Outliers Removed"</span><span class="r-bracket">)</span><br>
+<span class="r-function">hist</span><span class="r-bracket">(</span><span class="r-variable">district_data</span><span class="r-operator">$</span><span class="r-variable">cases_capped</span><span class="r-operator">,</span> <span class="r-parameter">main</span> <span class="r-operator">=</span> <span class="r-string">"Winsorized Data"</span><span class="r-bracket">)</span><br>
+<span class="r-function">hist</span><span class="r-bracket">(</span><span class="r-variable">district_data</span><span class="r-operator">$</span><span class="r-variable">cases_log</span><span class="r-operator">,</span> <span class="r-parameter">main</span> <span class="r-operator">=</span> <span class="r-string">"Log Transformed"</span><span class="r-bracket">)</span>
+                </code>
+            </div>
+        </div>
+
+        <div class="exercises-section fade-in">
+            <h2>📌 Practice Exercises</h2>
+            
+            <h3>Exercise 1: Data Pivoting Challenge</h3>
+            <div class="code-block">
+                <button class="copy-btn" onclick="copyCode(this)">📋 Copy</button>
+                <code>
+<span class="r-comment"># Exercise 1: Create age-specific malaria data and pivot it</span><br>
+<span class="r-variable">age_data</span> <span class="r-operator">&lt;-</span> <span class="r-function">data.frame</span><span class="r-bracket">(</span><br>
+  <span class="r-parameter">region</span> <span class="r-operator">=</span> <span class="r-function">c</span><span class="r-bracket">(</span><span class="r-string">"North"</span><span class="r-operator">,</span> <span class="r-string">"South"</span><span class="r-operator">,</span> <span class="r-string">"East"</span><span class="r-operator">,</span> <span class="r-string">"West"</span><span class="r-bracket">)</span><span class="r-operator">,</span><br>
+  <span class="r-parameter">under5</span> <span class="r-operator">=</span> <span class="r-function">c</span><span class="r-bracket">(</span><span class="r-number">45</span><span class="r-operator">,</span> <span class="r-number">52</span><span class="r-operator">,</span> <span class="r-number">38</span><span class="r-operator">,</span> <span class="r-number">41</span><span class="r-bracket">)</span><span class="r-operator">,</span><br>
+  <span class="r-parameter">age5_14</span> <span class="r-operator">=</span> <span class="r-function">c</span><span class="r-bracket">(</span><span class="r-number">32</span><span class="r-operator">,</span> <span class="r-number">28</span><span class="r-operator">,</span> <span class="r-number">35</span><span class="r-operator">,</span> <span class="r-number">29</span><span class="r-bracket">)</span><span class="r-operator">,</span><br>
+  <span class="r-parameter">age15plus</span> <span class="r-operator">=</span> <span class="r-function">c</span><span class="r-bracket">(</span><span class="r-number">18</span><span class="r-operator">,</span> <span class="r-number">15</span><span class="r-operator">,</span> <span class="r-number">22</span><span class="r-operator">,</span> <span class="r-number">19</span><span class="r-bracket">)</span><br>
+<span class="r-bracket">)</span><br>
+<br>
+<span class="r-comment"># Task: Convert to long format and create a grouped bar chart</span><br>
+<span class="r-comment"># Your code here...</span>
+                </code>
+            </div>
+            
+            <h3>Exercise 2: Multiple Dataset Join</h3>
+            <div class="code-block">
+                <button class="copy-btn" onclick="copyCode(this)">📋 Copy</button>
+                <code>
+<span class="r-comment"># Exercise 2: Join multiple datasets</span><br>
+<span class="r-variable">intervention_data</span> <span class="r-operator">&lt;-</span> <span class="r-function">data.frame</span><span class="r-bracket">(</span><br>
+  <span class="r-parameter">district_id</span> <span class="r-operator">=</span> <span class="r-function">c</span><span class="r-bracket">(</span><span class="r-number">101</span><span class="r-operator">,</span> <span class="r-number">102</span><span class="r-operator">,</span> <span class="r-number">103</span><span class="r-operator">,</span> <span class="r-number">104</span><span class="r-bracket">)</span><span class="r-operator">,</span><br>
+  <span class="r-parameter">bed_nets</span> <span class="r-operator">=</span> <span class="r-function">c</span><span class="r-bracket">(</span><span class="r-number">75</span><span class="r-operator">,</span> <span class="r-number">82</span><span class="r-operator">,</span> <span class="r-number">68</span><span class="r-operator">,</span> <span class="r-number">91</span><span class="r-bracket">)</span><span class="r-operator">,</span><br>
+  <span class="r-parameter">indoor_spraying</span> <span class="r-operator">=</span> <span class="r-function">c</span><span class="r-bracket">(</span><span class="r-number">45</span><span class="r-operator">,</span> <span class="r-number">38</span><span class="r-operator">,</span> <span class="r-number">52</span><span class="r-operator">,</span> <span class="r-number">41</span><span class="r-bracket">)</span><br>
+<span class="r-bracket">)</span><br>
+<br>
+<span class="r-variable">environmental_data</span> <span class="r-operator">&lt;-</span> <span class="r-function">data.frame</span><span class="r-bracket">(</span><br>
+  <span class="r-parameter">district_id</span> <span class="r-operator">=</span> <span class="r-function">c</span><span class="r-bracket">(</span><span class="r-number">101</span><span class="r-operator">,</span> <span class="r-number">103</span><span class="r-operator">,</span> <span class="r-number">105</span><span class="r-operator">,</span> <span class="r-number">106</span><span class="r-bracket">)</span><span class="r-operator">,</span><br>
+  <span class="r-parameter">rainfall</span> <span class="r-operator">=</span> <span class="r-function">c</span><span class="r-bracket">(</span><span class="r-number">1200</span><span class="r-operator">,</span> <span class="r-number">890</span><span class="r-operator">,</span> <span class="r-number">1450</span><span class="r-operator">,</span> <span class="r-number">780</span><span class="r-bracket">)</span><span class="r-operator">,</span><br>
+  <span class="r-parameter">temperature</span> <span class="r-operator">=</span> <span class="r-function">c</span><span class="r-bracket">(</span><span class="r-number">26.5</span><span class="r-operator">,</span> <span class="r-number">28.1</span><span class="r-operator">,</span> <span class="r-number">24.8</span><span class="r-operator">,</span> <span class="r-number">29.2</span><span class="r-bracket">)</span><br>
+<span class="r-bracket">)</span><br>
+<br>
+<span class="r-comment"># Task: Join with the malaria_cases data from earlier</span><br>
+<span class="r-comment"># Create a comprehensive dataset and analyze relationships</span><br>
+<span class="r-comment"># Your code here...</span>
+                </code>
+            </div>
+            
+            <h3>Exercise 3: Outlier Investigation</h3>
+            <div class="code-block">
+                <button class="copy-btn" onclick="copyCode(this)">📋 Copy</button>
+                <code>
+<span class="r-comment"># Exercise 3: Advanced outlier detection</span><br>
+<span class="r-comment"># Create a function to detect outliers using Z-score method</span><br>
+<span class="r-variable">detect_zscore_outliers</span> <span class="r-operator">&lt;-</span> <span class="r-function">function</span><span class="r-bracket">(</span><span class="r-variable">x</span><span class="r-operator">,</span> <span class="r-parameter">threshold</span> <span class="r-operator">=</span> <span class="r-number">2.5</span><span class="r-bracket">)</span> <span class="r-bracket">{</span><br>
+  <span class="r-comment"># Your code here: calculate z-scores and identify outliers</span><br>
+<span class="r-bracket">}</span><br>
+<br>
+<span class="r-comment"># Task: Apply both IQR and Z-score methods to the district_data</span><br>
+<span class="r-comment"># Compare the results and create visualizations</span><br>
+<span class="r-comment"># Your code here...</span>
+                </code>
+            </div>
+        </div>
+
+        <div class="summary-section fade-in">
+            <h2>Week 5 Summary</h2>
+            <p><strong>Key Skills Learned:</strong></p>
+            <p>• <strong>Data Pivoting:</strong> Transform between wide and long formats using <code>pivot_longer()</code> and <code>pivot_wider()</code></p>
+            <p>• <strong>Data Joining:</strong> Combine datasets using <code>left_join()</code>, <code>inner_join()</code>, and other join functions</p>
+            <p>• <strong>Outlier Detection:</strong> Identify unusual values using statistical methods and visualizations</p>
+            <p>• <strong>Data Quality:</strong> Handle missing values and data inconsistencies in real-world malaria datasets</p>
+            <br>
+            <p><strong>Next Week:</strong> Statistical modeling and hypothesis testing for malaria data analysis</p>
+        </div>
+
+        <script>
+            function copyCode(button) {
+                const codeBlock = button.parentNode;
+                const code = codeBlock.querySelector('code').innerText;
+                
+                navigator.clipboard.writeText(code).then(function() {
+                    button.textContent = '✅ Copied!';
+                    setTimeout(function() {
+                        button.innerHTML = '📋 Copy';
+                    }, 2000);
+                });
+            }
+        </script>
+    </div>
+</body>
+</html>

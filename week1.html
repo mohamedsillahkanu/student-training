@@ -1,0 +1,872 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Week 1: Introduction to R & RStudio for Malaria Data Analysis</title>
+    <style>
+        .malaria-module {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #e2e8f0;
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            min-height: 100vh;
+        }
+
+        .malaria-module .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #1e293b;
+            margin-top: 20px;
+            margin-bottom: 20px;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+            border: 1px solid #334155;
+        }
+
+        .malaria-module .header {
+            background: linear-gradient(135deg, #1e40af, #1d4ed8);
+            color: white;
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(30,64,175,0.3);
+        }
+
+        .malaria-module .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .malaria-module .objectives {
+            background: linear-gradient(135deg, #1e40af, #2563eb);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+        }
+
+        .malaria-module .note-section {
+            background: #334155;
+            padding: 25px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            border-left: 5px solid #3b82f6;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .malaria-module .note-section h2 {
+            color: #60a5fa;
+            margin-bottom: 20px;
+            font-size: 1.8em;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .malaria-module .note-section h3 {
+            color: #93c5fd;
+            margin: 25px 0 15px 0;
+            font-size: 1.4em;
+            border-bottom: 2px solid #3b82f6;
+            padding-bottom: 5px;
+        }
+
+        .malaria-module .note-section h4 {
+            color: #3b82f6;
+            margin: 20px 0 10px 0;
+            font-size: 1.2em;
+        }
+
+        .malaria-module .note-section h5 {
+            color: #10b981;
+            margin: 15px 0 8px 0;
+            font-size: 1.1em;
+        }
+
+        .malaria-module .note-section p {
+            color: #cbd5e1;
+        }
+
+        .malaria-module .note-section ol {
+            color: #cbd5e1;
+            margin: 10px 0 10px 20px;
+        }
+
+        .malaria-module .note-section li {
+            margin: 8px 0;
+        }
+
+        .malaria-module .code-block {
+            background: #0f172a;
+            color: #e2e8f0;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 15px 0;
+            position: relative;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            overflow-x: auto;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            border: 1px solid #1e293b;
+        }
+
+        .malaria-module .copy-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: #475569;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.8em;
+            transition: all 0.3s ease;
+        }
+
+        .malaria-module .copy-btn:hover {
+            background: #1e293b;
+            transform: translateY(-2px);
+        }
+
+        .malaria-module .r-comment { color: #34d399; }
+        .malaria-module .r-variable { color: #60a5fa; }
+        .malaria-module .r-function { color: #fbbf24; }
+        .malaria-module .r-operator { color: #f87171; }
+        .malaria-module .r-bracket { color: #e2e8f0; }
+        .malaria-module .r-string { color: #a78bfa; }
+        .malaria-module .r-parameter { color: #2dd4bf; }
+        .malaria-module .r-boolean { color: #fb7185; }
+        .malaria-module .r-number { color: #fbbf24; }
+
+        .malaria-module .explanation-box {
+            background: linear-gradient(135deg, #0f172a, #1e293b);
+            border-left: 4px solid #10b981;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 0 8px 8px 0;
+            box-shadow: 0 2px 8px rgba(16,185,129,0.2);
+        }
+
+        .malaria-module .explanation-box h5 {
+            color: #10b981;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .malaria-module .explanation-box p {
+            margin: 0;
+            color: #cbd5e1;
+        }
+
+        .malaria-module .summary-section {
+            background: linear-gradient(135deg, #1e40af, #1d4ed8);
+            color: white;
+            padding: 25px;
+            border-radius: 12px;
+            margin: 30px 0;
+            box-shadow: 0 10px 25px rgba(30,64,175,0.3);
+        }
+
+        .malaria-module .exercises-section {
+            background: linear-gradient(135deg, #1e293b, #334155);
+            padding: 25px;
+            border-radius: 12px;
+            margin: 30px 0;
+            border: 2px solid #3b82f6;
+        }
+
+        .malaria-module .exercises-section h2 {
+            color: #60a5fa;
+            margin-bottom: 20px;
+        }
+
+        .malaria-module .exercises-section h3 {
+            color: #93c5fd;
+            margin: 20px 0 15px 0;
+            border-bottom: 2px solid #3b82f6;
+            padding-bottom: 5px;
+        }
+
+        .malaria-module .exercises-section h4 {
+            color: #3b82f6;
+            margin: 15px 0 10px 0;
+        }
+
+        .malaria-module .exercises-section p {
+            color: #cbd5e1;
+        }
+
+        .malaria-module .exercises-section ol {
+            margin: 10px 0 10px 20px;
+        }
+
+        .malaria-module .exercises-section li {
+            margin: 8px 0;
+            color: #cbd5e1;
+        }
+
+        .malaria-module .table-container {
+            overflow-x: auto;
+            margin: 15px 0;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+
+        .malaria-module table {
+            width: 100%;
+            border-collapse: collapse;
+            background: #0f172a;
+            color: #e2e8f0;
+        }
+
+        .malaria-module th, .malaria-module td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #334155;
+        }
+
+        .malaria-module th {
+            background: #1e293b;
+            color: #60a5fa;
+            font-weight: 600;
+        }
+
+        .malaria-module .solution-section {
+            background: linear-gradient(135deg, #0f172a, #1e293b);
+            padding: 25px;
+            border-radius: 12px;
+            margin: 30px 0;
+            border: 2px solid #10b981;
+        }
+
+        .malaria-module .solution-section h2 {
+            color: #10b981;
+            margin-bottom: 20px;
+        }
+
+        .malaria-module .solution-section h3 {
+            color: #34d399;
+            margin: 20px 0 15px 0;
+            border-bottom: 2px solid #10b981;
+            padding-bottom: 5px;
+        }
+
+        .malaria-module .solution-section h4 {
+            color: #10b981;
+            margin: 15px 0 10px 0;
+        }
+
+        .malaria-module .solution-section p {
+            color: #cbd5e1;
+        }
+
+        .malaria-module .progress-bar {
+            background: #374151;
+            height: 8px;
+            border-radius: 4px;
+            margin: 20px 0;
+            overflow: hidden;
+        }
+
+        .malaria-module .progress-fill {
+            background: linear-gradient(90deg, #3b82f6, #60a5fa);
+            height: 100%;
+            width: 25%;
+            border-radius: 4px;
+            transition: width 0.5s ease;
+        }
+
+        /* Video Section Styles */
+        .malaria-module .video-section {
+            background: linear-gradient(135deg, #0f172a, #1e293b);
+            padding: 25px;
+            border-radius: 12px;
+            margin: 20px 0;
+            border: 2px solid #ef4444;
+            box-shadow: 0 8px 25px rgba(239,68,68,0.2);
+        }
+
+        .malaria-module .video-section h3 {
+            color: #f87171;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.3em;
+        }
+
+        .malaria-module .video-section p {
+            color: #cbd5e1;
+            margin-bottom: 15px;
+        }
+
+        .malaria-module .video-container {
+            position: relative;
+            width: 100%;
+            height: 0;
+            padding-bottom: 56.25%; /* 16:9 aspect ratio */
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+        }
+
+        .malaria-module .video-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+            border-radius: 8px;
+        }
+
+        @media (max-width: 768px) {
+            .malaria-module .container {
+                margin: 10px;
+                padding: 15px;
+            }
+            
+            .malaria-module .header h1 {
+                font-size: 2em;
+            }
+            
+            .malaria-module .code-block {
+                font-size: 0.9em;
+            }
+        }
+
+        /* Animated elements */
+        .malaria-module .fade-in {
+            animation: fadeIn 0.6s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .malaria-module .note-section:hover, .malaria-module .video-section:hover {
+            transform: translateY(-2px);
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+        }
+    </style>
+</head>
+<body>
+    <div class="malaria-module">
+        <div class="container">
+            <div class="header fade-in">
+                <h1>📅 Week 1: Introduction to R & RStudio</h1>
+                <p>Setting up your environment and mastering the fundamentals for malaria data analysis</p>
+                <div class="progress-bar">
+                    <div class="progress-fill"></div>
+                </div>
+            </div>
+
+            <div class="objectives fade-in">
+                <p><strong>This week, we will:</strong><br>
+                ✅ <strong>Set up R and RStudio</strong><br>
+                ✅ <strong>Learn basic R syntax</strong><br>
+                ✅ <strong>Use R Markdown for documentation</strong><br>
+                ✅ <strong>Read malaria datasets (CSV, Excel) into R step by step</strong></p>
+            </div>
+
+            <div class="note-section fade-in">
+                <h2>1️⃣ Installing R and RStudio</h2>
+                
+                <h3>Why Use R and RStudio?</h3>
+                <p>✔ <strong>R</strong> is a powerful language for <strong>data analysis, statistics, and visualization</strong>.<br>
+                ✔ <strong>RStudio</strong> makes working with R easier by providing a user-friendly interface.</p>
+                
+                <h4>Step 1: Install R</h4>
+                <ol>
+                    <li>Go to <a href="https://cran.r-project.org/" target="_blank">CRAN</a></li>
+                    <li>Download and install R for your operating system</li>
+                </ol>
+                
+                <h4>Step 2: Install RStudio</h4>
+                <ol>
+                    <li>Go to <a href="https://posit.co/download/rstudio-desktop/" target="_blank">Posit</a></li>
+                    <li>Download <strong>RStudio Desktop</strong> and install it</li>
+                </ol>
+                
+                <h4>Step 3: Open RStudio</h4>
+                <p>When you open RStudio, you'll see:<br>
+                📌 <strong>Console</strong> – Run R commands interactively<br>
+                📌 <strong>Script Editor</strong> – Write and save R scripts (.R files)<br>
+                📌 <strong>Environment Pane</strong> – View variables and datasets<br>
+                📌 <strong>Plots Pane</strong> – Display graphs and tables</p>
+            </div>
+
+            <div class="video-section fade-in">
+                <h3>🎥 Video: Installing R and RStudio</h3>
+                <p>Watch this comprehensive tutorial on how to install R and RStudio on your computer:</p>
+                <div class="video-container">
+                    <iframe src="https://www.youtube.com/embed/TFGYlKvQEQ4" title="Installing R and RStudio" allowfullscreen></iframe>
+                </div>
+            </div>
+
+            <div class="note-section fade-in">
+                <h2>2️⃣ Basic R Syntax</h2>
+                
+                <h4>Step 1: Assigning Variables</h4>
+                <div class="code-block">
+                    <button class="copy-btn" onclick="copyCode(this)">📋 Copy</button>
+                    <code>
+<span class="r-variable">cases</span> <span class="r-operator">&lt;-</span> <span class="r-number">150</span>          <span class="r-comment"># Number of malaria cases</span><br>
+<span class="r-variable">fatality_rate</span> <span class="r-operator">&lt;-</span> <span class="r-number">4.2</span>  <span class="r-comment"># Fatality rate in percentage</span><br>
+<span class="r-variable">region</span> <span class="r-operator">&lt;-</span> <span class="r-string">"West"</span>      <span class="r-comment"># Region name (text)</span><br>
+<span class="r-variable">outbreak</span> <span class="r-operator">&lt;-</span> <span class="r-boolean">TRUE</span>      <span class="r-comment"># Logical value (Boolean)</span>
+                    </code>
+                </div>
+                
+                <div class="explanation-box">
+                    <h5>🔍 Explanation:</h5>
+                    <p>✔ <code>cases <- 150</code> assigns <code>150</code> to <code>cases</code><br>
+                    ✔ <code>fatality_rate <- 4.2</code> stores <code>4.2</code> in <code>fatality_rate</code><br>
+                    ✔ <code>region <- "West"</code> stores <code>"West"</code> as a text string<br>
+                    ✔ <code>outbreak <- TRUE</code> stores a <strong>Boolean</strong> value (TRUE/FALSE)</p>
+                </div>
+                
+                <h4>Step 2: Checking Data Types</h4>
+                <div class="code-block">
+                    <button class="copy-btn" onclick="copyCode(this)">📋 Copy</button>
+                    <code>
+<span class="r-function">class</span><span class="r-bracket">(</span><span class="r-variable">cases</span><span class="r-bracket">)</span>          <span class="r-comment"># Output: "numeric"</span><br>
+<span class="r-function">class</span><span class="r-bracket">(</span><span class="r-variable">region</span><span class="r-bracket">)</span>         <span class="r-comment"># Output: "character"</span><br>
+<span class="r-function">class</span><span class="r-bracket">(</span><span class="r-variable">outbreak</span><span class="r-bracket">)</span>       <span class="r-comment"># Output: "logical"</span>
+                    </code>
+                </div>
+                
+                <div class="explanation-box">
+                    <h5>🔍 Explanation:</h5>
+                    <p>✔ <code>class()</code> function shows the data type of each variable<br>
+                    ✔ <code>"numeric"</code> means numbers<br>
+                    ✔ <code>"character"</code> means text<br>
+                    ✔ <code>"logical"</code> means <strong>TRUE or FALSE</strong></p>
+                </div>
+                
+                <h4>Step 3: Basic Operators</h4>
+                <div class="code-block">
+                    <button class="copy-btn" onclick="copyCode(this)">📋 Copy</button>
+                    <code>
+<span class="r-variable">total_cases</span> <span class="r-operator">&lt;-</span> <span class="r-variable">cases</span> <span class="r-operator">+</span> <span class="r-number">50</span>   <span class="r-comment"># Adding 50 more cases</span><br>
+<span class="r-variable">fatalities</span> <span class="r-operator">&lt;-</span> <span class="r-variable">cases</span> <span class="r-operator">*</span> <span class="r-bracket">(</span><span class="r-variable">fatality_rate</span> <span class="r-operator">/</span> <span class="r-number">100</span><span class="r-bracket">)</span>  <span class="r-comment"># Calculating fatalities</span><br>
+<span class="r-variable">recovered</span> <span class="r-operator">&lt;-</span> <span class="r-variable">cases</span> <span class="r-operator">-</span> <span class="r-variable">fatalities</span>  <span class="r-comment"># Subtracting fatalities from total cases</span>
+                    </code>
+                </div>
+                
+                <div class="explanation-box">
+                    <h5>🔍 Explanation:</h5>
+                    <p>✔ <code>cases + 50</code> adds 50 cases<br>
+                    ✔ <code>cases * (fatality_rate / 100)</code> converts percentage to decimal and calculates fatalities<br>
+                    ✔ <code>cases - fatalities</code> finds the number of recovered patients</p>
+                </div>
+            </div>
+
+            <div class="video-section fade-in">
+                <h3>🎥 Video: R Basics - Variables and Data Types</h3>
+                <p>Learn the fundamentals of R syntax, variables, and data types with practical examples:</p>
+                <div class="video-container">
+                    <iframe src="https://www.youtube.com/embed/SWxoJqTqo08" title="R Basics - Variables and Data Types" allowfullscreen></iframe>
+                </div>
+            </div>
+
+            <div class="note-section fade-in">
+                <h2>3️⃣ R Markdown for Documentation</h2>
+                
+                <h3>What is R Markdown?</h3>
+                <p>📌 <strong>R Markdown</strong> lets you create <strong>reports, notebooks, and presentations</strong> with <strong>text, R code, and results</strong> in one document.</p>
+                
+                <h4>Step 1: Install R Markdown</h4>
+                <div class="code-block">
+                    <button class="copy-btn" onclick="copyCode(this)">📋 Copy</button>
+                    <code>
+<span class="r-function">install.packages</span><span class="r-bracket">(</span><span class="r-string">"rmarkdown"</span><span class="r-bracket">)</span>  <span class="r-comment"># Installs R Markdown package</span>
+                    </code>
+                </div>
+                
+                <div class="explanation-box">
+                    <h5>🔍 Explanation:</h5>
+                    <p>✔ <code>install.packages("rmarkdown")</code> installs the package to generate documents in <strong>HTML, PDF, or Word</strong></p>
+                </div>
+                
+                <h4>Step 2: Create an R Markdown File</h4>
+                <ol>
+                    <li>Open <strong>RStudio</strong></li>
+                    <li>Click <strong>File → New File → R Markdown</strong></li>
+                    <li>Select <strong>HTML, PDF, or Word output format</strong></li>
+                    <li>Click <strong>OK</strong></li>
+                </ol>
+                
+                <h4>Step 3: Writing R Markdown Code</h4>
+                <div class="code-block">
+                    <button class="copy-btn" onclick="copyCode(this)">📋 Copy</button>
+                    <code>
+<span class="r-comment"># Malaria Data Analysis</span><br>
+<br>
+This document presents an analysis of malaria cases.<br>
+<br>
+```{r}<br>
+<span class="r-function">summary</span><span class="r-bracket">(</span><span class="r-variable">cases</span><span class="r-bracket">)</span>  <span class="r-comment"># Shows summary statistics of 'cases'</span><br>
+```
+                    </code>
+                </div>
+                
+                <div class="explanation-box">
+                    <h5>🔍 Explanation:</h5>
+                    <p>✔ <code>#</code> starts a <strong>comment</strong><br>
+                    ✔ <code>summary(cases)</code> calculates <strong>min, max, mean, and median</strong> of <code>cases</code><br>
+                    ✔ Text outside <code>{r}</code> is normal text in the report<br>
+                    📌 Click <strong>Knit</strong> in RStudio to generate an <strong>HTML, PDF, or Word</strong> document.</p>
+                </div>
+            </div>
+
+            <div class="video-section fade-in">
+                <h3>🎥 Video: R Markdown Tutorial</h3>
+                <p>Complete guide to R Markdown - creating documents that combine code, output, and narrative text:</p>
+                <div class="video-container">
+                    <iframe src="https://www.youtube.com/embed/DNS7i2m4sB0" title="R Markdown Tutorial" allowfullscreen></iframe>
+                </div>
+            </div>
+
+            <div class="note-section fade-in">
+                <h2>4️⃣ Reading Malaria Datasets (CSV, Excel) in R</h2>
+                
+                <h3>Why Read External Data?</h3>
+                <p>📌 Malaria data is stored in <strong>CSV (Comma-Separated Values) or Excel</strong> files.<br>
+                📌 We use <strong><code>readr</code></strong> and <strong><code>readxl</code></strong> to load these files into R.</p>
+                
+                <h4>Step 1: Install Required Packages</h4>
+                <div class="code-block">
+                    <button class="copy-btn" onclick="copyCode(this)">📋 Copy</button>
+                    <code>
+<span class="r-function">install.packages</span><span class="r-bracket">(</span><span class="r-string">"readr"</span><span class="r-bracket">)</span>   <span class="r-comment"># Install readr package for CSV files</span><br>
+<span class="r-function">install.packages</span><span class="r-bracket">(</span><span class="r-string">"readxl"</span><span class="r-bracket">)</span>  <span class="r-comment"># Install readxl package for Excel files</span>
+                    </code>
+                </div>
+                
+                <div class="explanation-box">
+                    <h5>🔍 Explanation:</h5>
+                    <p>✔ <code>install.packages("readr")</code> installs <code>readr</code> (for CSV files)<br>
+                    ✔ <code>install.packages("readxl")</code> installs <code>readxl</code> (for Excel files)</p>
+                </div>
+                
+                <h4>📂 4.1 Reading CSV Files with readr</h4>
+                <div class="code-block">
+                    <button class="copy-btn" onclick="copyCode(this)">📋 Copy</button>
+                    <code>
+<span class="r-function">library</span><span class="r-bracket">(</span><span class="r-variable">readr</span><span class="r-bracket">)</span>  <span class="r-comment"># Load readr package</span><br>
+<br>
+<span class="r-comment"># Read malaria data from a CSV file</span><br>
+<span class="r-variable">malaria_data</span> <span class="r-operator">&lt;-</span> <span class="r-function">read_csv</span><span class="r-bracket">(</span><span class="r-string">"malaria_cases.csv"</span><span class="r-bracket">)</span><br>
+<br>
+<span class="r-comment"># View first few rows</span><br>
+<span class="r-function">head</span><span class="r-bracket">(</span><span class="r-variable">malaria_data</span><span class="r-bracket">)</span>
+                    </code>
+                </div>
+                
+                <div class="explanation-box">
+                    <h5>🔍 Explanation:</h5>
+                    <p>✔ <code>library(readr)</code> loads the <strong><code>readr</code></strong> package<br>
+                    ✔ <code>read_csv("malaria_cases.csv")</code> reads the CSV file into a <strong>dataframe</strong><br>
+                    ✔ <code>malaria_data</code> stores the <strong>imported dataset</strong><br>
+                    ✔ <code>head(malaria_data)</code> shows the <strong>first 6 rows</strong> of the dataset</p>
+                </div>
+                
+                <h4>📂 4.2 Reading Excel Files with readxl</h4>
+                <div class="code-block">
+                    <button class="copy-btn" onclick="copyCode(this)">📋 Copy</button>
+                    <code>
+<span class="r-function">library</span><span class="r-bracket">(</span><span class="r-variable">readxl</span><span class="r-bracket">)</span>  <span class="r-comment"># Load readxl package</span><br>
+<br>
+<span class="r-comment"># Read malaria data from an Excel file</span><br>
+<span class="r-variable">malaria_data_excel</span> <span class="r-operator">&lt;-</span> <span class="r-function">read_excel</span><span class="r-bracket">(</span><span class="r-string">"malaria_cases.xlsx"</span><span class="r-operator">,</span> <span class="r-parameter">sheet</span> <span class="r-operator">=</span> <span class="r-number">1</span><span class="r-bracket">)</span><br>
+<br>
+<span class="r-comment"># View first few rows</span><br>
+<span class="r-function">head</span><span class="r-bracket">(</span><span class="r-variable">malaria_data_excel</span><span class="r-bracket">)</span>
+                    </code>
+                </div>
+                
+                <div class="explanation-box">
+                    <h5>🔍 Explanation:</h5>
+                    <p>✔ <code>library(readxl)</code> loads the <strong><code>readxl</code></strong> package<br>
+                    ✔ <code>read_excel("malaria_cases.xlsx", sheet = 1)</code> reads <strong>Sheet 1</strong> of the Excel file<br>
+                    ✔ <code>malaria_data_excel</code> stores the <strong>imported dataset</strong><br>
+                    ✔ <code>head(malaria_data_excel)</code> shows the <strong>first 6 rows</strong></p>
+                </div>
+                
+                <h4>📌 4.3 Writing Data to CSV and Excel</h4>
+                
+                <h5>Saving as CSV</h5>
+                <div class="code-block">
+                    <button class="copy-btn" onclick="copyCode(this)">📋 Copy</button>
+                    <code>
+<span class="r-function">write_csv</span><span class="r-bracket">(</span><span class="r-variable">malaria_data</span><span class="r-operator">,</span> <span class="r-string">"cleaned_malaria_data.csv"</span><span class="r-bracket">)</span>
+                    </code>
+                </div>
+                
+                <div class="explanation-box">
+                    <h5>🔍 Explanation:</h5>
+                    <p>✔ <code>write_csv(malaria_data, "cleaned_malaria_data.csv")</code> saves <strong><code>malaria_data</code></strong> as a CSV file</p>
+                </div>
+                
+                <h5>Saving as Excel</h5>
+                <div class="code-block">
+                    <button class="copy-btn" onclick="copyCode(this)">📋 Copy</button>
+                    <code>
+<span class="r-function">install.packages</span><span class="r-bracket">(</span><span class="r-string">"writexl"</span><span class="r-bracket">)</span>  <span class="r-comment"># Install writexl package</span><br>
+<span class="r-function">library</span><span class="r-bracket">(</span><span class="r-variable">writexl</span><span class="r-bracket">)</span>  <span class="r-comment"># Load writexl</span><br>
+<br>
+<span class="r-function">write_xlsx</span><span class="r-bracket">(</span><span class="r-variable">malaria_data</span><span class="r-operator">,</span> <span class="r-string">"cleaned_malaria_data.xlsx"</span><span class="r-bracket">)</span>
+                    </code>
+                </div>
+                
+                <div class="explanation-box">
+                    <h5>🔍 Explanation:</h5>
+                    <p>✔ <code>install.packages("writexl")</code> installs <strong><code>writexl</code></strong> for writing Excel files<br>
+                    ✔ <code>library(writexl)</code> loads the <strong><code>writexl</code></strong> package<br>
+                    ✔ <code>write_xlsx(malaria_data, "cleaned_malaria_data.xlsx")</code> saves data as an <strong>Excel file</strong></p>
+                </div>
+            </div>
+
+            <div class="video-section fade-in">
+                <h3>🎥 Video: Importing and Exporting Data in R</h3>
+                <p>Learn how to read CSV and Excel files into R and export your cleaned datasets:</p>
+                <div class="video-container">
+                    <iframe src="https://www.youtube.com/embed/2TcPAZOyV0U" title="Importing and Exporting Data in R" allowfullscreen></iframe>
+                </div>
+            </div>
+
+            <div class="summary-section fade-in">
+                <h2>✅ Summary of Week 1</h2>
+                <p>By the end of this week, you should:<br>
+                ✔ <strong>Install R and RStudio</strong><br>
+                ✔ <strong>Understand basic R syntax</strong> (variables, operators)<br>
+                ✔ <strong>Use R Markdown for documentation</strong><br>
+                ✔ <strong>Read and write malaria datasets (CSV, Excel)</strong></p>
+            </div>
+
+            <div class="video-section fade-in">
+                <h3>🎥 Video: Week 1 Summary and Next Steps</h3>
+                <p>Review everything we've covered this week and get ready for data cleaning and visualization:</p>
+                <div class="video-container">
+                    <iframe src="https://www.youtube.com/embed/lL0e3AyXWcI" title="R Programming Week 1 Summary" allowfullscreen></iframe>
+                </div>
+            </div>
+
+            <div class="exercises-section fade-in">
+                <h2>📌 Week 1: Exercises – Introduction to R & RStudio for Malaria Data Analysis</h2>
+                
+                <p>These exercises will help you practice <strong>basic R syntax, data types, and reading/writing malaria datasets.</strong> Try them step by step.</p>
+                
+                <h3>1️⃣ Basic R Syntax and Operations</h3>
+                <p>Create variables related to malaria cases and perform simple calculations.</p>
+                
+                <h4>Exercise 1.1: Assign Values</h4>
+                <p>🔹 <strong>Create the following variables in R:</strong><br>
+                - <code>total_cases</code> = <strong>500</strong> (Total malaria cases)<br>
+                - <code>fatality_rate</code> = <strong>3.5</strong> (Fatality rate in percentage)<br>
+                - <code>region</code> = <strong>"North"</strong> (Name of the region)<br>
+                - <code>outbreak</code> = <strong>TRUE</strong> (Logical value indicating outbreak status)</p>
+                
+                <p>✍ <strong>Write the R code to assign these values.</strong></p>
+                
+                <h4>Exercise 1.2: Check Data Types</h4>
+                <p>🔹 <strong>Use <code>class()</code> to check the data type of each variable created above.</strong></p>
+                
+                <p><strong>Example Output:</strong></p>
+                <div class="code-block">
+                    <code>[1] "numeric"<br>[1] "character"<br>[1] "logical"</code>
+                </div>
+                
+                <p>✍ <strong>Write the R code to check the types.</strong></p>
+                
+                <h4>Exercise 1.3: Perform Calculations</h4>
+                <p>Using the variables created earlier, calculate:</p>
+                <ol>
+                    <li><strong>Estimated fatalities</strong>:<br>
+                    <code>fatalities = total_cases × (fatality_rate / 100)</code></li>
+                    <li><strong>Recovered cases</strong>:<br>
+                    <code>recovered = total_cases - fatalities</code></li>
+                </ol>
+                
+                <p>✍ <strong>Write the R code to calculate these values.</strong></p>
+                
+                <h3>2️⃣ Using R Markdown</h3>
+                
+                <h4>Exercise 2.1: Install and Load R Markdown</h4>
+                <p>🔹 <strong>Write the R command to install and load the <code>rmarkdown</code> package.</strong></p>
+                
+                <h4>Exercise 2.2: Create an R Markdown File</h4>
+                <ol>
+                    <li><strong>In RStudio</strong>, go to <strong>File → New File → R Markdown</strong></li>
+                    <li><strong>Choose</strong> an output format (<strong>HTML, PDF, or Word</strong>)</li>
+                    <li><strong>Write a short summary</strong> about malaria cases in your document</li>
+                    <li><strong>Include an R code chunk</strong> that displays the summary of <code>total_cases</code></li>
+                </ol>
+                
+                <p>✍ <strong>Follow the steps and create your first R Markdown document!</strong></p>
+                
+                <h3>3️⃣ Reading and Writing Data (CSV, Excel)</h3>
+                
+                <h4>Exercise 3.1: Install and Load Data Packages</h4>
+                <p>🔹 <strong>Write the R commands to install and load <code>readr</code> and <code>readxl</code>.</strong></p>
+                
+                <h4>Exercise 3.2: Read a CSV File</h4>
+                <p>Suppose you have a malaria dataset <strong><code>malaria_data.csv</code></strong> with the following columns:</p>
+                
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Region</th>
+                                <th>Cases</th>
+                                <th>Fatalities</th>
+                                <th>Recovered</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>North</td>
+                                <td>500</td>
+                                <td>20</td>
+                                <td>480</td>
+                            </tr>
+                            <tr>
+                                <td>South</td>
+                                <td>300</td>
+                                <td>10</td>
+                                <td>290</td>
+                            </tr>
+                            <tr>
+                                <td>East</td>
+                                <td>700</td>
+                                <td>35</td>
+                                <td>665</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                
+                <p><strong>Write the R code to:</strong></p>
+                <ol>
+                    <li>Load the <strong><code>readr</code></strong> package</li>
+                    <li>Read the <strong>CSV file</strong> into a dataframe called <code>malaria_df</code></li>
+                    <li>Display the <strong>first 6 rows</strong> of the dataframe</li>
+                </ol>
+                
+                <h4>Exercise 3.3: Read an Excel File</h4>
+                <p>If the same data is in <strong><code>malaria_data.xlsx</code> (Sheet 1)</strong>, <strong>write the R code</strong> to:</p>
+                <ol>
+                    <li>Load the <strong><code>readxl</code></strong> package</li>
+                    <li>Read the <strong>Excel file</strong> into a dataframe called <code>malaria_excel_df</code></li>
+                    <li>Display the <strong>first 6 rows</strong></li>
+                </ol>
+                
+                <h4>Exercise 3.4: Write Data to CSV and Excel</h4>
+                <p>After analyzing the malaria dataset, save it as:</p>
+                <ol>
+                    <li><strong>CSV file</strong>: <code>"processed_malaria_data.csv"</code></li>
+                    <li><strong>Excel file</strong>: <code>"processed_malaria_data.xlsx"</code></li>
+                </ol>
+                
+                <p><strong>Write the R code to do this!</strong></p>
+                
+                <h3>4️⃣ Bonus Challenge: Automate CSV Import</h3>
+                <p>🔹 <strong>Write an R script that:</strong></p>
+                <ol>
+                    <li><strong>Asks the user</strong> for a CSV file path</li>
+                    <li><strong>Loads the dataset</strong></li>
+                    <li><strong>Displays summary statistics</strong></li>
+                    <li><strong>Saves the cleaned dataset as a new CSV file</strong></li>
+                </ol>
+                
+                <p>📌 <strong>Hint:</strong> Use <code>read_csv()</code>, <code>summary()</code>, and <code>write_csv()</code>.</p>
+                
+                <h4>💡 What's Next?</h4>
+                <p>✔ Try these exercises in RStudio<br>
+                ✔ If you have questions, ask for hints!<br>
+                ✔ Get ready for <strong>Week 2: Data Cleaning & Visualization!</strong> 🚀</p>
+            </div>
+
+            <div class="video-section fade-in">
+                <h3>🎥 Video: Practice Exercises Walkthrough</h3>
+                <p>Step-by-step solutions to the Week 1 exercises with practical examples:</p>
+                <div class="video-container">
+                    <iframe src="https://www.youtube.com/embed/UYclmg1_KLk" title="R Programming Practice Exercises" allowfullscreen></iframe>
+                </div>
+            </div>
+
+           
+        </div>
+    </div>
+    
+    <script>
+        function copyCode(button) {
+            const codeBlock = button.nextElementSibling;
+            const code = codeBlock.textContent;
+            
+            navigator.clipboard.writeText(code).then(() => {
+                button.textContent = '✅ Copied!';
+                setTimeout(() => {
+                    button.textContent = '📋 Copy';
+                }, 2000);
+            }).catch(err => {
+                console.error('Failed to copy code: ', err);
+                button.textContent = '❌ Failed';
+                setTimeout(() => {
+                    button.textContent = '📋 Copy';
+                }, 2000);
+            });
+        }
+
+        // Add fade-in animation on scroll
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        // Apply to all sections within the malaria module
+        document.querySelectorAll('.malaria-module .note-section, .malaria-module .summary-section, .malaria-module .exercises-section, .malaria-module .solution-section, .malaria-module .video-section').forEach(section => {
+            section.style.opacity = '0';
+            section.style.transform = 'translateY(20px)';
+            section.style.transition = 'all 0.6s ease';
+            observer.observe(section);
+        });
+
+        // Animate progress bar on load
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                const progressFill = document.querySelector('.malaria-module .progress-fill');
+                if (progressFill) {
+                    progressFill.style.width = '25%';
+                }
+            }, 500);
+        });
+
+        // Add video loading optimization
+        document.querySelectorAll('.video-container iframe').forEach(iframe => {
+            iframe.loading = 'lazy';
+        });
+    </script>
+</body>
+</html>

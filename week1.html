@@ -128,6 +128,7 @@
             cursor: pointer;
             font-size: 0.8em;
             transition: all 0.3s ease;
+            z-index: 10;
         }
 
         .malaria-module .copy-btn:hover {
@@ -807,21 +808,74 @@ This document presents an analysis of malaria cases.<br>
     
     <script>
         function copyCode(button) {
-            const codeBlock = button.nextElementSibling;
-            const code = codeBlock.textContent;
+            // Find the code element - it should be the next sibling after the button
+            const codeBlock = button.parentElement;
+            const codeElement = codeBlock.querySelector('code');
             
-            navigator.clipboard.writeText(code).then(() => {
-                button.textContent = '✅ Copied!';
-                setTimeout(() => {
-                    button.textContent = '📋 Copy';
-                }, 2000);
-            }).catch(err => {
-                console.error('Failed to copy code: ', err);
+            if (!codeElement) {
+                console.error('Could not find code element');
+                return;
+            }
+            
+            // Get the text content and clean it up
+            let codeText = codeElement.textContent || codeElement.innerText;
+            
+            // Remove extra whitespace and normalize line breaks
+            codeText = codeText.trim().replace(/\s+/g, ' ').replace(/\s*\n\s*/g, '\n');
+            
+            // Use the Clipboard API
+            if (navigator.clipboard && window.isSecureContext) {
+                navigator.clipboard.writeText(codeText).then(() => {
+                    button.textContent = '✅ Copied!';
+                    button.style.background = '#10b981';
+                    setTimeout(() => {
+                        button.textContent = '📋 Copy';
+                        button.style.background = '#475569';
+                    }, 2000);
+                }).catch(err => {
+                    console.error('Failed to copy code: ', err);
+                    fallbackCopyTextToClipboard(codeText, button);
+                });
+            } else {
+                // Fallback for older browsers
+                fallbackCopyTextToClipboard(codeText, button);
+            }
+        }
+        
+        function fallbackCopyTextToClipboard(text, button) {
+            const textArea = document.createElement('textarea');
+            textArea.value = text;
+            textArea.style.position = 'fixed';
+            textArea.style.left = '-999999px';
+            textArea.style.top = '-999999px';
+            document.body.appendChild(textArea);
+            textArea.focus();
+            textArea.select();
+            
+            try {
+                const successful = document.execCommand('copy');
+                if (successful) {
+                    button.textContent = '✅ Copied!';
+                    button.style.background = '#10b981';
+                    setTimeout(() => {
+                        button.textContent = '📋 Copy';
+                        button.style.background = '#475569';
+                    }, 2000);
+                } else {
+                    button.textContent = '❌ Failed';
+                    setTimeout(() => {
+                        button.textContent = '📋 Copy';
+                    }, 2000);
+                }
+            } catch (err) {
+                console.error('Fallback: Unable to copy', err);
                 button.textContent = '❌ Failed';
                 setTimeout(() => {
                     button.textContent = '📋 Copy';
                 }, 2000);
-            });
+            }
+            
+            document.body.removeChild(textArea);
         }
 
         // Add fade-in animation on scroll

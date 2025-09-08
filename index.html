@@ -947,7 +947,7 @@
                     </div>
                 </div>
                 <div class="repo-info">
-                    <h1 class="repo-title">Training Plan</h1>
+                    <h1 class="repo-title">R Training Plan</h1>
                     <p class="repo-description">Comprehensive epidemiological trend analysis tools and sample datasets</p>
                 </div>
                 <div class="logo logo-secondary">
@@ -1063,6 +1063,34 @@
                         <div class="loading-message">Loading week content...</div>
                     </div>
                 </div>
+                <!-- Course Notes Tab -->
+                <div class="categories-container tab-content" id="notes-tab">
+                    <div class="categories-header">
+                        <div class="categories-title">Course Notes</div>
+                        <div>
+                            <select id="fileSelect" onchange="switchFile()" style="background: #0d1117; color: #e6edf3; border: 1px solid #30363d; padding: 8px 12px; border-radius: 4px;">
+                                <option value="file1">File 1: Introduction to R</option>
+                                <option value="file2">File 2: Data Cleaning & Visualization</option>
+                                <option value="file3">File 3: Statistical Analysis</option>
+                                <option value="file4">File 4: Geospatial Data</option>
+                                <option value="file5">File 5: Time Series Analysis</option>
+                                <option value="file6">File 6: Machine Learning Basics</option>
+                                <option value="file7">File 7: Advanced Visualization</option>
+                                <option value="file8">File 8: Database Integration</option>
+                                <option value="file9">File 9: Report Generation</option>
+                                <option value="file10">File 10: Reproducible Research</option>
+                                <option value="file11">File 11: Web Applications</option>
+                                <option value="file12">File 12: Final Project</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <!-- File Content Container -->
+                    <div class="notes-content" id="file-content-container">
+                        <div class="loading-message">Loading file content...</div>
+                    </div>
+                </div>
+
 
                 <!-- Web Tools Tab -->
                 <div class="categories-container tab-content" id="webtools-tab">
@@ -1207,7 +1235,7 @@
     <!-- Login Modal -->
     <div id="loginModal" class="modal" role="dialog" aria-labelledby="loginTitle" aria-modal="true">
         <div class="modal-content">
-            <h2 id="loginTitle">🔒 Repository Access</h2>
+            <h2 id="loginTitle">🔒 R Training Repository Access</h2>
             <p style="color: #8b949e; margin-bottom: 30px; font-size: 14px;">
                 Please enter your credentials to access the epidemiological datasets
             </p>
@@ -1713,8 +1741,44 @@
                         • ... (up to week12.html)
                     </div>
                 `;
-            }
+            } 
         };
+
+        // File content loading function
+        const loadFileContent = async (fileNumber) => {
+            const container = document.getElementById('file-content-container');
+            const fileName = `file${fileNumber}.html`;
+            
+            try {
+                container.innerHTML = '<div class="loading-message">Loading file content...</div>';
+                
+                const response = await fetch(fileName);
+                
+                if (!response.ok) {
+                    throw new Error(`Failed to load ${fileName}: ${response.status}`);
+                }
+                
+                const content = await response.text();
+                container.innerHTML = content;
+                
+                console.log(`Successfully loaded ${fileName}`);
+                
+            } catch (error) {
+                console.error(`Error loading file content:`, error);
+                container.innerHTML = `
+                    <div class="error-message-notes">
+                        <strong>Error loading file${fileNumber} content</strong><br>
+                        Could not load ${fileName}. Please ensure the file exists in the same directory as this HTML file.<br>
+                        <small>Error: ${error.message}</small><br><br>
+                        <em>Expected file structure:</em><br>
+                        • file1.html<br>
+                        • file2.html<br>
+                        • ... (up to file12.html)
+                    </div>
+                `;
+            } 
+        };
+
 
         // Switch between weeks in notes
         const switchWeek = async () => {

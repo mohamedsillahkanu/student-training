@@ -1,0 +1,3046 @@
+<!DOCTYPE html>                                
+<html lang="en">     
+<head>  
+    <meta charset="UTF-8">  
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dataset Repository - Epidemiological Data</title>  
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif;
+            background-color: #0d1117;
+            color: #e6edf3;
+            line-height: 1.6;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #1f2937, #374151);
+            padding: 20px 0;
+            border-bottom: 1px solid #30363d;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 5px;
+        }
+
+        .repo-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            gap: 20px;
+        }
+
+        .logo {
+            height: 150px;
+            width: 150px;
+            object-fit: contain;
+            background: #21262d;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #58a6ff;
+            font-weight: bold;
+            font-size: 12px;
+            border: 2px dashed #30363d;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .logo-primary {
+            order: -1;
+        }
+
+        .logo-secondary {
+            order: 1;
+        }
+
+        .repo-info {
+            flex: 1;
+            text-align: center;
+        }
+
+        .repo-title {
+            font-size: 28px;
+            font-weight: 600;
+            color: #58a6ff;
+        }
+
+        .repo-description {
+            color: #8b949e;
+            margin-top: 8px;
+        }
+
+        .user-info {
+            color: #58a6ff;
+            font-size: 14px;
+            display: none;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .user-role {
+            background: #238636;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .user-role.student {
+            background: #1f6feb;
+        }
+
+        .user-role.lecturer {
+            background: #f85149;
+        }
+
+        .logout-btn {
+            background: #f85149;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            margin-left: 10px;
+        }
+
+        .logout-btn:hover {
+            background: #da3633;
+        }
+
+        .stats-bar {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+            padding: 15px;
+            background: rgba(13, 17, 23, 0.4);
+            border-radius: 6px;
+            border: 1px solid #30363d;
+            margin-bottom: 30px;
+        }
+
+        .stat-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            color: #8b949e;
+            font-size: 14px;
+        }
+
+        .stat-number {
+            color: #e6edf3;
+            font-weight: 600;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 80% 20%;  
+            gap: 5px;
+        }
+
+        .categories-container {
+            background: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 6px;
+            overflow: hidden;
+        }
+
+        .categories-header {
+            background: #21262d;
+            padding: 15px 20px;
+            border-bottom: 1px solid #30363d;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .categories-title {
+            font-weight: 600;
+            color: #e6edf3;
+        }
+
+        .upload-btn, .refresh-btn, .message-btn {
+            background: #1f6feb;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            margin-left: 8px;
+        }
+
+        .upload-btn:hover, .refresh-btn:hover, .message-btn:hover {
+            background: #0969da;
+        }
+
+        .refresh-btn {
+            background: #6f42c1;
+        }
+
+        .refresh-btn:hover {
+            background: #5a2d91;
+        }
+
+        .message-btn {
+            background: #238636;
+        }
+
+        .message-btn:hover {
+            background: #2ea043;
+        }
+
+        .category {
+            border-bottom: 1px solid #21262d;
+        }
+
+        .category:last-child {
+            border-bottom: none;
+        }
+
+        .category-header {
+            background: #161b22;
+            padding: 15px 20px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            color: #58a6ff;
+            transition: background 0.2s;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border: none;
+            width: 100%;
+            text-align: left;
+        }
+
+        .category-header:hover {
+            background: #21262d;
+        }
+
+        .category-header:focus {
+            outline: 2px solid #58a6ff;
+            outline-offset: -2px;
+        }
+
+        .category-arrow {
+            transition: transform 0.2s;
+            font-size: 12px;
+        }
+
+        .category-arrow.expanded {
+            transform: rotate(90deg);
+        }
+
+        .files {
+            display: none;
+            background: #0d1117;
+        }
+
+        .files.expanded {
+            display: block;
+        }
+
+        .file {
+            padding: 15px 20px;
+            border-bottom: 1px solid #21262d;
+            transition: background 0.2s;
+            position: relative;
+        }
+
+        .file:hover {
+            background: #161b22;
+        }
+
+        .file:last-child {
+            border-bottom: none;
+        }
+
+        .file-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 8px;
+        }
+
+        .file-name {
+            font-weight: 500;
+            color: #e6edf3;
+            font-size: 14px;
+        }
+
+        .file-meta {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .file-size {
+            color: #58a6ff;
+            font-weight: 600;
+            font-size: 12px;
+        }
+
+        .file-grade {
+            background: #238636;
+            color: white;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .file-grade.pending {
+            background: #f85149;
+        }
+
+        .file-grade.overdue {
+            background: #da3633;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.7; }
+            100% { opacity: 1; }
+        }
+
+        .file-description {
+            color: #8b949e;
+            font-size: 12px;
+            margin-bottom: 10px;
+        }
+
+        .file-actions {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .download-btn {
+            background: #238636;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: background 0.2s;
+        }
+
+        .download-btn:hover {
+            background: #2ea043;
+        }
+
+        .download-btn:focus {
+            outline: 2px solid #2ea043;
+            outline-offset: 2px;
+        }
+
+        .comment-btn {
+            background: #6f42c1;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: background 0.2s;
+        }
+
+        .comment-btn:hover {
+            background: #5a2d91;
+        }
+
+        .grade-btn {
+            background: #f85149;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: background 0.2s;
+        }
+
+        .grade-btn:hover {
+            background: #da3633;
+        }
+
+        .comments-section {
+            margin-top: 15px;
+            padding: 15px;
+            background: #21262d;
+            border-radius: 6px;
+            border-left: 3px solid #6f42c1;
+            display: none;
+        }
+
+        .comments-section.expanded {
+            display: block;
+        }
+
+        .comment {
+            padding: 10px;
+            margin-bottom: 10px;
+            background: #161b22;
+            border-radius: 4px;
+            border-left: 2px solid #6f42c1;
+        }
+
+        .comment:last-child {
+            margin-bottom: 0;
+        }
+
+        .comment-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 5px;
+        }
+
+        .comment-author {
+            font-weight: 600;
+            color: #58a6ff;
+            font-size: 12px;
+        }
+
+        .comment-date {
+            color: #8b949e;
+            font-size: 11px;
+        }
+
+        .comment-text {
+            color: #e6edf3;
+            font-size: 13px;
+            line-height: 1.4;
+        }
+
+        .sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .info-card {
+            background: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 6px;
+            padding: 20px;
+        }
+
+        .card-title {
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: #e6edf3;
+        }
+
+        .info-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #21262d;
+        }
+
+        .info-item:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+        }
+
+        .info-label {
+            color: #8b949e;
+            font-size: 14px;
+        }
+
+        .info-value {
+            color: #e6edf3;
+            font-weight: 500;
+            font-size: 14px;
+        }
+
+        .student-uploads {
+            background: #0f1419;
+            border: 1px solid #1f6feb;
+            border-radius: 6px;
+            margin-top: 20px;
+        }
+
+        .student-uploads .categories-header {
+            background: #1f6feb;
+            color: white;
+        }
+
+        .tab-navigation {
+            display: flex;
+            background: #21262d;
+            border-radius: 6px 6px 0 0;
+            border: 1px solid #30363d;
+            border-bottom: none;
+            overflow: hidden;
+        }
+
+        .tab-btn {
+            background: #21262d;
+            color: #8b949e;
+            border: none;
+            padding: 15px 20px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.2s;
+            flex: 1;
+            border-right: 1px solid #30363d;
+        }
+
+        .tab-btn:last-child {
+            border-right: none;
+        }
+
+        .tab-btn:hover {
+            background: #30363d;
+            color: #e6edf3;
+        }
+
+        .tab-btn.active {
+            background: #161b22;
+            color: #58a6ff;
+            border-bottom: 2px solid #58a6ff;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .notes-content {
+            padding: 20px;
+            background: #0d1117;
+            min-height: 400px;
+        }
+
+        .loading-message {
+            text-align: center;
+            color: #8b949e;
+            padding: 50px 20px;
+            font-size: 14px;
+        }
+
+        .error-message-notes {
+            text-align: center;
+            color: #f85149;
+            padding: 50px 20px;
+            font-size: 14px;
+            background: rgba(248, 81, 73, 0.1);
+            border-radius: 6px;
+            margin: 20px;
+        }
+
+        .web-content {
+            padding: 0;
+            background: #0d1117;
+            min-height: 600px;
+            border-radius: 0 0 6px 6px;
+        }
+
+        .web-frame {
+            width: 100%;
+            height: 800px;
+            border: none;
+            border-radius: 0 0 6px 6px;
+            background: white;
+        }
+
+        .url-error {
+            text-align: center;
+            color: #f85149;
+            padding: 50px 20px;
+            font-size: 14px;
+            background: rgba(248, 81, 73, 0.1);
+            border-radius: 6px;
+            margin: 20px;
+        }
+
+        /* Assignment Card Styles */
+        .assignment-card {
+            background: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 6px;
+            margin-bottom: 15px;
+            padding: 15px;
+            transition: all 0.2s;
+        }
+
+        .assignment-card:hover {
+            border-color: #58a6ff;
+            background: #1c2128;
+        }
+
+        .assignment-card.overdue {
+            border-color: #f85149;
+            background: rgba(248, 81, 73, 0.05);
+        }
+
+        .assignment-card.submitted {
+            border-color: #238636;
+            background: rgba(35, 134, 54, 0.05);
+        }
+
+        .assignment-header {
+            display: flex;
+            justify-content: between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .assignment-title {
+            font-weight: 600;
+            color: #58a6ff;
+            font-size: 16px;
+        }
+
+        .assignment-status {
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 10px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .assignment-status.pending {
+            background: #f85149;
+            color: white;
+        }
+
+        .assignment-status.submitted {
+            background: #238636;
+            color: white;
+        }
+
+        .assignment-status.graded {
+            background: #6f42c1;
+            color: white;
+        }
+
+        .assignment-status.overdue {
+            background: #da3633;
+            color: white;
+            animation: pulse 2s infinite;
+        }
+
+        .assignment-meta {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 10px;
+            font-size: 12px;
+            color: #8b949e;
+        }
+
+        .assignment-description {
+            color: #e6edf3;
+            font-size: 13px;
+            line-height: 1.4;
+            margin-bottom: 10px;
+        }
+
+        .assignment-actions {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        /* Messaging Styles */
+        .message-card {
+            background: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 6px;
+            margin-bottom: 10px;
+            padding: 15px;
+            transition: all 0.2s;
+        }
+
+        .message-card.unread {
+            border-color: #1f6feb;
+            background: rgba(31, 111, 235, 0.05);
+        }
+
+        .message-card.announcement {
+            border-color: #f85149;
+            background: rgba(248, 81, 73, 0.05);
+        }
+
+        .message-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .message-subject {
+            font-weight: 600;
+            color: #58a6ff;
+            font-size: 14px;
+        }
+
+        .message-meta {
+            font-size: 11px;
+            color: #8b949e;
+        }
+
+        .message-body {
+            color: #e6edf3;
+            font-size: 13px;
+            line-height: 1.4;
+            margin-bottom: 10px;
+        }
+
+        .message-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .reply-btn {
+            background: #1f6feb;
+            color: white;
+            border: none;
+            padding: 4px 8px;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 11px;
+        }
+
+        .reply-btn:hover {
+            background: #0969da;
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(1, 4, 9, 0.9);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: #161b22;
+            padding: 40px;
+            border-radius: 8px;
+            border: 1px solid #30363d;
+            width: 90%;
+            max-width: 450px;
+            text-align: center;
+        }
+
+        .modal h2 {
+            color: #58a6ff;
+            margin-bottom: 20px;
+            font-size: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        .form-group label {
+            display: block;
+            color: #e6edf3;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #30363d;
+            border-radius: 6px;
+            background: #0d1117;
+            color: #e6edf3;
+            font-size: 14px;
+        }
+
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+            outline: none;
+            border-color: #58a6ff;
+        }
+
+        .login-btn, .submit-btn {
+            width: 100%;
+            background: #238636;
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .login-btn:hover, .submit-btn:hover {
+            background: #2ea043;
+        }
+
+        .cancel-btn {
+            width: 100%;
+            background: transparent;
+            color: #8b949e;
+            border: 1px solid #30363d;
+            padding: 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            margin-top: 10px;
+        }
+
+        .cancel-btn:hover {
+            background: #21262d;
+        }
+
+        .error-message, .success-message {
+            font-size: 12px;
+            margin-top: 10px;
+            display: none;
+            padding: 8px;
+            border-radius: 4px;
+        }
+
+        .error-message {
+            color: #f85149;
+            background: rgba(248, 81, 73, 0.1);
+        }
+
+        .success-message {
+            color: #238636;
+            background: rgba(35, 134, 54, 0.1);
+        }
+
+        .toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #238636;
+            color: white;
+            padding: 15px 20px;
+            border-radius: 6px;
+            z-index: 1001;
+            transform: translateX(400px);
+            transition: transform 0.3s ease;
+            max-width: 350px;
+            word-wrap: break-word;
+        }
+
+        .toast.show {
+            transform: translateX(0);
+        }
+
+        .toast.error {
+            background: #f85149;
+        }
+
+        .toast.info {
+            background: #1f6feb;
+        }
+
+        .notification-badge {
+            background: #f85149;
+            color: white;
+            border-radius: 50%;
+            padding: 2px 6px;
+            font-size: 10px;
+            font-weight: 600;
+            margin-left: 5px;
+        }
+
+        .demo-info {
+            margin-top: 20px;
+            padding: 15px;
+            background: rgba(88, 166, 255, 0.1);
+            border-radius: 6px;
+            border-left: 3px solid #58a6ff;
+        }
+
+        .demo-info p {
+            color: #8b949e;
+            font-size: 12px;
+            margin: 0;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .stats-bar {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+
+            .repo-header {
+                flex-direction: column;
+                align-items: center;
+                gap: 15px;
+                text-align: center;
+            }
+
+            .logo {
+                height: 120px;
+                width: 120px;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .file-actions {
+                flex-direction: column;
+            }
+
+            .assignment-meta {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <div class="repo-header">
+                <div class="logo logo-primary">
+                    <img src="NMCP.png" alt="NMCP Logo" style="width: 100%; height: 100%; object-fit: contain;" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                    <div style="font-size: 12px; color: #8b949e; display: none; text-align: center;">
+                        <div>NMCP.png</div>
+                        <div style="font-size: 10px;">Logo Missing</div>
+                    </div>
+                </div>
+                <div class="repo-info">
+                    <h1 class="repo-title">Training Plan</h1>
+                    <p class="repo-description">Comprehensive epidemiological trend analysis tools and sample datasets</p>
+                </div>
+                <div class="logo logo-secondary">
+                    <img src="AMMnet_logo.png" alt="ICF-SL Logo" style="width: 100%; height: 100%; object-fit: contain;" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                    <div style="font-size: 12px; color: #8b949e; display: none; text-align: center;">
+                        <div>ICF-SL.png</div>
+                        <div style="font-size: 10px;">Logo Missing</div>
+                    </div>
+                </div>
+                <div class="user-info" id="userInfo">
+                    <span class="user-role" id="userRole"></span>
+                    <span>Logged in as: <span id="currentUser"></span> (<span id="currentEmail"></span>)</span>
+                    <button class="logout-btn" onclick="logout()">Logout</button>
+                </div>
+            </div>
+            
+            <div class="stats-bar">
+                <div class="stat-item">
+                    <span class="stat-number" id="totalFiles">0</span> files
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number" id="totalSize">0</span> total size
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number" id="pendingGrades">0</span> pending grades
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number" id="unreadNotifications">0</span> unread messages
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number" id="overdueAssignments">0</span> overdue assignments
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="container">
+        <div class="main-content">
+            <div>
+                <!-- Tab Navigation -->
+                <div class="tab-navigation">
+                    <button class="tab-btn active" onclick="switchTab('datasets')">Dataset Categories</button>
+                    <button class="tab-btn" onclick="switchTab('assignments')">Weekly Assignments</button>
+                    <button class="tab-btn" onclick="switchTab('messages')">Messages</button>
+                    <button class="tab-btn" onclick="switchTab('notes')">Course Notes</button>
+                    <button class="tab-btn" onclick="switchTab('webtools')">Chatbot</button>
+                    <button class="tab-btn" onclick="switchTab('code')">R Coding Practice</button>
+                    <button class="tab-btn" onclick="switchTab('snt')">SNT Code Library</button>
+                </div>
+
+                <!-- Dataset Categories Tab -->
+                <div class="categories-container tab-content active" id="datasets-tab">
+                    <div class="categories-header">
+                        <div class="categories-title">Dataset Categories</div>
+                    </div>
+                    <div id="categories-container" role="region" aria-label="Dataset categories">
+                        <!-- Categories will be populated by JavaScript -->
+                    </div>
+                </div>
+
+                <!-- Weekly Assignments Tab -->
+                <div class="categories-container tab-content" id="assignments-tab">
+                    <div class="categories-header">
+                        <div class="categories-title">Weekly Assignments</div>
+                        <div id="assignment-controls">
+                            <button class="upload-btn" id="uploadBtn" onclick="showUploadModal()" style="display: none;">Upload Assignment</button>
+                            <button class="refresh-btn" onclick="refreshAssignments()">Refresh</button>
+                        </div>
+                    </div>
+                    <div id="assignments-container" role="region" aria-label="Weekly assignments">
+                        <!-- Assignments will be populated by JavaScript -->
+                    </div>
+                </div>
+
+                <!-- Messages Tab -->
+                <div class="categories-container tab-content" id="messages-tab">
+                    <div class="categories-header">
+                        <div class="categories-title">Messages & Announcements</div>
+                        <div id="message-controls">
+                            <button class="message-btn" id="composeBtn" onclick="showComposeModal()" style="display: none;">New Message</button>
+                            <button class="refresh-btn" onclick="refreshMessages()">Refresh</button>
+                        </div>
+                    </div>
+                    <div id="messages-container" role="region" aria-label="Messages and announcements">
+                        <!-- Messages will be populated by JavaScript -->
+                    </div>
+                </div>
+
+                <!-- Course Notes Tab -->
+                <div class="categories-container tab-content" id="notes-tab">
+                    <div class="categories-header">
+                        <div class="categories-title">Course Notes</div>
+                        <div>
+                            <select id="weekSelect" onchange="switchWeek()" style="background: #0d1117; color: #e6edf3; border: 1px solid #30363d; padding: 8px 12px; border-radius: 4px;">
+                                <option value="week1">Week 1: Introduction to R</option>
+                                <option value="week2">Week 2: Data Cleaning & Visualization</option>
+                                <option value="week3">Week 3: Statistical Analysis</option>
+                                <option value="week4">Week 4: Geospatial Data</option>
+                                <option value="week5">Week 5: Time Series Analysis</option>
+                                <option value="week6">Week 6: Machine Learning Basics</option>
+                                <option value="week7">Week 7: Advanced Visualization</option>
+                                <option value="week8">Week 8: Database Integration</option>
+                                <option value="week9">Week 9: Report Generation</option>
+                                <option value="week10">Week 10: Reproducible Research</option>
+                                <option value="week11">Week 11: Web Applications</option>
+                                <option value="week12">Week 12: Final Project</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <!-- Week Content Container -->
+                    <div class="notes-content" id="week-content-container">
+                        <div class="loading-message">Loading week content...</div>
+                    </div>
+                </div>
+
+                <!-- Web Tools Tab -->
+                <div class="categories-container tab-content" id="webtools-tab">
+                    <div class="categories-header">
+                        <div class="categories-title">Web Tools & Resources</div>
+                        <div>
+                            <button class="refresh-btn" onclick="refreshFrame()">🔄 Refresh</button>
+                        </div>   
+                    </div>
+                    
+                    <!-- URL Content Container -->
+                    <div class="web-content" id="web-content-container">
+                        <!-- Embedded URL will load here -->
+                        <iframe 
+                            id="embeddedFrame"
+                            src="https://icf-sl-chatbox.streamlit.app?embed=true" 
+                            class="web-frame"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                            sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-presentation"
+                            onload="showToast('Content loaded successfully', 'success')"
+                            onerror="handleFrameError()">
+                        </iframe>
+                    </div>
+                </div>
+                
+                <!-- General Knowledge Tab -->
+                <div class="categories-container tab-content" id="code-tab">
+                    <div class="categories-header">
+                        <div class="categories-title">R Coding Practice</div>
+                        <div>
+                            <button class="refresh-btn" onclick="refreshFrame()">🔄 Refresh</button>
+                        </div>
+                    </div>
+                    
+                    <!-- URL Content Container -->
+                    <div class="web-content" id="web-content-container">
+                        <!-- Embedded URL will load here -->
+                        <iframe 
+                            id="embeddedFrame"
+                            src="https://webr.sh/?embed=true" 
+                            class="web-frame"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                            sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-presentation"
+                            onload="showToast('Content loaded successfully', 'success')"
+                            onerror="handleFrameError()">
+                        </iframe>
+                    </div>
+                </div>
+                
+                <!-- SNT Code Library Tab -->
+                <div class="categories-container tab-content" id="snt-tab">
+                    <div class="categories-header">
+                        <div class="categories-title">SNT Code Library</div>
+                        <div>
+                            <button class="refresh-btn" onclick="refreshFrame()">🔄 Refresh</button>
+                        </div>
+                    </div>
+                    
+                    <!-- URL Content Container -->
+                    <div class="web-content" id="web-content-container">
+                        <!-- Embedded URL will load here -->
+                        <iframe 
+                            id="embeddedFrame"
+                            src="https://nmcp-sl-snt-automation.streamlit.app/?embed=true" 
+                            class="web-frame"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                            sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-presentation"
+                            onload="showToast('Content loaded successfully', 'success')"
+                            onerror="handleFrameError()">
+                        </iframe>
+                    </div>
+                </div>
+
+                <!-- Student Uploads Section -->
+                <div class="student-uploads" id="studentUploads" style="display: none;">
+                    <div class="categories-header">
+                        <div class="categories-title">📚 Student Submissions</div>
+                        <div>
+                            <button class="upload-btn" id="uploadBtn2" onclick="showUploadModal()" style="display: none;">
+                                📤 Upload Assignment
+                            </button>
+                            <button class="refresh-btn" onclick="refreshSubmissions()">
+                                🔄 Refresh
+                            </button>
+                        </div>
+                    </div>
+                    <div id="student-files-container" role="region" aria-label="Student submissions">
+                        <!-- Student files will be populated by JavaScript -->
+                    </div>
+                </div>
+            </div>
+
+            <aside class="sidebar">
+                <div class="info-card">
+                    <h3 class="card-title">About This Repository</h3>
+                    <p style="color: #8b949e; font-size: 14px; line-height: 1.6;">
+                        This repository contains epidemiological trend analysis tools and sample datasets for healthcare data visualization and statistical analysis.
+                    </p>
+                </div>
+
+                <div class="info-card" id="notificationCard" style="display: none;">
+                    <h3 class="card-title">📧 Recent Messages</h3>
+                    <div id="notifications-list">
+                        <!-- Notifications will be populated here -->
+                    </div>
+                </div>
+
+                <div class="info-card">
+                    <h3 class="card-title">Dataset Information</h3>
+                    <div class="info-item">
+                        <span class="info-label">Total Categories</span>
+                        <span class="info-value" id="categoryCount">9</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">File Types</span>
+                        <span class="info-value">Excel, PDF, Shapefiles, Code, Notes</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Data Period</span>
+                        <span class="info-value">2021</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">License</span>
+                        <span class="info-value">MIT</span>
+                    </div>
+                </div>
+
+                <div class="info-card">
+                    <h3 class="card-title">Quick Start</h3>
+                    <ol style="color: #8b949e; font-size: 14px; line-height: 1.6; padding-left: 20px;">
+                        <li>Login with your credentials</li>
+                        <li>Browse dataset categories</li>
+                        <li id="studentQuickStart" style="display: none;">Check weekly assignments</li>
+                        <li>Download files for analysis</li>
+                        <li id="lecturerQuickStart" style="display: none;">Send messages to students</li>
+                    </ol>
+                </div>
+            </aside>
+        </div>
+    </main>
+
+    <!-- Login Modal -->
+    <div id="loginModal" class="modal" role="dialog" aria-labelledby="loginTitle" aria-modal="true">
+        <div class="modal-content">
+            <h2 id="loginTitle">🔒 Repository Access</h2>
+            <p style="color: #8b949e; margin-bottom: 30px; font-size: 14px;">
+                Please enter your credentials to access the epidemiological datasets
+            </p>
+            
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <input type="text" id="username" name="username" placeholder="Enter username" required autocomplete="username">
+                </div>
+                
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password" placeholder="Enter password" required autocomplete="current-password">
+                </div>
+                
+                <button type="button" class="login-btn" id="loginButton">Login</button>
+            </form>
+            
+            <div class="error-message" id="errorMessage" role="alert" aria-live="polite">
+                Invalid credentials. Please try again.
+            </div>
+
+            <div class="success-message" id="successMessage" role="alert" aria-live="polite">
+                Login successful! Loading datasets...
+            </div>
+            
+            <div class="demo-info">
+                <p><strong>Demo Credentials:</strong></p>
+                <p>Admin: admin | 1234</p>
+                <p>Researcher: researcher | data2024</p>
+                <p>Student: student | pass123</p>
+                <p><strong>Lecturers:</strong></p>
+                <p>Dr. Smith: dr_smith | smith2024</p>
+                <p>Dr. Johnson: dr_johnson | johnson2024</p>
+                <p>General Lecturer: lecturer | teach2024</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Upload Modal -->
+    <div id="uploadModal" class="modal" role="dialog" aria-labelledby="uploadTitle" aria-modal="true">
+        <div class="modal-content">
+            <h2 id="uploadTitle">📤 Upload Assignment</h2>
+            
+            <div class="upload-area" onclick="document.getElementById('fileInput').click()">
+                <div class="upload-icon">📁</div>
+                <div class="upload-text">Click to select files or drag and drop</div>
+                <div class="supported-formats">Supported: R scripts (.R), PDFs (.pdf), Videos (.mp4, .mov), HTML (.html)</div>
+            </div>
+            
+            <input type="file" id="fileInput" class="file-input" multiple accept=".R,.r,.pdf,.mp4,.mov,.avi,.html,.htm">
+            
+            <div class="upload-form" id="uploadForm" style="display: none;">
+                <div class="form-group">
+                    <label for="assignmentTitle">Assignment Title</label>
+                    <input type="text" id="assignmentTitle" placeholder="Enter assignment title" required>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="course">Course</label>
+                        <select id="course" required>
+                            <option value="">Select Course</option>
+                            <option value="EPI101">EPI101 - Epidemiology Basics</option>
+                            <option value="STAT202">STAT202 - Biostatistics</option>
+                            <option value="DATA301">DATA301 - Data Analysis with R</option>
+                            <option value="VIZ401">VIZ401 - Data Visualization</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="weekNumber">Week Number</label>
+                        <select id="weekNumber" required>
+                            <option value="">Select Week</option>
+                            <option value="1">Week 1</option>
+                            <option value="2">Week 2</option>
+                            <option value="3">Week 3</option>
+                            <option value="4">Week 4</option>
+                            <option value="5">Week 5</option>
+                            <option value="6">Week 6</option>
+                            <option value="7">Week 7</option>
+                            <option value="8">Week 8</option>
+                            <option value="9">Week 9</option>
+                            <option value="10">Week 10</option>
+                            <option value="11">Week 11</option>
+                            <option value="12">Week 12</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="description">Description (Optional)</label>
+                    <textarea id="description" placeholder="Brief description of your assignment..." rows="3"></textarea>
+                </div>
+                
+                <div style="display: flex; gap: 10px;">
+                    <button type="button" class="submit-btn" onclick="submitUpload()">Submit Assignment</button>
+                    <button type="button" class="cancel-btn" onclick="closeUploadModal()">Cancel</button>
+                </div>
+            </div>
+            
+            <div class="error-message" id="uploadError"></div>
+            <div class="success-message" id="uploadSuccess"></div>
+        </div>
+    </div>
+
+    <!-- Message Compose Modal -->
+    <div id="composeModal" class="modal" role="dialog" aria-labelledby="composeTitle" aria-modal="true">
+        <div class="modal-content">
+            <h2 id="composeTitle">✉️ Compose Message</h2>
+            
+            <div class="form-group">
+                <label for="messageType">Message Type</label>
+                <select id="messageType" onchange="handleMessageTypeChange()" required>
+                    <option value="">Select Type</option>
+                    <option value="announcement">Announcement (All Students)</option>
+                    <option value="individual">Individual Message</option>
+                    <option value="group">Group Message</option>
+                </select>
+            </div>
+            
+            <div class="form-group" id="recipientGroup" style="display: none;">
+                <label for="messageRecipient">Recipient</label>
+                <select id="messageRecipient" multiple>
+                    <!-- Will be populated based on message type -->
+                </select>
+                <small style="color: #8b949e;">Hold Ctrl/Cmd to select multiple recipients</small>
+            </div>
+            
+            <div class="form-group">
+                <label for="messageSubject">Subject</label>
+                <input type="text" id="messageSubject" placeholder="Enter message subject" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="messageBody">Message</label>
+                <textarea id="messageBody" placeholder="Enter your message..." rows="6" required></textarea>
+            </div>
+            
+            <div style="display: flex; gap: 10px;">
+                <button type="button" class="submit-btn" onclick="sendMessage()">Send Message</button>
+                <button type="button" class="cancel-btn" onclick="closeComposeModal()">Cancel</button>
+            </div>
+            
+            <div class="error-message" id="composeError"></div>
+            <div class="success-message" id="composeSuccess"></div>
+        </div>
+    </div>
+
+    <!-- Comment/Grade Modal -->
+    <div id="commentModal" class="modal" role="dialog" aria-labelledby="commentTitle" aria-modal="true">
+        <div class="modal-content">
+            <h2 id="commentTitle">💬 Add Comment & Grade</h2>
+            
+            <div class="form-group">
+                <label for="gradeInput">Grade (0-100)</label>
+                <input type="number" id="gradeInput" min="0" max="100" placeholder="Enter grade">
+            </div>
+            
+            <div class="form-group">
+                <label for="commentText">Comment</label>
+                <textarea id="commentText" placeholder="Add your feedback..." rows="4" required></textarea>
+            </div>
+            
+            <div style="display: flex; gap: 10px;">
+                <button type="button" class="submit-btn" onclick="submitComment()">Submit</button>
+                <button type="button" class="cancel-btn" onclick="closeCommentModal()">Cancel</button>
+            </div>
+            
+            <div class="error-message" id="commentError"></div>
+            <div class="success-message" id="commentSuccess"></div>
+        </div>
+    </div>
+
+    <!-- Reply Modal -->
+    <div id="replyModal" class="modal" role="dialog" aria-labelledby="replyTitle" aria-modal="true">
+        <div class="modal-content">
+            <h2 id="replyTitle">↩️ Reply to Message</h2>
+            
+            <div class="form-group">
+                <label>Original Message</label>
+                <div id="originalMessage" style="background: #0d1117; padding: 10px; border-radius: 4px; margin-bottom: 15px; font-size: 12px; color: #8b949e;"></div>
+            </div>
+            
+            <div class="form-group">
+                <label for="replyText">Your Reply</label>
+                <textarea id="replyText" placeholder="Enter your reply..." rows="4" required></textarea>
+            </div>
+            
+            <div style="display: flex; gap: 10px;">
+                <button type="button" class="submit-btn" onclick="sendReply()">Send Reply</button>
+                <button type="button" class="cancel-btn" onclick="closeReplyModal()">Cancel</button>
+            </div>
+            
+            <div class="error-message" id="replyError"></div>
+            <div class="success-message" id="replySuccess"></div>
+        </div>
+    </div>
+
+    <!-- Toast notification -->
+    <div id="toast" class="toast" role="alert" aria-live="polite"></div>
+
+    <script>
+        // Global state
+        let isLoggedIn = false;
+        let currentUser = null;
+        let userRole = null;
+        let currentUserEmail = null;
+        let selectedFile = null;
+        let currentToast = null;
+        let currentWeek = 'week1';
+        let selectedMessageForReply = null;
+
+        // Predefined users (managed in backend)
+        let userDatabase = {
+            'admin': { 
+                password: '1234', 
+                role: 'admin', 
+                email: 'admin@university.edu', 
+                fullName: 'System Administrator',
+                assignedLecturer: null
+            },
+            'researcher': { 
+                password: 'data2024', 
+                role: 'researcher', 
+                email: 'researcher@university.edu', 
+                fullName: 'Research Staff',
+                assignedLecturer: null
+            },
+            'student': { 
+                password: 'pass123', 
+                role: 'student', 
+                email: 'student@university.edu', 
+                fullName: 'Demo Student',
+                assignedLecturer: 'dr_smith'
+            },
+            'dr_smith': { 
+                password: 'smith2024', 
+                role: 'lecturer', 
+                email: 'dr.smith@university.edu', 
+                fullName: 'Dr. Sarah Smith',
+                courses: ['EPI101', 'DATA301'],
+                assignedLecturer: null
+            },
+            'dr_johnson': { 
+                password: 'johnson2024', 
+                role: 'lecturer', 
+                email: 'dr.johnson@university.edu', 
+                fullName: 'Dr. Michael Johnson',
+                courses: ['STAT202', 'VIZ401'],
+                assignedLecturer: null
+            },
+            'lecturer': { 
+                password: 'teach2024', 
+                role: 'lecturer', 
+                email: 'lecturer@university.edu', 
+                fullName: 'Dr. Teaching Staff',
+                courses: ['EPI101', 'DATA301', 'STAT202', 'VIZ401'],
+                assignedLecturer: null
+            }
+        };
+
+        let globalMessages = [];
+        let globalStudentFiles = [];
+        let weeklyAssignments = [];
+
+        // Weekly assignments with due dates
+        const initializeWeeklyAssignments = () => {
+            const assignments = [
+                {
+                    id: 'w1-intro',
+                    week: 1,
+                    title: 'Introduction to R - Basic Operations',
+                    course: 'DATA301',
+                    description: 'Complete basic R operations: variables, data types, and simple calculations. Submit an R script with examples.',
+                    dueDate: '2025-09-15',
+                    totalPoints: 10,
+                    requirements: ['R script file', 'Comments explaining each operation', 'Output examples']
+                },
+                {
+                    id: 'w2-clean',
+                    week: 2,
+                    title: 'Data Cleaning & Visualization',
+                    course: 'DATA301',
+                    description: 'Clean a provided messy dataset and create 3 different visualizations using ggplot2.',
+                    dueDate: '2025-09-22',
+                    totalPoints: 15,
+                    requirements: ['Cleaned dataset', 'R script with cleaning steps', 'Three ggplot2 visualizations']
+                },
+                {
+                    id: 'w3-stats',
+                    week: 3,
+                    title: 'Statistical Analysis Assignment',
+                    course: 'STAT202',
+                    description: 'Perform descriptive and inferential statistics on epidemiological data. Include t-tests and ANOVA.',
+                    dueDate: '2025-09-29',
+                    totalPoints: 20,
+                    requirements: ['Statistical analysis report', 'R script', 'Interpretation of results']
+                },
+                {
+                    id: 'w4-geo',
+                    week: 4,
+                    title: 'Geospatial Data Analysis',
+                    course: 'DATA301',
+                    description: 'Create maps using shapefiles and analyze spatial patterns in disease data.',
+                    dueDate: '2025-10-06',
+                    totalPoints: 25,
+                    requirements: ['Interactive map', 'Spatial analysis report', 'R script with sf package']
+                },
+                {
+                    id: 'w5-time',
+                    week: 5,
+                    title: 'Time Series Analysis',
+                    course: 'DATA301',
+                    description: 'Analyze trends in disease incidence over time. Forecast future trends.',
+                    dueDate: '2025-10-13',
+                    totalPoints: 20,
+                    requirements: ['Time series plots', 'Trend analysis', 'Forecasting models']
+                },
+                {
+                    id: 'w6-ml',
+                    week: 6,
+                    title: 'Machine Learning Basics',
+                    course: 'DATA301',
+                    description: 'Build predictive models for disease classification using basic ML algorithms.',
+                    dueDate: '2025-10-20',
+                    totalPoints: 25,
+                    requirements: ['Model building script', 'Model evaluation', 'Performance comparison']
+                },
+                {
+                    id: 'w7-viz',
+                    week: 7,
+                    title: 'Advanced Visualization Dashboard',
+                    course: 'VIZ401',
+                    description: 'Create an interactive dashboard using Shiny to display epidemiological data.',
+                    dueDate: '2025-10-27',
+                    totalPoints: 30,
+                    requirements: ['Shiny application', 'Interactive elements', 'User documentation']
+                },
+                {
+                    id: 'w8-db',
+                    week: 8,
+                    title: 'Database Integration',
+                    course: 'DATA301',
+                    description: 'Connect R to databases, perform queries, and analyze large datasets.',
+                    dueDate: '2025-11-03',
+                    totalPoints: 20,
+                    requirements: ['Database connection script', 'SQL queries', 'Analysis report']
+                },
+                {
+                    id: 'w9-report',
+                    week: 9,
+                    title: 'Automated Report Generation',
+                    course: 'DATA301',
+                    description: 'Create automated reports using R Markdown for weekly epidemiological summaries.',
+                    dueDate: '2025-11-10',
+                    totalPoints: 25,
+                    requirements: ['R Markdown template', 'Automated report', 'Professional formatting']
+                },
+                {
+                    id: 'w10-repro',
+                    week: 10,
+                    title: 'Reproducible Research Project',
+                    course: 'DATA301',
+                    description: 'Create a fully reproducible analysis with version control and documentation.',
+                    dueDate: '2025-11-17',
+                    totalPoints: 30,
+                    requirements: ['Git repository', 'Complete documentation', 'Reproducible analysis']
+                },
+                {
+                    id: 'w11-web',
+                    week: 11,
+                    title: 'Web Application Development',
+                    course: 'VIZ401',
+                    description: 'Build a web application for epidemiological data visualization and exploration.',
+                    dueDate: '2025-11-24',
+                    totalPoints: 35,
+                    requirements: ['Web application', 'User interface', 'Data visualization features']
+                },
+                {
+                    id: 'w12-final',
+                    week: 12,
+                    title: 'Final Project - Comprehensive Analysis',
+                    course: 'DATA301',
+                    description: 'Complete epidemiological analysis project incorporating all course concepts.',
+                    dueDate: '2025-12-01',
+                    totalPoints: 50,
+                    requirements: ['Complete analysis', 'Final presentation', 'All source code', 'Written report']
+                }
+            ];
+
+            weeklyAssignments = assignments.map(assignment => ({
+                ...assignment,
+                submissions: [],
+                isOverdue: new Date(assignment.dueDate) < new Date()
+            }));
+        };
+
+        // Sample files for each category
+        const shapefiles = [
+            { 
+                name: 'Chiefdom2021', 
+                size: '1 MB', 
+                type: 'shapefile', 
+                icon: '🗺️', 
+                path: '/data/shapefiles/Chiefdom2021', 
+                content: 'Shapefile for chiefdom boundaries in 2021 containing geographic data for administrative divisions.',
+                files: ['Chiefdom2021.shp', 'Chiefdom2021.shx', 'Chiefdom2021.dbf']
+            },
+            { 
+                name: 'District2021', 
+                size: '900 KB', 
+                type: 'shapefile', 
+                icon: '🗺️', 
+                path: '/data/shapefiles/District2021', 
+                content: 'Shapefile for district boundaries in 2021 with complete administrative mapping data.',
+                files: ['District2021.shp', 'District2021.shx', 'District2021.dbf']
+            }
+        ];
+
+        const epiRoutineFiles = [
+            { name: 'epi_data_2021.xlsx', size: '856 KB', type: 'excel', icon: '📊', path: '/data/epi/epi_data_2021.xlsx', content: 'Excel file with comprehensive epidemiological data at district and chiefdom level including case counts and demographics.' }
+        ];
+
+        const interventionFiles = [
+            { name: 'intervention_2021.xlsx', size: '512 KB', type: 'excel', icon: '📊', path: '/data/intervention/intervention_2021.xlsx', content: 'Intervention coverage data for 2021 including vaccination rates and treatment coverage statistics.' }
+        ];
+
+        const campaignSurveyFiles = [
+            { name: 'survey_2021.xlsx', size: '768 KB', type: 'excel', icon: '📊', path: '/data/survey/survey_2021.xlsx', content: 'Survey and campaign data for 2021 with population health indicators and campaign effectiveness metrics.' }
+        ];
+
+        const reportFiles = [
+            { name: 'annual_report_2021.pdf', size: '1.2 MB', type: 'pdf', icon: '📄', path: '/data/reports/annual_report_2021.pdf', content: 'Comprehensive annual epidemiological report for 2021 with analysis and recommendations.' }
+        ];
+
+        const otherFiles = [
+            { name: 'comparative_analysis_2021.xlsx', size: '856 KB', type: 'excel', icon: '📊', path: '/data/historical/comparative_analysis_2021.xlsx', content: 'Excel file containing 2021 epidemiological data with district and chiefdom comparative analysis.' }
+        ];
+
+        const notesFiles = [
+            { name: 'research_notes_2021.md', size: '125 KB', type: 'markdown', icon: '📝', path: '/notes/research_notes_2021.md', content: 'Comprehensive research notes and methodology documentation for 2021 epidemiological studies.' },
+            { name: 'field_observations.txt', size: '89 KB', type: 'text', icon: '📋', path: '/notes/field_observations.txt', content: 'Field observation notes from data collection activities across various districts and chiefdoms.' },
+            { name: 'meeting_minutes_Q3.docx', size: '256 KB', type: 'document', icon: '📄', path: '/notes/meeting_minutes_Q3.docx', content: 'Meeting minutes from Q3 2021 stakeholder meetings and project planning sessions.' }
+        ];
+
+        const codeRepositoryFiles = [
+            { name: 'data_cleaning.R', size: '78 KB', type: 'r-script', icon: '🧹', path: '/code/data_cleaning.R', content: 'R script for cleaning and preprocessing epidemiological datasets before analysis.' },
+            { name: 'visualization_toolkit.R', size: '156 KB', type: 'r-script', icon: '📊', path: '/code/visualization_toolkit.R', content: 'Comprehensive R toolkit for creating epidemiological data visualizations and maps.' },
+            { name: 'analysis_pipeline.py', size: '134 KB', type: 'python', icon: '🐍', path: '/code/analysis_pipeline.py', content: 'Python pipeline for automated epidemiological data analysis and reporting.' },
+            { name: 'spatial_analysis.R', size: '203 KB', type: 'r-script', icon: '🗺️', path: '/code/spatial_analysis.R', content: 'Advanced spatial analysis functions for geographic epidemiological data processing.' }
+        ];
+
+        const sntCodeLibraryFiles = [
+            { name: 'snt_core_functions.R', size: '267 KB', type: 'r-script', icon: '⚙️', path: '/snt-lib/snt_core_functions.R', content: 'SNT Core library with essential functions for surveillance and tracking analysis.' },
+            { name: 'snt_data_models.R', size: '198 KB', type: 'r-script', icon: '🔧', path: '/snt-lib/snt_data_models.R', content: 'SNT data modeling framework for epidemiological surveillance systems.' },
+            { name: 'snt_dashboard_components.js', size: '345 KB', type: 'javascript', icon: '📱', path: '/snt-lib/snt_dashboard_components.js', content: 'JavaScript components for SNT surveillance dashboards and real-time monitoring.' },
+            { name: 'snt_api_client.py', size: '112 KB', type: 'python', icon: '🔌', path: '/snt-lib/snt_api_client.py', content: 'Python API client for SNT surveillance system integration and data synchronization.' }
+        ];
+
+        // Data categories
+        const dataCategories = {
+            'shapefiles': { name: 'Shapefiles', files: [...shapefiles] },
+            'epi_routine': { name: 'Epi Routine Data', files: [...epiRoutineFiles] },
+            'intervention': { name: 'Intervention Data', files: [...interventionFiles] },
+            'campaign_survey': { name: 'Campaign/Survey Data', files: [...campaignSurveyFiles] },
+            'reports': { name: 'Reports', files: [...reportFiles] },
+            'notes': { name: 'Notes & Documentation', files: [...notesFiles] },
+            'code_repository': { name: 'Code Repository', files: [...codeRepositoryFiles] },
+            'snt_code_library': { name: 'SNT Code Library', files: [...sntCodeLibraryFiles] },
+            'other': { name: 'Other Files', files: [...otherFiles] }
+        };
+
+        // Week content loading function
+        const loadWeekContent = async (weekNumber) => {
+            const container = document.getElementById('week-content-container');
+            const weekFile = `${weekNumber}.html`;
+            
+            try {
+                container.innerHTML = '<div class="loading-message">Loading week content...</div>';
+                
+                const response = await fetch(weekFile);
+                
+                if (!response.ok) {
+                    throw new Error(`Failed to load ${weekFile}: ${response.status}`);
+                }
+                
+                const content = await response.text();
+                container.innerHTML = content;
+                
+                console.log(`Successfully loaded ${weekFile}`);
+                
+            } catch (error) {
+                console.error(`Error loading week content:`, error);
+                container.innerHTML = `
+                    <div class="error-message-notes">
+                        <strong>Error loading ${weekNumber} content</strong><br>
+                        Could not load ${weekFile}. Please ensure the file exists in the same directory as this HTML file.<br>
+                        <small>Error: ${error.message}</small><br><br>
+                        <em>Expected file structure:</em><br>
+                        • week1.html<br>
+                        • week2.html<br>
+                        • ... (up to week12.html)
+                    </div>
+                `;
+            }
+        };
+
+        // Switch between weeks in notes
+        const switchWeek = async () => {
+            const selectedWeek = document.getElementById('weekSelect').value;
+            currentWeek = selectedWeek;
+            await loadWeekContent(selectedWeek);
+        };
+
+        // Switch between tabs
+        const switchTab = async (tabName) => {
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            document.getElementById(`${tabName}-tab`).classList.add('active');
+            event.target.classList.add('active');
+            
+            if (tabName === 'datasets') {
+                renderCategories();
+            } else if (tabName === 'assignments') {
+                renderAssignments();
+            } else if (tabName === 'messages') {
+                renderMessages();
+            } else if (tabName === 'notes') {
+                await loadWeekContent(currentWeek);
+            } else if (tabName === 'webtools') {
+                initializeWebTools();
+            }
+        };
+
+        // Initialize web tools tab
+        const initializeWebTools = () => {
+            const iframe = document.getElementById('embeddedFrame');
+            if (iframe) {
+                console.log('Web Tools tab initialized with embedded URL:', iframe.src);
+            }
+        };
+
+        // Handle iframe loading error
+        const handleFrameError = () => {
+            const container = document.getElementById('web-content-container');
+            const iframe = document.getElementById('embeddedFrame');
+            const url = iframe ? iframe.src : 'Unknown URL';
+            
+            container.innerHTML = `
+                <div class="url-error">
+                    <strong>Failed to load embedded content</strong><br>
+                    The website may not allow embedding, or there might be a connection issue.<br>
+                    <small>URL: ${url}</small><br><br>
+                    <button class="upload-btn" onclick="openInNewTab('${url}')">🔗 Open in New Tab</button>
+                </div>
+            `;
+        };
+
+        // Refresh the current iframe
+        const refreshFrame = () => {
+            const iframe = document.getElementById('embeddedFrame');
+            if (iframe) {
+                iframe.src = iframe.src;
+                showToast('Refreshing content...', 'info');
+            } else {
+                showToast('No content to refresh', 'error');
+            }
+        };
+
+        // Open URL in new tab
+        const openInNewTab = (url) => {
+            window.open(url, '_blank');
+        };
+
+        // Show login modal
+        const showLoginModal = () => {
+            const modal = document.getElementById('loginModal');
+            modal.style.display = 'flex';
+            setTimeout(() => {
+                document.getElementById('username').focus();
+            }, 100);
+        };
+
+        // Simple login function
+        const simpleLogin = () => {
+            const user = document.getElementById('username').value.trim();
+            const pass = document.getElementById('password').value;
+            const errorMessage = document.getElementById('errorMessage');
+            const successMessage = document.getElementById('successMessage');
+            
+            errorMessage.style.display = 'none';
+            successMessage.style.display = 'none';
+            
+            if (userDatabase[user] && userDatabase[user].password === pass) {
+                isLoggedIn = true;
+                currentUser = user;
+                userRole = userDatabase[user].role;
+                currentUserEmail = userDatabase[user].email;
+                
+                document.getElementById('loginModal').style.display = 'none';
+                document.getElementById('currentUser').textContent = user;
+                document.getElementById('currentEmail').textContent = currentUserEmail;
+                document.getElementById('userRole').textContent = userRole;
+                document.getElementById('userRole').className = `user-role ${userRole}`;
+                document.getElementById('userInfo').style.display = 'flex';
+                
+                setupUserInterface();
+                
+                renderCategories();
+                renderAssignments();
+                renderMessages();
+                updateStats();
+                showToast(`Welcome, ${user}! Logged in as ${userRole}.`);
+                
+                document.getElementById('username').value = '';
+                document.getElementById('password').value = '';
+            } else {
+                errorMessage.style.display = 'block';
+                document.getElementById('password').value = '';
+            }
+        };
+
+        // Setup user interface based on role
+        const setupUserInterface = () => {
+            const studentUploads = document.getElementById('studentUploads');
+            const uploadBtn = document.getElementById('uploadBtn');
+            const uploadBtn2 = document.getElementById('uploadBtn2');
+            const composeBtn = document.getElementById('composeBtn');
+            const studentQuickStart = document.getElementById('studentQuickStart');
+            const lecturerQuickStart = document.getElementById('lecturerQuickStart');
+            const notificationCard = document.getElementById('notificationCard');
+
+            // Reset visibility
+            studentUploads.style.display = 'none';
+            uploadBtn.style.display = 'none';
+            uploadBtn2.style.display = 'none';
+            composeBtn.style.display = 'none';
+            studentQuickStart.style.display = 'none';
+            lecturerQuickStart.style.display = 'none';
+            notificationCard.style.display = 'none';
+
+            if (userRole === 'student') {
+                studentUploads.style.display = 'block';
+                uploadBtn.style.display = 'inline-block';
+                uploadBtn2.style.display = 'inline-block';
+                studentQuickStart.style.display = 'block';
+                notificationCard.style.display = 'block';
+            } else if (userRole === 'lecturer' || userRole === 'admin') {
+                studentUploads.style.display = 'block';
+                composeBtn.style.display = 'inline-block';
+                lecturerQuickStart.style.display = 'block';
+                notificationCard.style.display = 'block';
+            } else if (userRole === 'researcher') {
+                studentUploads.style.display = 'block';
+                notificationCard.style.display = 'block';
+            }
+            
+            renderStudentFiles();
+        };
+
+        // Render weekly assignments
+        const renderAssignments = () => {
+            const container = document.getElementById('assignments-container');
+            container.innerHTML = '';
+
+            if (weeklyAssignments.length === 0) {
+                container.innerHTML = '<div style="padding: 20px; text-align: center; color: #8b949e;">No assignments available yet.</div>';
+                return;
+            }
+
+            weeklyAssignments.forEach((assignment, index) => {
+                const isOverdue = new Date(assignment.dueDate) < new Date();
+                const hasSubmission = userRole === 'student' && 
+                    globalStudentFiles.some(f => f.weekNumber == assignment.week && f.uploadedBy === currentUser);
+                
+                let statusClass = 'pending';
+                let statusText = 'Not Submitted';
+                
+                if (hasSubmission) {
+                    const submission = globalStudentFiles.find(f => f.weekNumber == assignment.week && f.uploadedBy === currentUser);
+                    if (submission.grade !== null) {
+                        statusClass = 'graded';
+                        statusText = `Graded (${submission.grade}%)`;
+                    } else {
+                        statusClass = 'submitted';
+                        statusText = 'Submitted';
+                    }
+                } else if (isOverdue) {
+                    statusClass = 'overdue';
+                    statusText = 'Overdue';
+                }
+
+                const assignmentDiv = document.createElement('div');
+                assignmentDiv.classList.add('assignment-card', statusClass);
+                
+                const daysUntilDue = Math.ceil((new Date(assignment.dueDate) - new Date()) / (1000 * 60 * 60 * 24));
+                const dueText = isOverdue ? `${Math.abs(daysUntilDue)} days overdue` : 
+                               daysUntilDue === 0 ? 'Due today' : `${daysUntilDue} days remaining`;
+
+                assignmentDiv.innerHTML = `
+                    <div class="assignment-header">
+                        <div class="assignment-title">Week ${assignment.week}: ${assignment.title}</div>
+                        <div class="assignment-status ${statusClass}">${statusText}</div>
+                    </div>
+                    <div class="assignment-meta">
+                        <div><strong>Course:</strong> ${assignment.course}</div>
+                        <div><strong>Due:</strong> ${assignment.dueDate} (${dueText})</div>
+                        <div><strong>Points:</strong> ${assignment.totalPoints}</div>
+                        <div><strong>Requirements:</strong> ${assignment.requirements.length} items</div>
+                    </div>
+                    <div class="assignment-description">${assignment.description}</div>
+                    <div class="assignment-actions">
+                        ${userRole === 'student' && !hasSubmission ? 
+                            `<button class="upload-btn" onclick="openUploadForAssignment(${assignment.week})">Submit Assignment</button>` : ''
+                        }
+                        ${hasSubmission ? 
+                            `<button class="download-btn" onclick="viewSubmission(${assignment.week})">View Submission</button>` : ''
+                        }
+                        ${userRole === 'lecturer' || userRole === 'admin' ? 
+                            `<button class="comment-btn" onclick="viewAssignmentSubmissions(${assignment.week})">View Submissions</button>` : ''
+                        }
+                    </div>
+                    <div style="margin-top: 10px; padding: 10px; background: #0d1117; border-radius: 4px; font-size: 12px;">
+                        <strong>Requirements:</strong>
+                        <ul style="margin: 5px 0 0 20px; color: #8b949e;">
+                            ${assignment.requirements.map(req => `<li>${req}</li>`).join('')}
+                        </ul>
+                    </div>
+                `;
+                container.appendChild(assignmentDiv);
+            });
+        };
+
+        // Render messages
+        const renderMessages = () => {
+            const container = document.getElementById('messages-container');
+            container.innerHTML = '';
+
+            if (globalMessages.length === 0) {
+                container.innerHTML = '<div style="padding: 20px; text-align: center; color: #8b949e;">No messages yet.</div>';
+                return;
+            }
+
+            // Filter messages based on user role
+            let messagesToShow = globalMessages;
+            
+            if (userRole === 'student') {
+                messagesToShow = globalMessages.filter(msg => 
+                    msg.type === 'announcement' || 
+                    msg.recipients.includes(currentUserEmail) ||
+                    msg.senderEmail === currentUserEmail
+                );
+            } else if (userRole === 'lecturer') {
+                messagesToShow = globalMessages.filter(msg => 
+                    msg.senderEmail === currentUserEmail ||
+                    msg.recipients.includes(currentUserEmail) ||
+                    msg.type === 'announcement'
+                );
+            }
+
+            messagesToShow.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+
+            messagesToShow.forEach((message, index) => {
+                const isUnread = !message.readBy.includes(currentUserEmail);
+                const messageDiv = document.createElement('div');
+                messageDiv.classList.add('message-card');
+                if (isUnread) messageDiv.classList.add('unread');
+                if (message.type === 'announcement') messageDiv.classList.add('announcement');
+
+                const typeIcon = message.type === 'announcement' ? '📢' : 
+                                message.type === 'individual' ? '✉️' : '👥';
+
+                messageDiv.innerHTML = `
+                    <div class="message-header">
+                        <div class="message-subject">${typeIcon} ${message.subject}</div>
+                        <div class="message-meta">
+                            From: ${message.senderName} | ${message.timestamp}
+                            ${isUnread ? '<span class="notification-badge">NEW</span>' : ''}
+                        </div>
+                    </div>
+                    <div class="message-body">${message.body}</div>
+                    ${message.replies && message.replies.length > 0 ? `
+                        <div style="margin-top: 10px; padding: 10px; background: #0d1117; border-radius: 4px;">
+                            <strong>Replies (${message.replies.length}):</strong>
+                            ${message.replies.map(reply => `
+                                <div style="margin-top: 5px; padding: 5px; background: #161b22; border-radius: 3px; font-size: 12px;">
+                                    <strong>${reply.senderName}:</strong> ${reply.text}
+                                    <div style="color: #8b949e; font-size: 10px;">${reply.timestamp}</div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    ` : ''}
+                    <div class="message-actions">
+                        ${message.senderEmail !== currentUserEmail ? 
+                            `<button class="reply-btn" onclick="showReplyModal('${message.id}')">Reply</button>` : ''
+                        }
+                        ${isUnread ? 
+                            `<button class="reply-btn" onclick="markMessageRead('${message.id}')">Mark Read</button>` : ''
+                        }
+                    </div>
+                `;
+                container.appendChild(messageDiv);
+            });
+        };
+
+        // Message handling functions
+        const showComposeModal = () => {
+            document.getElementById('composeModal').style.display = 'flex';
+            populateRecipients();
+        };
+
+        const closeComposeModal = () => {
+            document.getElementById('composeModal').style.display = 'none';
+            document.getElementById('messageType').value = '';
+            document.getElementById('messageSubject').value = '';
+            document.getElementById('messageBody').value = '';
+            document.getElementById('recipientGroup').style.display = 'none';
+            document.getElementById('composeError').style.display = 'none';
+            document.getElementById('composeSuccess').style.display = 'none';
+        };
+
+        const handleMessageTypeChange = () => {
+            const messageType = document.getElementById('messageType').value;
+            const recipientGroup = document.getElementById('recipientGroup');
+            
+            if (messageType === 'announcement') {
+                recipientGroup.style.display = 'none';
+            } else {
+                recipientGroup.style.display = 'block';
+                populateRecipients();
+            }
+        };
+
+        const populateRecipients = () => {
+            const messageType = document.getElementById('messageType').value;
+            const recipientSelect = document.getElementById('messageRecipient');
+            recipientSelect.innerHTML = '';
+            
+            if (messageType === 'individual' || messageType === 'group') {
+                Object.entries(userDatabase).forEach(([username, userData]) => {
+                    if (userData.email !== currentUserEmail) {
+                        const option = document.createElement('option');
+                        option.value = userData.email;
+                        option.textContent = `${userData.fullName} (${userData.role})`;
+                        recipientSelect.appendChild(option);
+                    }
+                });
+            }
+        };
+
+        const sendMessage = () => {
+            const messageType = document.getElementById('messageType').value;
+            const subject = document.getElementById('messageSubject').value.trim();
+            const body = document.getElementById('messageBody').value.trim();
+            const composeError = document.getElementById('composeError');
+            const composeSuccess = document.getElementById('composeSuccess');
+            
+            composeError.style.display = 'none';
+            composeSuccess.style.display = 'none';
+            
+            if (!messageType || !subject || !body) {
+                composeError.textContent = 'Please fill in all fields.';
+                composeError.style.display = 'block';
+                return;
+            }
+            
+            let recipients = [];
+            if (messageType === 'announcement') {
+                recipients = Object.values(userDatabase)
+                    .filter(user => user.role === 'student')
+                    .map(user => user.email);
+            } else {
+                const selectedRecipients = Array.from(document.getElementById('messageRecipient').selectedOptions)
+                    .map(option => option.value);
+                if (selectedRecipients.length === 0) {
+                    composeError.textContent = 'Please select at least one recipient.';
+                    composeError.style.display = 'block';
+                    return;
+                }
+                recipients = selectedRecipients;
+            }
+            
+            const currentUserData = userDatabase[currentUser];
+            const newMessage = {
+                id: Date.now() + Math.random(),
+                type: messageType,
+                subject: subject,
+                body: body,
+                senderEmail: currentUserEmail,
+                senderName: currentUserData.fullName,
+                recipients: recipients,
+                timestamp: new Date().toLocaleString(),
+                readBy: [currentUserEmail],
+                replies: []
+            };
+            
+            globalMessages.push(newMessage);
+            
+            composeSuccess.textContent = `Message sent to ${recipients.length} recipient(s)!`;
+            composeSuccess.style.display = 'block';
+            
+            setTimeout(() => {
+                closeComposeModal();
+                renderMessages();
+                updateStats();
+                showToast('Message sent successfully!');
+            }, 2000);
+        };
+
+        const showReplyModal = (messageId) => {
+            selectedMessageForReply = messageId;
+            const message = globalMessages.find(m => m.id == messageId);
+            if (message) {
+                document.getElementById('originalMessage').innerHTML = `
+                    <strong>From:</strong> ${message.senderName}<br>
+                    <strong>Subject:</strong> ${message.subject}<br>
+                    <strong>Message:</strong> ${message.body}
+                `;
+                document.getElementById('replyModal').style.display = 'flex';
+            }
+        };
+
+        const closeReplyModal = () => {
+            document.getElementById('replyModal').style.display = 'none';
+            document.getElementById('replyText').value = '';
+            document.getElementById('replyError').style.display = 'none';
+            document.getElementById('replySuccess').style.display = 'none';
+            selectedMessageForReply = null;
+        };
+
+        const sendReply = () => {
+            const replyText = document.getElementById('replyText').value.trim();
+            const replyError = document.getElementById('replyError');
+            const replySuccess = document.getElementById('replySuccess');
+            
+            replyError.style.display = 'none';
+            replySuccess.style.display = 'none';
+            
+            if (!replyText) {
+                replyError.textContent = 'Please enter a reply.';
+                replyError.style.display = 'block';
+                return;
+            }
+            
+            const message = globalMessages.find(m => m.id == selectedMessageForReply);
+            if (message) {
+                const currentUserData = userDatabase[currentUser];
+                const reply = {
+                    id: Date.now(),
+                    senderEmail: currentUserEmail,
+                    senderName: currentUserData.fullName,
+                    text: replyText,
+                    timestamp: new Date().toLocaleString()
+                };
+                
+                if (!message.replies) message.replies = [];
+                message.replies.push(reply);
+                
+                replySuccess.textContent = 'Reply sent successfully!';
+                replySuccess.style.display = 'block';
+                
+                setTimeout(() => {
+                    closeReplyModal();
+                    renderMessages();
+                    showToast('Reply sent!');
+                }, 2000);
+            }
+        };
+
+        const markMessageRead = (messageId) => {
+            const message = globalMessages.find(m => m.id == messageId);
+            if (message && !message.readBy.includes(currentUserEmail)) {
+                message.readBy.push(currentUserEmail);
+                renderMessages();
+                updateStats();
+            }
+        };
+
+        // Assignment handling functions
+        const openUploadForAssignment = (weekNumber) => {
+            document.getElementById('weekNumber').value = weekNumber;
+            showUploadModal();
+        };
+
+        const viewSubmission = (weekNumber) => {
+            const submission = globalStudentFiles.find(f => f.weekNumber == weekNumber && f.uploadedBy === currentUser);
+            if (submission) {
+                showToast(`Viewing submission for Week ${weekNumber}: ${submission.title}`);
+                // In a real app, this would open the file or show details
+            }
+        };
+
+        const viewAssignmentSubmissions = (weekNumber) => {
+            const submissions = globalStudentFiles.filter(f => f.weekNumber == weekNumber);
+            showToast(`Week ${weekNumber} has ${submissions.length} submission(s)`);
+            // In a real app, this would show all submissions for grading
+        };
+
+        const refreshAssignments = () => {
+            renderAssignments();
+            updateStats();
+            showToast('Assignments refreshed!', 'info');
+        };
+
+        const refreshMessages = () => {
+            renderMessages();
+            updateStats();
+            showToast('Messages refreshed!', 'info');
+        };
+
+        // Upload modal functions
+        const showUploadModal = () => {
+            if (userRole !== 'student') {
+                showToast('Only students can upload assignments', 'error');
+                return;
+            }
+            document.getElementById('uploadModal').style.display = 'flex';
+        };
+
+        const closeUploadModal = () => {
+            document.getElementById('uploadModal').style.display = 'none';
+            document.getElementById('uploadForm').style.display = 'none';
+            document.getElementById('fileInput').value = '';
+            document.getElementById('assignmentTitle').value = '';
+            document.getElementById('course').value = '';
+            document.getElementById('weekNumber').value = '';
+            document.getElementById('description').value = '';
+        };
+
+        // Handle file selection
+        const handleFileSelect = (files) => {
+            const uploadForm = document.getElementById('uploadForm');
+            const uploadError = document.getElementById('uploadError');
+            
+            uploadError.style.display = 'none';
+            
+            if (files.length === 0) return;
+            
+            // Validate file types
+            const validExtensions = ['.r', '.R', '.pdf', '.mp4', '.mov', '.avi', '.html', '.htm'];
+            const invalidFiles = [];
+            
+            Array.from(files).forEach(file => {
+                const extension = '.' + file.name.split('.').pop().toLowerCase();
+                if (!validExtensions.includes(extension) && !validExtensions.includes(extension.toUpperCase())) {
+                    invalidFiles.push(file.name);
+                }
+            });
+            
+            if (invalidFiles.length > 0) {
+                uploadError.textContent = `Invalid file types: ${invalidFiles.join(', ')}. Please upload R scripts, PDFs, videos, or HTML files.`;
+                uploadError.style.display = 'block';
+                return;
+            }
+            
+            uploadForm.style.display = 'block';
+            showToast(`${files.length} file(s) selected for upload`);
+        };
+
+        // Submit upload
+        const submitUpload = () => {
+            const files = document.getElementById('fileInput').files;
+            const title = document.getElementById('assignmentTitle').value.trim();
+            const course = document.getElementById('course').value;
+            const weekNumber = document.getElementById('weekNumber').value;
+            const description = document.getElementById('description').value.trim();
+            const uploadError = document.getElementById('uploadError');
+            const uploadSuccess = document.getElementById('uploadSuccess');
+            
+            uploadError.style.display = 'none';
+            uploadSuccess.style.display = 'none';
+            
+            if (!files.length || !title || !course || !weekNumber) {
+                uploadError.textContent = 'Please fill in all required fields and select files.';
+                uploadError.style.display = 'block';
+                return;
+            }
+            
+            const currentUserData = userDatabase[currentUser];
+            const assignedLecturerUsername = currentUserData.assignedLecturer;
+            
+            if (!assignedLecturerUsername) {
+                uploadError.textContent = 'No lecturer assigned to your account. Please contact administration.';
+                uploadError.style.display = 'block';
+                return;
+            }
+            
+            // Add to global student files
+            Array.from(files).forEach(file => {
+                const fileIcon = getFileIcon(file.name);
+                const newFile = {
+                    id: Date.now() + Math.random(),
+                    name: file.name,
+                    title: title,
+                    course: course,
+                    weekNumber: parseInt(weekNumber),
+                    description: description,
+                    size: formatFileSize(file.size),
+                    type: file.type || 'application/octet-stream',
+                    icon: fileIcon,
+                    uploadedBy: currentUser,
+                    uploadedByEmail: currentUserEmail,
+                    assignedLecturer: assignedLecturerUsername,
+                    uploadDate: new Date().toLocaleString(),
+                    grade: null,
+                    comments: [],
+                    status: 'submitted'
+                };
+                globalStudentFiles.push(newFile);
+            });
+            
+            uploadSuccess.textContent = `Assignment "${title}" uploaded successfully!`;
+            uploadSuccess.style.display = 'block';
+            
+            // Send message to lecturer
+            const lecturerData = userDatabase[assignedLecturerUsername];
+            if (lecturerData) {
+                const newMessage = {
+                    id: Date.now() + Math.random(),
+                    type: 'individual',
+                    subject: `New Assignment Submission - Week ${weekNumber}`,
+                    body: `Student ${currentUserData.fullName} has submitted "${title}" for Week ${weekNumber} in course ${course}.`,
+                    senderEmail: currentUserEmail,
+                    senderName: currentUserData.fullName,
+                    recipients: [lecturerData.email],
+                    timestamp: new Date().toLocaleString(),
+                    readBy: [currentUserEmail],
+                    replies: []
+                };
+                globalMessages.push(newMessage);
+            }
+            
+            setTimeout(() => {
+                closeUploadModal();
+                renderStudentFiles();
+                renderAssignments();
+                updateStats();
+                showToast('Assignment uploaded and lecturer notified!');
+            }, 2000);
+        };
+
+        // Get file icon based on extension
+        const getFileIcon = (fileName) => {
+            const extension = fileName.split('.').pop().toLowerCase();
+            switch (extension) {
+                case 'r': return '📊';
+                case 'pdf': return '📄';
+                case 'mp4':
+                case 'mov':
+                case 'avi': return '🎥';
+                case 'html':
+                case 'htm': return '🌐';
+                default: return '📁';
+            }
+        };
+
+        // Format file size
+        const formatFileSize = (bytes) => {
+            if (bytes === 0) return '0 B';
+            const k = 1024;
+            const sizes = ['B', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
+        };
+
+        // Render student files
+        const renderStudentFiles = () => {
+            const container = document.getElementById('student-files-container');
+            container.innerHTML = '';
+
+            if (globalStudentFiles.length === 0) {
+                container.innerHTML = '<div style="padding: 20px; text-align: center; color: #8b949e;">No assignments uploaded yet.</div>';
+                return;
+            }
+
+            // Filter files based on user role and assignments
+            let filesToShow = globalStudentFiles;
+            
+            if (userRole === 'student') {
+                filesToShow = globalStudentFiles.filter(f => f.uploadedBy === currentUser);
+            } else if (userRole === 'lecturer') {
+                filesToShow = globalStudentFiles.filter(f => f.assignedLecturer === currentUser);
+            }
+
+            if (filesToShow.length === 0) {
+                const message = userRole === 'lecturer' ? 
+                    'No submissions from your assigned students yet.' : 
+                    'No assignments uploaded yet.';
+                container.innerHTML = `<div style="padding: 20px; text-align: center; color: #8b949e;">${message}</div>`;
+                return;
+            }
+
+            filesToShow.forEach((file, index) => {
+                const isOwnFile = file.uploadedBy === currentUser;
+                const canComment = userRole === 'lecturer' || userRole === 'admin';
+                const studentInfo = userDatabase[file.uploadedBy];
+                const lecturerInfo = userDatabase[file.assignedLecturer];
+                
+                const fileDiv = document.createElement('div');
+                fileDiv.classList.add('file');
+                fileDiv.innerHTML = `
+                    <div class="file-header">
+                        <div class="file-name">${file.icon} ${file.name}</div>
+                        <div class="file-meta">
+                            ${file.grade !== null ? `<div class="file-grade">${file.grade}%</div>` : '<div class="file-grade pending">Pending</div>'}
+                            <div class="file-size">${file.size}</div>
+                        </div>
+                    </div>
+                    <div class="file-description">
+                        <strong>${file.title}</strong> - ${file.course} (Week ${file.weekNumber})<br>
+                        ${file.description || 'No description provided'}<br>
+                        <small>
+                            Student: ${studentInfo ? studentInfo.fullName : file.uploadedBy} (${file.uploadedByEmail})<br>
+                            Lecturer: ${lecturerInfo ? lecturerInfo.fullName : file.assignedLecturer}<br>
+                            Submitted: ${file.uploadDate}
+                        </small>
+                    </div>
+                    <div class="file-actions">
+                        ${isOwnFile || userRole === 'lecturer' || userRole === 'admin' ? 
+                            `<button class="download-btn" onclick="downloadStudentFile('${file.id}')">Download</button>` : ''
+                        }
+                        ${canComment && file.assignedLecturer === currentUser ? 
+                            `<button class="comment-btn" onclick="showCommentModal('${file.id}')">
+                                Comment ${file.comments.length > 0 ? `(${file.comments.length})` : ''}
+                            </button>
+                            <button class="grade-btn" onclick="showGradeModal('${file.id}')">
+                                ${file.grade !== null ? 'Update Grade' : 'Grade'}
+                            </button>` : ''
+                        }
+                    </div>
+                    ${file.comments.length > 0 ? `
+                        <div class="comments-section expanded">
+                            <h4 style="color: #6f42c1; margin-bottom: 10px; font-size: 13px;">Comments & Feedback</h4>
+                            ${file.comments.map(comment => `
+                                <div class="comment">
+                                    <div class="comment-header">
+                                        <span class="comment-author">${comment.authorName} (${comment.role})</span>
+                                        <span class="comment-date">${comment.date}</span>
+                                    </div>
+                                    <div class="comment-text">${comment.text}</div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    ` : ''}
+                `;
+                container.appendChild(fileDiv);
+            });
+        };
+
+        // Download student file
+        const downloadStudentFile = (fileId) => {
+            const file = globalStudentFiles.find(f => f.id == fileId);
+            if (!file) {
+                showToast('File not found', 'error');
+                return;
+            }
+
+            const link = document.createElement('a');
+            link.download = file.name;
+            link.href = '#';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            
+            const extension = file.name.split('.').pop();
+            showToast(`${file.name} downloaded successfully! (.${extension} format)`);
+        };
+
+        // Show comment modal
+        const showCommentModal = (fileId) => {
+            selectedFile = fileId;
+            document.getElementById('commentModal').style.display = 'flex';
+            document.getElementById('commentTitle').textContent = 'Add Comment & Grade';
+            document.getElementById('gradeInput').value = '';
+            document.getElementById('commentText').value = '';
+        };
+
+        // Show grade modal
+        const showGradeModal = (fileId) => {
+            selectedFile = fileId;
+            const file = globalStudentFiles.find(f => f.id == fileId);
+            if (file && file.grade !== null) {
+                document.getElementById('gradeInput').value = file.grade;
+            }
+            document.getElementById('commentModal').style.display = 'flex';
+            document.getElementById('commentTitle').textContent = 'Grade Assignment';
+            document.getElementById('commentText').value = '';
+        };
+
+        // Close comment modal
+        const closeCommentModal = () => {
+            document.getElementById('commentModal').style.display = 'none';
+            document.getElementById('gradeInput').value = '';
+            document.getElementById('commentText').value = '';
+            document.getElementById('commentError').style.display = 'none';
+            document.getElementById('commentSuccess').style.display = 'none';
+            selectedFile = null;
+        };
+
+        // Submit comment and grade
+        const submitComment = () => {
+            const grade = document.getElementById('gradeInput').value;
+            const commentText = document.getElementById('commentText').value.trim();
+            const commentError = document.getElementById('commentError');
+            const commentSuccess = document.getElementById('commentSuccess');
+            
+            commentError.style.display = 'none';
+            commentSuccess.style.display = 'none';
+            
+            if (!commentText) {
+                commentError.textContent = 'Please enter a comment.';
+                commentError.style.display = 'block';
+                return;
+            }
+            
+            const file = globalStudentFiles.find(f => f.id == selectedFile);
+            if (!file) {
+                commentError.textContent = 'File not found.';
+                commentError.style.display = 'block';
+                return;
+            }
+            
+            // Add comment
+            const currentUserData = userDatabase[currentUser];
+            file.comments.push({
+                id: Date.now(),
+                author: currentUser,
+                authorName: currentUserData.fullName,
+                authorEmail: currentUserEmail,
+                role: userRole,
+                text: commentText,
+                date: new Date().toLocaleString()
+            });
+            
+            // Update grade if provided
+            let gradeMessage = '';
+            const isNewGrade = grade && grade >= 0 && grade <= 100;
+            if (isNewGrade) {
+                const oldGrade = file.grade;
+                file.grade = parseInt(grade);
+                file.status = 'graded';
+                gradeMessage = oldGrade !== null ? 
+                    ` Grade updated from ${oldGrade}% to ${grade}%.` : 
+                    ` Grade assigned: ${grade}%.`;
+            }
+            
+            commentSuccess.textContent = 'Comment added successfully!' + gradeMessage;
+            commentSuccess.style.display = 'block';
+            
+            // Send message to student
+            const notificationSubject = isNewGrade ? 
+                `Grade Posted: ${file.title}` : 
+                `New Comment: ${file.title}`;
+            const notificationMessage = isNewGrade ? 
+                `Your assignment "${file.title}" has been graded: ${grade}%. Feedback: ${commentText}` :
+                `New comment on your assignment "${file.title}": ${commentText}`;
+                
+            const newMessage = {
+                id: Date.now() + Math.random(),
+                type: 'individual',
+                subject: notificationSubject,
+                body: notificationMessage,
+                senderEmail: currentUserEmail,
+                senderName: currentUserData.fullName,
+                recipients: [file.uploadedByEmail],
+                timestamp: new Date().toLocaleString(),
+                readBy: [currentUserEmail],
+                replies: []
+            };
+            globalMessages.push(newMessage);
+            
+            setTimeout(() => {
+                closeCommentModal();
+                renderStudentFiles();
+                updateStats();
+                showToast(isNewGrade ? 'Grade assigned and student notified!' : 'Comment added and student notified!');
+            }, 2000);
+        };
+
+        // Refresh submissions
+        const refreshSubmissions = () => {
+            renderStudentFiles();
+            updateStats();
+            showToast('Submissions refreshed!', 'info');
+        };
+
+        // Download file function
+        const downloadFile = (fileName, fileType) => {
+            if (!isLoggedIn) {
+                showToast('Please log in first', 'error');
+                return;
+            }
+
+            let fileData = null;
+            Object.values(dataCategories).forEach(category => {
+                const found = category.files.find(f => f.name === fileName || f.name.startsWith(fileName));
+                if (found) fileData = found;
+            });
+
+            if (!fileData) {
+                showToast('File not found', 'error');
+                return;
+            }
+
+            showToast(`Preparing download for ${fileName}...`);
+            
+            setTimeout(() => {
+                if (fileType === 'shapefile' && fileData.files) {
+                    // Download all shapefile components
+                    fileData.files.forEach((file, index) => {
+                        setTimeout(() => {
+                            const link = document.createElement('a');
+                            link.download = file;
+                            link.href = '#';
+                            document.body.appendChild(link);
+                            link.click();
+                            document.body.removeChild(link);
+
+                            if (index === 0) {
+                                const extension = file.split('.').pop();
+                                showToast(`Downloaded ${file} (.${extension} format)`);
+                            }
+                        }, index * 200);
+                    });
+
+                    setTimeout(() => {
+                        showToast(`All ${fileName} shapefile components downloaded! Files: ${fileData.files.join(', ')}`);
+                    }, fileData.files.length * 200 + 500);
+                } else {
+                    const link = document.createElement('a');
+                    link.download = fileData.name;
+                    link.href = '#';
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                    
+                    const extension = fileData.name.split('.').pop();
+                    showToast(`${fileName} downloaded successfully! (.${extension} format)`);
+                }
+            }, 800);
+        };
+
+        // Logout function
+        const logout = () => {
+            if (confirm('Are you sure you want to logout?')) {
+                isLoggedIn = false;
+                currentUser = null;
+                userRole = null;
+                currentUserEmail = null;
+                document.getElementById('userInfo').style.display = 'none';
+                document.getElementById('categories-container').innerHTML = '';
+                document.getElementById('assignments-container').innerHTML = '';
+                document.getElementById('messages-container').innerHTML = '';
+                document.getElementById('student-files-container').innerHTML = '';
+                document.getElementById('studentUploads').style.display = 'none';
+                document.getElementById('notificationCard').style.display = 'none';
+                document.getElementById('uploadBtn').style.display = 'none';
+                document.getElementById('uploadBtn2').style.display = 'none';
+                document.getElementById('composeBtn').style.display = 'none';
+                document.getElementById('studentQuickStart').style.display = 'none';
+                document.getElementById('lecturerQuickStart').style.display = 'none';
+                document.getElementById('totalFiles').textContent = '0';
+                document.getElementById('totalSize').textContent = '0';
+                document.getElementById('pendingGrades').textContent = '0';
+                document.getElementById('unreadNotifications').textContent = '0';
+                document.getElementById('overdueAssignments').textContent = '0';
+                showLoginModal();
+                showToast('Logged out successfully.');
+            }
+        };
+
+        // Render categories and files
+        const renderCategories = () => {
+            const container = document.getElementById('categories-container');
+            container.innerHTML = '';
+
+            Object.keys(dataCategories).forEach((key, index) => {
+                const category = dataCategories[key];
+
+                const categoryDiv = document.createElement('div');
+                categoryDiv.classList.add('category');
+
+                const headerButton = document.createElement('button');
+                headerButton.classList.add('category-header');
+                headerButton.setAttribute('aria-expanded', 'false');
+                headerButton.setAttribute('aria-controls', `files-${key}`);
+                headerButton.innerHTML = `
+                    <span>${category.name} (${category.files.length} files)</span>
+                    <span class="category-arrow">▶</span>
+                `;
+                headerButton.addEventListener('click', () => toggleCategory(key));
+                categoryDiv.appendChild(headerButton);
+
+                const filesDiv = document.createElement('div');
+                filesDiv.classList.add('files');
+                filesDiv.id = `files-${key}`;
+                filesDiv.setAttribute('role', 'region');
+                filesDiv.setAttribute('aria-label', `${category.name} files`);
+
+                category.files.forEach((file, fileIndex) => {
+                    const fileDiv = document.createElement('div');
+                    fileDiv.classList.add('file');
+                    fileDiv.innerHTML = `
+                        <div class="file-header">
+                            <div class="file-name">${file.icon} ${file.name}</div>
+                            <div class="file-meta">
+                                <div class="file-size">${file.size}</div>
+                            </div>
+                        </div>
+                        <div class="file-description">${file.content}</div>
+                        <div class="file-actions">
+                            <button class="download-btn" onclick="downloadFile('${file.name}', '${file.type}')">
+                                Download ${file.type === 'shapefile' ? 'All Files' : ''}
+                            </button>
+                        </div>
+                    `;
+                    filesDiv.appendChild(fileDiv);
+                });
+
+                categoryDiv.appendChild(filesDiv);
+                container.appendChild(categoryDiv);
+            });
+        };
+
+        // Toggle category visibility
+        const toggleCategory = (categoryKey) => {
+            const filesDiv = document.getElementById(`files-${categoryKey}`);
+            const headerButton = document.querySelector(`[aria-controls="files-${categoryKey}"]`);
+            const arrow = headerButton.querySelector('.category-arrow');
+            
+            if (filesDiv.classList.contains('expanded')) {
+                filesDiv.classList.remove('expanded');
+                arrow.classList.remove('expanded');
+                headerButton.setAttribute('aria-expanded', 'false');
+            } else {
+                filesDiv.classList.add('expanded');
+                arrow.classList.add('expanded');
+                headerButton.setAttribute('aria-expanded', 'true');
+            }
+        };
+
+        // Update statistics
+        const updateStats = () => {
+            let totalFiles = 0;
+            let totalSizeKB = 0;
+            let pendingGrades = 0;
+            let unreadMessages = 0;
+            let overdueAssignments = 0;
+            
+            // Count main repository files
+            Object.values(dataCategories).forEach(category => {
+                totalFiles += category.files.length;
+                category.files.forEach(file => {
+                    const sizeMatch = file.size.match(/(\d+(?:\.\d+)?)\s*(KB|MB)/i);
+                    if (sizeMatch) {
+                        const size = parseFloat(sizeMatch[1]);
+                        const unit = sizeMatch[2].toUpperCase();
+                        totalSizeKB += unit === 'MB' ? size * 1024 : size;
+                    }
+                });
+            });
+            
+            // Count student files
+            totalFiles += globalStudentFiles.length;
+            pendingGrades = globalStudentFiles.filter(f => f.grade === null).length;
+            
+            // Count overdue assignments for current user
+            if (userRole === 'student') {
+                overdueAssignments = weeklyAssignments.filter(assignment => {
+                    const isOverdue = new Date(assignment.dueDate) < new Date();
+                    const hasSubmission = globalStudentFiles.some(f => 
+                        f.weekNumber == assignment.week && f.uploadedBy === currentUser
+                    );
+                    return isOverdue && !hasSubmission;
+                }).length;
+            }
+            
+            // Count unread messages for current user
+            if (currentUserEmail) {
+                let messagesToCount = globalMessages;
+                if (userRole === 'student') {
+                    messagesToCount = globalMessages.filter(msg => 
+                        msg.type === 'announcement' || 
+                        msg.recipients.includes(currentUserEmail) ||
+                        msg.senderEmail === currentUserEmail
+                    );
+                } else if (userRole === 'lecturer') {
+                    messagesToCount = globalMessages.filter(msg => 
+                        msg.senderEmail === currentUserEmail ||
+                        msg.recipients.includes(currentUserEmail) ||
+                        msg.type === 'announcement'
+                    );
+                }
+                unreadMessages = messagesToCount.filter(msg => !msg.readBy.includes(currentUserEmail)).length;
+            }
+            
+            document.getElementById('totalFiles').textContent = totalFiles;
+            document.getElementById('totalSize').textContent = totalSizeKB > 1024 
+                ? `${(totalSizeKB / 1024).toFixed(1)} MB` 
+                : `${Math.round(totalSizeKB)} KB`;
+            document.getElementById('pendingGrades').textContent = pendingGrades;
+            document.getElementById('unreadNotifications').textContent = unreadMessages;
+            document.getElementById('overdueAssignments').textContent = overdueAssignments;
+        };
+
+        // Show toast notification
+        const showToast = (message, type = 'success') => {
+            if (currentToast) {
+                clearTimeout(currentToast);
+            }
+
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.className = `toast ${type}`;
+            toast.classList.add('show');
+            
+            currentToast = setTimeout(() => {
+                toast.classList.remove('show');
+                currentToast = null;
+            }, 4000);
+        };
+
+        // Update notifications display in sidebar
+        const updateNotifications = () => {
+            const notificationsList = document.getElementById('notifications-list');
+            if (!notificationsList) return;
+            
+            let messagesToShow = globalMessages;
+            if (userRole === 'student') {
+                messagesToShow = globalMessages.filter(msg => 
+                    msg.type === 'announcement' || 
+                    msg.recipients.includes(currentUserEmail) ||
+                    msg.senderEmail === currentUserEmail
+                );
+            } else if (userRole === 'lecturer') {
+                messagesToShow = globalMessages.filter(msg => 
+                    msg.senderEmail === currentUserEmail ||
+                    msg.recipients.includes(currentUserEmail) ||
+                    msg.type === 'announcement'
+                );
+            }
+            
+            const recentMessages = messagesToShow.slice(-5).reverse();
+            
+            if (recentMessages.length === 0) {
+                notificationsList.innerHTML = '<div style="color: #8b949e; font-size: 12px;">No messages yet</div>';
+                return;
+            }
+            
+            notificationsList.innerHTML = recentMessages.map(msg => {
+                const typeIcon = msg.type === 'announcement' ? '📢' : '✉️';
+                const isUnread = !msg.readBy.includes(currentUserEmail);
+                
+                return `
+                    <div style="padding: 10px 0; border-bottom: 1px solid #21262d; font-size: 12px;" onclick="markMessageRead('${msg.id}')">
+                        <div style="display: flex; align-items: center; gap: 5px; margin-bottom: 3px;">
+                            <span style="color: #58a6ff;">${typeIcon}</span>
+                            <span style="color: #58a6ff; font-weight: 600;">${msg.subject}</span>
+                            ${isUnread ? '<span class="notification-badge">NEW</span>' : ''}
+                        </div>
+                        <div style="color: #e6edf3; margin-bottom: 5px; font-size: 11px;">${msg.body.substring(0, 80)}${msg.body.length > 80 ? '...' : ''}</div>
+                        <div style="color: #8b949e; font-size: 10px;">
+                            From: ${msg.senderName} | ${msg.timestamp}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        };
+
+        // Add sample data for demo
+        const addSampleData = () => {
+            // Add sample student files if none exist
+            if (globalStudentFiles.length === 0) {
+                globalStudentFiles.push(
+                    {
+                        id: 1001,
+                        name: 'malaria_analysis.R',
+                        title: 'Malaria Data Analysis Project',
+                        course: 'DATA301',
+                        weekNumber: 3,
+                        description: 'Statistical analysis of malaria incidence data using R with advanced visualization techniques',
+                        size: '45 KB',
+                        type: 'application/x-r-script',
+                        icon: '📊',
+                        uploadedBy: 'student',
+                        uploadedByEmail: 'student@university.edu',
+                        assignedLecturer: 'dr_smith',
+                        uploadDate: '2025-08-28 14:30',
+                        grade: 85,
+                        comments: [
+                            {
+                                id: 1,
+                                author: 'dr_smith',
+                                authorName: 'Dr. Sarah Smith',
+                                authorEmail: 'dr.smith@university.edu',
+                                role: 'lecturer',
+                                text: 'Excellent statistical approach! Your use of ggplot2 for visualizations is particularly impressive. Consider adding confidence intervals to your trend analysis.',
+                                date: '2025-08-29 10:15'
+                            }
+                        ],
+                        status: 'graded'
+                    },
+                    {
+                        id: 1002,
+                        name: 'epi_report.pdf',
+                        title: 'Epidemiological Trends Report',
+                        course: 'EPI101',
+                        weekNumber: 4,
+                        description: 'Comprehensive analysis of epidemiological trends in West Africa with focus on vector-borne diseases',
+                        size: '2.1 MB',
+                        type: 'application/pdf',
+                        icon: '📄',
+                        uploadedBy: 'student',
+                        uploadedByEmail: 'student@university.edu',
+                        assignedLecturer: 'dr_smith',
+                        uploadDate: '2025-08-30 09:45',
+                        grade: null,
+                        comments: [],
+                        status: 'submitted'
+                    }
+                );
+
+                // Add sample messages
+                globalMessages.push(
+                    {
+                        id: 2001,
+                        type: 'announcement',
+                        subject: 'Welcome to the Fall 2025 Semester',
+                        body: 'Welcome everyone to the new semester! Please check your weekly assignments and make sure to submit all work on time. Office hours are Tuesdays and Thursdays 2-4 PM.',
+                        senderEmail: 'dr.smith@university.edu',
+                        senderName: 'Dr. Sarah Smith',
+                        recipients: ['student@university.edu'],
+                        timestamp: new Date(Date.now() - 86400000).toLocaleString(),
+                        readBy: ['dr.smith@university.edu'],
+                        replies: []
+                    },
+                    {
+                        id: 2002,
+                        type: 'individual',
+                        subject: 'Grade Posted: Malaria Data Analysis',
+                        body: 'Your assignment has been graded: 85%. Excellent work on the statistical analysis! Keep up the good work.',
+                        senderEmail: 'dr.smith@university.edu',
+                        senderName: 'Dr. Sarah Smith',
+                        recipients: ['student@university.edu'],
+                        timestamp: new Date(Date.now() - 3600000).toLocaleString(),
+                        readBy: ['dr.smith@university.edu'],
+                        replies: []
+                    }
+                );
+            }
+        };
+
+        // Initialize application
+        document.addEventListener('DOMContentLoaded', () => {
+            // Set up file input handler
+            const fileInput = document.getElementById('fileInput');
+            if (fileInput) {
+                fileInput.addEventListener('change', (e) => {
+                    handleFileSelect(e.target.files);
+                });
+            }
+
+            // Set up drag and drop
+            const uploadArea = document.querySelector('.upload-area');
+            if (uploadArea) {
+                ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+                    uploadArea.addEventListener(eventName, preventDefaults, false);
+                });
+
+                function preventDefaults(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                }
+
+                ['dragenter', 'dragover'].forEach(eventName => {
+                    uploadArea.addEventListener(eventName, () => {
+                        uploadArea.classList.add('dragover');
+                    }, false);
+                });
+
+                ['dragleave', 'drop'].forEach(eventName => {
+                    uploadArea.addEventListener(eventName, () => {
+                        uploadArea.classList.remove('dragover');
+                    }, false);
+                });
+
+                uploadArea.addEventListener('drop', (e) => {
+                    const files = e.dataTransfer.files;
+                    handleFileSelect(files);
+                }, false);
+            }
+
+            // Set up login
+            const loginBtn = document.getElementById('loginButton');
+            const usernameInput = document.getElementById('username');
+            const passwordInput = document.getElementById('password');
+            
+            if (loginBtn) loginBtn.onclick = simpleLogin;
+            
+            if (usernameInput) {
+                usernameInput.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                        if (passwordInput) passwordInput.focus();
+                    }
+                });
+            }
+
+            if (passwordInput) {
+                passwordInput.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                        simpleLogin();
+                    }
+                });
+            }
+
+            // Initialize data and show login
+            initializeWeeklyAssignments();
+            addSampleData();
+            updateStats();
+            showLoginModal();
+
+            // Load initial week content
+            loadWeekContent(currentWeek);
+        });
+    </script>
+</body>
+</html>

@@ -27,7 +27,7 @@
         .container {
             max-width: 1400px;
             margin: 0 auto;
-            padding: 0 5px;
+            padding: 0 20px;
         }
 
         .repo-header {
@@ -129,6 +129,7 @@
             border-radius: 6px;
             border: 1px solid #30363d;
             margin-bottom: 30px;
+            flex-wrap: wrap;
         }
 
         .stat-item {
@@ -146,8 +147,8 @@
 
         .main-content {
             display: grid;
-            grid-template-columns: 80% 20%;  
-            gap: 5px;
+            grid-template-columns: 1fr 300px;  
+            gap: 20px;
         }
 
         .categories-container {
@@ -431,7 +432,7 @@
         .sidebar {
             display: flex;
             flex-direction: column;
-            gap: 5px;
+            gap: 20px;
         }
 
         .info-card {
@@ -528,7 +529,7 @@
             display: block;
         }
 
-        .notes-content {
+        .notes-content, .files-content {
             padding: 20px;
             background: #0d1117;
             min-height: 400px;
@@ -576,6 +577,49 @@
             margin: 20px;
         }
 
+        .upload-area {
+            border: 2px dashed #30363d;
+            border-radius: 6px;
+            padding: 40px 20px;
+            text-align: center;
+            margin-bottom: 20px;
+            cursor: pointer;
+            transition: all 0.2s;
+            background: #161b22;
+        }
+
+        .upload-area:hover, .upload-area.dragover {
+            border-color: #58a6ff;
+            background: rgba(88, 166, 255, 0.1);
+        }
+
+        .upload-icon {
+            font-size: 48px;
+            margin-bottom: 10px;
+        }
+
+        .upload-text {
+            color: #e6edf3;
+            font-size: 16px;
+            margin-bottom: 5px;
+        }
+
+        .supported-formats {
+            color: #8b949e;
+            font-size: 12px;
+        }
+
+        .file-input {
+            display: none;
+        }
+
+        .upload-form {
+            background: #161b22;
+            padding: 20px;
+            border-radius: 6px;
+            border: 1px solid #30363d;
+        }
+
         /* Assignment Card Styles */
         .assignment-card {
             background: #161b22;
@@ -603,7 +647,7 @@
 
         .assignment-header {
             display: flex;
-            justify-content: between;
+            justify-content: space-between;
             align-items: center;
             margin-bottom: 10px;
         }
@@ -749,8 +793,10 @@
             border-radius: 8px;
             border: 1px solid #30363d;
             width: 90%;
-            max-width: 450px;
+            max-width: 500px;
             text-align: center;
+            max-height: 90vh;
+            overflow-y: auto;
         }
 
         .modal h2 {
@@ -899,6 +945,10 @@
         }
 
         @media (max-width: 768px) {
+            .container {
+                padding: 0 10px;
+            }
+
             .main-content {
                 grid-template-columns: 1fr;
             }
@@ -931,6 +981,16 @@
 
             .assignment-meta {
                 grid-template-columns: 1fr;
+            }
+
+            .tab-btn {
+                padding: 10px 8px;
+                font-size: 12px;
+            }
+
+            .modal-content {
+                width: 95%;
+                padding: 20px;
             }
         }
     </style>
@@ -989,14 +1049,14 @@
             <div>
                 <!-- Tab Navigation -->
                 <div class="tab-navigation">
-                    <button class="tab-btn active" onclick="switchTab('datasets')">Dataset Categories</button>
-                    <button class="tab-btn" onclick="switchTab('assignments')">Weekly Assignments</button>
-                    <button class="tab-btn" onclick="switchTab('messages')">Messages</button>
-                    <button class="tab-btn" onclick="switchTab('notes')">Course Notes</button>
-                    <button class="tab-btn" onclick="switchTab('webtools')">Chatbot</button>
-                    <button class="tab-btn" onclick="switchTab('code')">R Coding Practice</button>
-                    <button class="tab-btn" onclick="switchTab('snt')">SNT Code Library</button>
-                    <button class="tab-btn" onclick="switchTab('files')">MPR Outputs</button>
+                    <button class="tab-btn active" onclick="switchTab(event, 'datasets')">Dataset Categories</button>
+                    <button class="tab-btn" onclick="switchTab(event, 'assignments')">Weekly Assignments</button>
+                    <button class="tab-btn" onclick="switchTab(event, 'messages')">Messages</button>
+                    <button class="tab-btn" onclick="switchTab(event, 'notes')">Course Notes</button>
+                    <button class="tab-btn" onclick="switchTab(event, 'webtools')">Chatbot</button>
+                    <button class="tab-btn" onclick="switchTab(event, 'code')">R Coding Practice</button>
+                    <button class="tab-btn" onclick="switchTab(event, 'snt')">SNT Code Library</button>
+                    <button class="tab-btn" onclick="switchTab(event, 'files')">MPR Outputs</button>
                 </div>
 
                 <!-- Dataset Categories Tab -->
@@ -1064,10 +1124,11 @@
                         <div class="loading-message">Loading week content...</div>
                     </div>
                 </div>
-                <!-- Course Notes Tab -->
+
+                <!-- MPR Outputs Tab -->
                 <div class="categories-container tab-content" id="files-tab">
                     <div class="categories-header">
-                        <div class="categories-title">MPR outputs</div>
+                        <div class="categories-title">MPR Outputs</div>
                         <div>
                             <select id="fileSelect" onchange="switchFile()" style="background: #0d1117; color: #e6edf3; border: 1px solid #30363d; padding: 8px 12px; border-radius: 4px;">
                                 <option value="file1">File 1: Introduction to R</option>
@@ -1091,7 +1152,6 @@
                         <div class="loading-message">Loading file content...</div>
                     </div>
                 </div>
-
 
                 <!-- Web Tools Tab -->
                 <div class="categories-container tab-content" id="webtools-tab">
@@ -1117,26 +1177,26 @@
                     </div>
                 </div>
                 
-                <!-- General Knowledge Tab -->
+                <!-- R Coding Practice Tab -->
                 <div class="categories-container tab-content" id="code-tab">
                     <div class="categories-header">
                         <div class="categories-title">R Coding Practice</div>
                         <div>
-                            <button class="refresh-btn" onclick="refreshFrame()">🔄 Refresh</button>
+                            <button class="refresh-btn" onclick="refreshFrame('code')">🔄 Refresh</button>
                         </div>
                     </div>
                     
                     <!-- URL Content Container -->
-                    <div class="web-content" id="web-content-container">
+                    <div class="web-content" id="code-content-container">
                         <!-- Embedded URL will load here -->
                         <iframe 
-                            id="embeddedFrame"
+                            id="codeFrame"
                             src="https://webr.sh/?embed=true" 
                             class="web-frame"
                             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                             sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-presentation"
-                            onload="showToast('Content loaded successfully', 'success')"
-                            onerror="handleFrameError()">
+                            onload="showToast('R coding environment loaded', 'success')"
+                            onerror="handleFrameError('code')">
                         </iframe>
                     </div>
                 </div>
@@ -1146,21 +1206,21 @@
                     <div class="categories-header">
                         <div class="categories-title">SNT Code Library</div>
                         <div>
-                            <button class="refresh-btn" onclick="refreshFrame()">🔄 Refresh</button>
+                            <button class="refresh-btn" onclick="refreshFrame('snt')">🔄 Refresh</button>
                         </div>
                     </div>
                     
                     <!-- URL Content Container -->
-                    <div class="web-content" id="web-content-container">
+                    <div class="web-content" id="snt-content-container">
                         <!-- Embedded URL will load here -->
                         <iframe 
-                            id="embeddedFrame"
+                            id="sntFrame"
                             src="https://ahadi-analytics.github.io/snt-code-library/?embed=true" 
                             class="web-frame"
                             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                             sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-presentation"
-                            onload="showToast('Content loaded successfully', 'success')"
-                            onerror="handleFrameError()">
+                            onload="showToast('SNT code library loaded', 'success')"
+                            onerror="handleFrameError('snt')">
                         </iframe>
                     </div>
                 </div>
@@ -1744,7 +1804,8 @@
                 `;
             } 
         };
-        // Fixed file content loading function
+
+        // File content loading function
         const loadFileContent = async (fileName) => {
             const container = document.getElementById('file-content-container');
             
@@ -1770,7 +1831,6 @@
                         Could not load ${fileName}. Please ensure the file exists in the same directory as this HTML file.<br>
                         <small>Error: ${error.message}</small><br><br>
                         <em>Expected files:</em><br>
-                        • allmis.html<br>
                         • file1.html<br>
                         • file2.html<br>
                         • ... (or whatever your actual file names are)
@@ -1779,7 +1839,6 @@
             } 
         };
 
-
         // Switch between weeks in notes
         const switchWeek = async () => {
             const selectedWeek = document.getElementById('weekSelect').value;
@@ -1787,8 +1846,15 @@
             await loadWeekContent(selectedWeek);
         };
 
+        // Switch between files in MPR outputs
+        const switchFile = async () => {
+            const selectedFile = document.getElementById('fileSelect').value;
+            await loadFileContent(selectedFile + '.html');
+        };
+
         // Switch between tabs
-        const switchTab = async (tabName) => {
+        const switchTab = async (event, tabName) => {
+            // Remove active class from all tabs and buttons
             document.querySelectorAll('.tab-content').forEach(tab => {
                 tab.classList.remove('active');
             });
@@ -1797,9 +1863,11 @@
                 btn.classList.remove('active');
             });
             
+            // Add active class to selected tab and button
             document.getElementById(`${tabName}-tab`).classList.add('active');
             event.target.classList.add('active');
             
+            // Load content based on tab
             if (tabName === 'datasets') {
                 renderCategories();
             } else if (tabName === 'assignments') {
@@ -1808,8 +1876,14 @@
                 renderMessages();
             } else if (tabName === 'notes') {
                 await loadWeekContent(currentWeek);
+            } else if (tabName === 'files') {
+                await loadFileContent('file1.html');
             } else if (tabName === 'webtools') {
                 initializeWebTools();
+            } else if (tabName === 'code') {
+                initializeCodeTab();
+            } else if (tabName === 'snt') {
+                initializeSNTTab();
             }
         };
 
@@ -1821,11 +1895,38 @@
             }
         };
 
+        // Initialize code tab
+        const initializeCodeTab = () => {
+            const iframe = document.getElementById('codeFrame');
+            if (iframe) {
+                console.log('Code tab initialized with embedded URL:', iframe.src);
+            }
+        };
+
+        // Initialize SNT tab
+        const initializeSNTTab = () => {
+            const iframe = document.getElementById('sntFrame');
+            if (iframe) {
+                console.log('SNT tab initialized with embedded URL:', iframe.src);
+            }
+        };
+
         // Handle iframe loading error
-        const handleFrameError = () => {
-            const container = document.getElementById('web-content-container');
-            const iframe = document.getElementById('embeddedFrame');
-            const url = iframe ? iframe.src : 'Unknown URL';
+        const handleFrameError = (frameType = 'web') => {
+            let container, iframe, url;
+            
+            if (frameType === 'code') {
+                container = document.getElementById('code-content-container');
+                iframe = document.getElementById('codeFrame');
+            } else if (frameType === 'snt') {
+                container = document.getElementById('snt-content-container');
+                iframe = document.getElementById('sntFrame');
+            } else {
+                container = document.getElementById('web-content-container');
+                iframe = document.getElementById('embeddedFrame');
+            }
+            
+            url = iframe ? iframe.src : 'Unknown URL';
             
             container.innerHTML = `
                 <div class="url-error">
@@ -1838,8 +1939,17 @@
         };
 
         // Refresh the current iframe
-        const refreshFrame = () => {
-            const iframe = document.getElementById('embeddedFrame');
+        const refreshFrame = (frameType = 'web') => {
+            let iframe;
+            
+            if (frameType === 'code') {
+                iframe = document.getElementById('codeFrame');
+            } else if (frameType === 'snt') {
+                iframe = document.getElementById('sntFrame');
+            } else {
+                iframe = document.getElementById('embeddedFrame');
+            }
+            
             if (iframe) {
                 iframe.src = iframe.src;
                 showToast('Refreshing content...', 'info');
@@ -1937,6 +2047,7 @@
             }
             
             renderStudentFiles();
+            updateNotifications();
         };
 
         // Render weekly assignments
@@ -2184,6 +2295,7 @@
                 closeComposeModal();
                 renderMessages();
                 updateStats();
+                updateNotifications();
                 showToast('Message sent successfully!');
             }, 2000);
         };
@@ -2254,6 +2366,7 @@
                 message.readBy.push(currentUserEmail);
                 renderMessages();
                 updateStats();
+                updateNotifications();
             }
         };
 
@@ -2286,6 +2399,7 @@
         const refreshMessages = () => {
             renderMessages();
             updateStats();
+            updateNotifications();
             showToast('Messages refreshed!', 'info');
         };
 
@@ -2306,6 +2420,8 @@
             document.getElementById('course').value = '';
             document.getElementById('weekNumber').value = '';
             document.getElementById('description').value = '';
+            document.getElementById('uploadError').style.display = 'none';
+            document.getElementById('uploadSuccess').style.display = 'none';
         };
 
         // Handle file selection
@@ -2933,7 +3049,7 @@
                 const isUnread = !msg.readBy.includes(currentUserEmail);
                 
                 return `
-                    <div style="padding: 10px 0; border-bottom: 1px solid #21262d; font-size: 12px;" onclick="markMessageRead('${msg.id}')">
+                    <div style="padding: 10px 0; border-bottom: 1px solid #21262d; font-size: 12px; cursor: pointer;" onclick="markMessageRead('${msg.id}')">
                         <div style="display: flex; align-items: center; gap: 5px; margin-bottom: 3px;">
                             <span style="color: #58a6ff;">${typeIcon}</span>
                             <span style="color: #58a6ff; font-weight: 600;">${msg.subject}</span>

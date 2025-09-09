@@ -1620,7 +1620,7 @@
         let currentToast = null;
         let currentWeek = 'week1';
         let selectedMessageForReply = null;
-
+        
         // Predefined users (managed in backend)
         let userDatabase = {
             'admin': { 
@@ -1669,11 +1669,11 @@
                 assignedLecturer: null
             }
         };
-
+        
         let globalMessages = [];
         let globalStudentFiles = [];
         let weeklyAssignments = [];
-
+        
         // Weekly assignments with due dates
         const initializeWeeklyAssignments = () => {
             const assignments = [
@@ -1798,14 +1798,22 @@
                     requirements: ['Complete analysis', 'Final presentation', 'All source code', 'Written report']
                 }
             ];
-
-            weeklyAssignments = assignments.map(assignment => ({
-                ...assignment,
-                submissions: [],
-                isOverdue: new Date(assignment.dueDate) < new Date()
-            }));
+        
+            weeklyAssignments = assignments.map(assignment => {
+                const dueDate = new Date(assignment.dueDate);
+                const currentDate = new Date();
+                const daysUntilDue = Math.ceil((dueDate - currentDate) / (1000 * 60 * 60 * 24));
+                
+                return {
+                    ...assignment,
+                    submissions: [],
+                    isOverdue: dueDate < currentDate,
+                    isAvailable: daysUntilDue <= 7, // Available only 7 days or less before due date
+                    daysUntilAvailable: Math.max(0, daysUntilDue - 7)
+                };
+            });
         };
-
+        
         // Sample files for each category
         const shapefiles = [
             { 
@@ -1827,47 +1835,47 @@
                 files: ['District2021.shp', 'District2021.shx', 'District2021.dbf']
             }
         ];
-
+        
         const epiRoutineFiles = [
             { name: 'epi_data_2021.xlsx', size: '856 KB', type: 'excel', icon: '📊', path: '/data/epi/epi_data_2021.xlsx', content: 'Excel file with comprehensive epidemiological data at district and chiefdom level including case counts and demographics.' }
         ];
-
+        
         const interventionFiles = [
             { name: 'intervention_2021.xlsx', size: '512 KB', type: 'excel', icon: '📊', path: '/data/intervention/intervention_2021.xlsx', content: 'Intervention coverage data for 2021 including vaccination rates and treatment coverage statistics.' }
         ];
-
+        
         const campaignSurveyFiles = [
             { name: 'survey_2021.xlsx', size: '768 KB', type: 'excel', icon: '📊', path: '/data/survey/survey_2021.xlsx', content: 'Survey and campaign data for 2021 with population health indicators and campaign effectiveness metrics.' }
         ];
-
+        
         const reportFiles = [
             { name: 'annual_report_2021.pdf', size: '1.2 MB', type: 'pdf', icon: '📄', path: '/data/reports/annual_report_2021.pdf', content: 'Comprehensive annual epidemiological report for 2021 with analysis and recommendations.' }
         ];
-
+        
         const otherFiles = [
             { name: 'comparative_analysis_2021.xlsx', size: '856 KB', type: 'excel', icon: '📊', path: '/data/historical/comparative_analysis_2021.xlsx', content: 'Excel file containing 2021 epidemiological data with district and chiefdom comparative analysis.' }
         ];
-
+        
         const notesFiles = [
             { name: 'research_notes_2021.md', size: '125 KB', type: 'markdown', icon: '📝', path: '/notes/research_notes_2021.md', content: 'Comprehensive research notes and methodology documentation for 2021 epidemiological studies.' },
             { name: 'field_observations.txt', size: '89 KB', type: 'text', icon: '📋', path: '/notes/field_observations.txt', content: 'Field observation notes from data collection activities across various districts and chiefdoms.' },
             { name: 'meeting_minutes_Q3.docx', size: '256 KB', type: 'document', icon: '📄', path: '/notes/meeting_minutes_Q3.docx', content: 'Meeting minutes from Q3 2021 stakeholder meetings and project planning sessions.' }
         ];
-
+        
         const codeRepositoryFiles = [
             { name: 'data_cleaning.R', size: '78 KB', type: 'r-script', icon: '🧹', path: '/code/data_cleaning.R', content: 'R script for cleaning and preprocessing epidemiological datasets before analysis.' },
             { name: 'visualization_toolkit.R', size: '156 KB', type: 'r-script', icon: '📊', path: '/code/visualization_toolkit.R', content: 'Comprehensive R toolkit for creating epidemiological data visualizations and maps.' },
             { name: 'analysis_pipeline.py', size: '134 KB', type: 'python', icon: '🐍', path: '/code/analysis_pipeline.py', content: 'Python pipeline for automated epidemiological data analysis and reporting.' },
             { name: 'spatial_analysis.R', size: '203 KB', type: 'r-script', icon: '🗺️', path: '/code/spatial_analysis.R', content: 'Advanced spatial analysis functions for geographic epidemiological data processing.' }
         ];
-
+        
         const sntCodeLibraryFiles = [
             { name: 'snt_core_functions.R', size: '267 KB', type: 'r-script', icon: '⚙️', path: '/snt-lib/snt_core_functions.R', content: 'SNT Core library with essential functions for surveillance and tracking analysis.' },
             { name: 'snt_data_models.R', size: '198 KB', type: 'r-script', icon: '🔧', path: '/snt-lib/snt_data_models.R', content: 'SNT data modeling framework for epidemiological surveillance systems.' },
             { name: 'snt_dashboard_components.js', size: '345 KB', type: 'javascript', icon: '📱', path: '/snt-lib/snt_dashboard_components.js', content: 'JavaScript components for SNT surveillance dashboards and real-time monitoring.' },
             { name: 'snt_api_client.py', size: '112 KB', type: 'python', icon: '🔌', path: '/snt-lib/snt_api_client.py', content: 'Python API client for SNT surveillance system integration and data synchronization.' }
         ];
-
+        
         // Data categories
         const dataCategories = {
             'shapefiles': { name: 'Shapefiles', files: [...shapefiles] },
@@ -1880,7 +1888,7 @@
             'snt_code_library': { name: 'SNT Code Library', files: [...sntCodeLibraryFiles] },
             'other': { name: 'Other Files', files: [...otherFiles] }
         };
-
+        
         // Week content loading function
         const loadWeekContent = async (weekNumber) => {
             const container = document.getElementById('week-content-container');
@@ -1915,6 +1923,7 @@
                 `;
             } 
         };
+        
         // Load file content
         const loadFileContent = async (fileName) => {
             const container = document.getElementById('file-content-container');
@@ -1950,19 +1959,20 @@
                 `;
             } 
         };
+        
         // Switch between weeks in notes
         const switchWeek = async () => {
             const selectedWeek = document.getElementById('weekSelect').value;
             currentWeek = selectedWeek;
             await loadWeekContent(selectedWeek);
         };
-
+        
         // Switch between files in MPR outputs
         const switchFile = async () => {
             const selectedFile = document.getElementById('fileSelect').value;
             await loadFileContent(selectedFile + '.html');
         };
-
+        
         // Switch between tabs
         const switchTab = async (event, tabName) => {
             // Remove active class from all tabs and buttons
@@ -1997,7 +2007,7 @@
                 initializeSNTTab();
             }
         };
-
+        
         // Initialize web tools tab
         const initializeWebTools = () => {
             const iframe = document.getElementById('embeddedFrame');
@@ -2005,7 +2015,7 @@
                 console.log('Web Tools tab initialized with embedded URL:', iframe.src);
             }
         };
-
+        
         // Initialize code tab
         const initializeCodeTab = () => {
             const iframe = document.getElementById('codeFrame');
@@ -2013,7 +2023,7 @@
                 console.log('Code tab initialized with embedded URL:', iframe.src);
             }
         };
-
+        
         // Initialize SNT tab
         const initializeSNTTab = () => {
             const iframe = document.getElementById('sntFrame');
@@ -2021,7 +2031,7 @@
                 console.log('SNT tab initialized with embedded URL:', iframe.src);
             }
         };
-
+        
         // Handle iframe loading error
         const handleFrameError = (frameType = 'web') => {
             let container, iframe, url;
@@ -2048,7 +2058,7 @@
                 </div>
             `;
         };
-
+        
         // Refresh the current iframe
         const refreshFrame = (frameType = 'web') => {
             let iframe;
@@ -2068,12 +2078,12 @@
                 showToast('No content to refresh', 'error');
             }
         };
-
+        
         // Open URL in new tab
         const openInNewTab = (url) => {
             window.open(url, '_blank');
         };
-
+        
         // Show login modal
         const showLoginModal = () => {
             const modal = document.getElementById('loginModal');
@@ -2082,7 +2092,7 @@
                 document.getElementById('username').focus();
             }, 100);
         };
-
+        
         // Simple login function
         const simpleLogin = () => {
             const user = document.getElementById('username').value.trim();
@@ -2121,7 +2131,7 @@
                 document.getElementById('password').value = '';
             }
         };
-
+        
         // Setup user interface based on role
         const setupUserInterface = () => {
             const studentUploads = document.getElementById('studentUploads');
@@ -2131,7 +2141,7 @@
             const studentQuickStart = document.getElementById('studentQuickStart');
             const lecturerQuickStart = document.getElementById('lecturerQuickStart');
             const notificationCard = document.getElementById('notificationCard');
-
+        
             // Reset visibility
             studentUploads.style.display = 'none';
             uploadBtn.style.display = 'none';
@@ -2140,7 +2150,7 @@
             studentQuickStart.style.display = 'none';
             lecturerQuickStart.style.display = 'none';
             notificationCard.style.display = 'none';
-
+        
             if (userRole === 'student') {
                 studentUploads.style.display = 'block';
                 uploadBtn.style.display = 'inline-block';
@@ -2160,26 +2170,48 @@
             renderStudentFiles();
             updateNotifications();
         };
-
-        // Render weekly assignments
+        
+        // Add a refresh function to update assignment availability
+        const refreshAssignmentAvailability = () => {
+            weeklyAssignments.forEach(assignment => {
+                const dueDate = new Date(assignment.dueDate);
+                const currentDate = new Date();
+                const daysUntilDue = Math.ceil((dueDate - currentDate) / (1000 * 60 * 60 * 24));
+                
+                assignment.isOverdue = dueDate < currentDate;
+                assignment.isAvailable = daysUntilDue <= 7;
+                assignment.daysUntilAvailable = Math.max(0, daysUntilDue - 7);
+            });
+        };
+        
+        // Render weekly assignments with locking functionality
         const renderAssignments = () => {
             const container = document.getElementById('assignments-container');
             container.innerHTML = '';
-
+        
             if (weeklyAssignments.length === 0) {
                 container.innerHTML = '<div style="padding: 20px; text-align: center; color: #8b949e;">No assignments available yet.</div>';
                 return;
             }
-
+        
             weeklyAssignments.forEach((assignment, index) => {
-                const isOverdue = new Date(assignment.dueDate) < new Date();
+                const dueDate = new Date(assignment.dueDate);
+                const currentDate = new Date();
+                const daysUntilDue = Math.ceil((dueDate - currentDate) / (1000 * 60 * 60 * 24));
+                const isOverdue = dueDate < currentDate;
+                const isAvailable = daysUntilDue <= 7;
+                const daysUntilAvailable = Math.max(0, daysUntilDue - 7);
+                
                 const hasSubmission = userRole === 'student' && 
                     globalStudentFiles.some(f => f.weekNumber == assignment.week && f.uploadedBy === currentUser);
                 
                 let statusClass = 'pending';
                 let statusText = 'Not Submitted';
                 
-                if (hasSubmission) {
+                if (!isAvailable && !hasSubmission) {
+                    statusClass = 'locked';
+                    statusText = `Locked (${daysUntilAvailable} days)`;
+                } else if (hasSubmission) {
                     const submission = globalStudentFiles.find(f => f.weekNumber == assignment.week && f.uploadedBy === currentUser);
                     if (submission.grade !== null) {
                         statusClass = 'graded';
@@ -2191,30 +2223,48 @@
                 } else if (isOverdue) {
                     statusClass = 'overdue';
                     statusText = 'Overdue';
+                } else if (isAvailable) {
+                    statusClass = 'available';
+                    statusText = 'Available';
                 }
-
+        
                 const assignmentDiv = document.createElement('div');
                 assignmentDiv.classList.add('assignment-card', statusClass);
                 
-                const daysUntilDue = Math.ceil((new Date(assignment.dueDate) - new Date()) / (1000 * 60 * 60 * 24));
-                const dueText = isOverdue ? `${Math.abs(daysUntilDue)} days overdue` : 
+                let dueText;
+                if (!isAvailable && !hasSubmission) {
+                    dueText = `Available in ${daysUntilAvailable} days (${assignment.dueDate})`;
+                } else {
+                    dueText = isOverdue ? `${Math.abs(daysUntilDue)} days overdue` : 
                                daysUntilDue === 0 ? 'Due today' : `${daysUntilDue} days remaining`;
-
+                }
+        
                 assignmentDiv.innerHTML = `
                     <div class="assignment-header">
-                        <div class="assignment-title">Week ${assignment.week}: ${assignment.title}</div>
+                        <div class="assignment-title">
+                            ${!isAvailable && !hasSubmission ? '🔒 ' : ''}Week ${assignment.week}: ${assignment.title}
+                        </div>
                         <div class="assignment-status ${statusClass}">${statusText}</div>
                     </div>
                     <div class="assignment-meta">
                         <div><strong>Course:</strong> ${assignment.course}</div>
-                        <div><strong>Due:</strong> ${assignment.dueDate} (${dueText})</div>
+                        <div><strong>Due:</strong> ${dueText}</div>
                         <div><strong>Points:</strong> ${assignment.totalPoints}</div>
                         <div><strong>Requirements:</strong> ${assignment.requirements.length} items</div>
                     </div>
-                    <div class="assignment-description">${assignment.description}</div>
+                    <div class="assignment-description">
+                        ${!isAvailable && !hasSubmission ? 
+                            `<div style="color: #f85149; font-weight: 500; margin-bottom: 10px;">🔒 This assignment will be available ${daysUntilAvailable} days before the due date.</div>` : 
+                            ''
+                        }
+                        ${assignment.description}
+                    </div>
                     <div class="assignment-actions">
-                        ${userRole === 'student' && !hasSubmission ? 
+                        ${userRole === 'student' && !hasSubmission && isAvailable ? 
                             `<button class="upload-btn" onclick="openUploadForAssignment(${assignment.week})">Submit Assignment</button>` : ''
+                        }
+                        ${userRole === 'student' && !hasSubmission && !isAvailable ? 
+                            `<button class="upload-btn" style="opacity: 0.5; cursor: not-allowed;" disabled title="Assignment locked until ${daysUntilAvailable} days before due date">Submit Assignment (Locked)</button>` : ''
                         }
                         ${hasSubmission ? 
                             `<button class="download-btn" onclick="viewSubmission(${assignment.week})">View Submission</button>` : ''
@@ -2228,22 +2278,28 @@
                         <ul style="margin: 5px 0 0 20px; color: #8b949e;">
                             ${assignment.requirements.map(req => `<li>${req}</li>`).join('')}
                         </ul>
+                        ${!isAvailable && !hasSubmission ? 
+                            `<div style="margin-top: 10px; padding: 8px; background: rgba(248, 81, 73, 0.1); border-radius: 4px; border-left: 3px solid #f85149;">
+                                <strong style="color: #f85149;">Assignment Policy:</strong> Assignments become available 7 days before the due date to encourage proper time management and prevent last-minute submissions.
+                            </div>` : 
+                            ''
+                        }
                     </div>
                 `;
                 container.appendChild(assignmentDiv);
             });
         };
-
+        
         // Render messages
         const renderMessages = () => {
             const container = document.getElementById('messages-container');
             container.innerHTML = '';
-
+        
             if (globalMessages.length === 0) {
                 container.innerHTML = '<div style="padding: 20px; text-align: center; color: #8b949e;">No messages yet.</div>';
                 return;
             }
-
+        
             // Filter messages based on user role
             let messagesToShow = globalMessages;
             
@@ -2260,19 +2316,19 @@
                     msg.type === 'announcement'
                 );
             }
-
+        
             messagesToShow.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
-
+        
             messagesToShow.forEach((message, index) => {
                 const isUnread = !message.readBy.includes(currentUserEmail);
                 const messageDiv = document.createElement('div');
                 messageDiv.classList.add('message-card');
                 if (isUnread) messageDiv.classList.add('unread');
                 if (message.type === 'announcement') messageDiv.classList.add('announcement');
-
+        
                 const typeIcon = message.type === 'announcement' ? '📢' : 
                                 message.type === 'individual' ? '✉️' : '👥';
-
+        
                 messageDiv.innerHTML = `
                     <div class="message-header">
                         <div class="message-subject">${typeIcon} ${message.subject}</div>
@@ -2305,13 +2361,13 @@
                 container.appendChild(messageDiv);
             });
         };
-
+        
         // Message handling functions
         const showComposeModal = () => {
             document.getElementById('composeModal').style.display = 'flex';
             populateRecipients();
         };
-
+        
         const closeComposeModal = () => {
             document.getElementById('composeModal').style.display = 'none';
             document.getElementById('messageType').value = '';
@@ -2321,7 +2377,7 @@
             document.getElementById('composeError').style.display = 'none';
             document.getElementById('composeSuccess').style.display = 'none';
         };
-
+        
         const handleMessageTypeChange = () => {
             const messageType = document.getElementById('messageType').value;
             const recipientGroup = document.getElementById('recipientGroup');
@@ -2333,7 +2389,7 @@
                 populateRecipients();
             }
         };
-
+        
         const populateRecipients = () => {
             const messageType = document.getElementById('messageType').value;
             const recipientSelect = document.getElementById('messageRecipient');
@@ -2350,7 +2406,7 @@
                 });
             }
         };
-
+        
         const sendMessage = () => {
             const messageType = document.getElementById('messageType').value;
             const subject = document.getElementById('messageSubject').value.trim();
@@ -2410,7 +2466,7 @@
                 showToast('Message sent successfully!');
             }, 2000);
         };
-
+        
         const showReplyModal = (messageId) => {
             selectedMessageForReply = messageId;
             const message = globalMessages.find(m => m.id == messageId);
@@ -2423,7 +2479,7 @@
                 document.getElementById('replyModal').style.display = 'flex';
             }
         };
-
+        
         const closeReplyModal = () => {
             document.getElementById('replyModal').style.display = 'none';
             document.getElementById('replyText').value = '';
@@ -2431,7 +2487,7 @@
             document.getElementById('replySuccess').style.display = 'none';
             selectedMessageForReply = null;
         };
-
+        
         const sendReply = () => {
             const replyText = document.getElementById('replyText').value.trim();
             const replyError = document.getElementById('replyError');
@@ -2470,7 +2526,7 @@
                 }, 2000);
             }
         };
-
+        
         const markMessageRead = (messageId) => {
             const message = globalMessages.find(m => m.id == messageId);
             if (message && !message.readBy.includes(currentUserEmail)) {
@@ -2480,13 +2536,30 @@
                 updateNotifications();
             }
         };
-
-        // Assignment handling functions
+        
+        // Assignment handling functions with locking checks
         const openUploadForAssignment = (weekNumber) => {
+            const assignment = weeklyAssignments.find(a => a.week === weekNumber);
+            if (!assignment) {
+                showToast('Assignment not found', 'error');
+                return;
+            }
+            
+            const dueDate = new Date(assignment.dueDate);
+            const currentDate = new Date();
+            const daysUntilDue = Math.ceil((dueDate - currentDate) / (1000 * 60 * 60 * 24));
+            const isAvailable = daysUntilDue <= 7;
+            
+            if (!isAvailable) {
+                const daysUntilAvailable = daysUntilDue - 7;
+                showToast(`Assignment is locked. It will be available in ${daysUntilAvailable} days.`, 'error');
+                return;
+            }
+            
             document.getElementById('weekNumber').value = weekNumber;
             showUploadModal();
         };
-
+        
         const viewSubmission = (weekNumber) => {
             const submission = globalStudentFiles.find(f => f.weekNumber == weekNumber && f.uploadedBy === currentUser);
             if (submission) {
@@ -2494,26 +2567,27 @@
                 // In a real app, this would open the file or show details
             }
         };
-
+        
         const viewAssignmentSubmissions = (weekNumber) => {
             const submissions = globalStudentFiles.filter(f => f.weekNumber == weekNumber);
             showToast(`Week ${weekNumber} has ${submissions.length} submission(s)`);
             // In a real app, this would show all submissions for grading
         };
-
+        
         const refreshAssignments = () => {
+            refreshAssignmentAvailability(); // Update availability before rendering
             renderAssignments();
             updateStats();
             showToast('Assignments refreshed!', 'info');
         };
-
+        
         const refreshMessages = () => {
             renderMessages();
             updateStats();
             updateNotifications();
             showToast('Messages refreshed!', 'info');
         };
-
+        
         // Upload modal functions
         const showUploadModal = () => {
             if (userRole !== 'student') {
@@ -2522,7 +2596,7 @@
             }
             document.getElementById('uploadModal').style.display = 'flex';
         };
-
+        
         const closeUploadModal = () => {
             document.getElementById('uploadModal').style.display = 'none';
             document.getElementById('uploadForm').style.display = 'none';
@@ -2534,7 +2608,7 @@
             document.getElementById('uploadError').style.display = 'none';
             document.getElementById('uploadSuccess').style.display = 'none';
         };
-
+        
         // Handle file selection
         const handleFileSelect = (files) => {
             const uploadForm = document.getElementById('uploadForm');
@@ -2564,7 +2638,7 @@
             uploadForm.style.display = 'block';
             showToast(`${files.length} file(s) selected for upload`);
         };
-
+        
         // Submit upload
         const submitUpload = () => {
             const files = document.getElementById('fileInput').files;
@@ -2582,6 +2656,22 @@
                 uploadError.textContent = 'Please fill in all required fields and select files.';
                 uploadError.style.display = 'block';
                 return;
+            }
+            
+            // Check if assignment is still available for submission
+            const assignment = weeklyAssignments.find(a => a.week == weekNumber);
+            if (assignment) {
+                const dueDate = new Date(assignment.dueDate);
+                const currentDate = new Date();
+                const daysUntilDue = Math.ceil((dueDate - currentDate) / (1000 * 60 * 60 * 24));
+                const isAvailable = daysUntilDue <= 7;
+                
+                if (!isAvailable) {
+                    const daysUntilAvailable = daysUntilDue - 7;
+                    uploadError.textContent = `Assignment is locked. It will be available in ${daysUntilAvailable} days.`;
+                    uploadError.style.display = 'block';
+                    return;
+                }
             }
             
             const currentUserData = userDatabase[currentUser];
@@ -2646,7 +2736,7 @@
                 showToast('Assignment uploaded and lecturer notified!');
             }, 2000);
         };
-
+        
         // Get file icon based on extension
         const getFileIcon = (fileName) => {
             const extension = fileName.split('.').pop().toLowerCase();
@@ -2661,7 +2751,7 @@
                 default: return '📁';
             }
         };
-
+        
         // Format file size
         const formatFileSize = (bytes) => {
             if (bytes === 0) return '0 B';
@@ -2670,17 +2760,17 @@
             const i = Math.floor(Math.log(bytes) / Math.log(k));
             return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
         };
-
+        
         // Render student files
         const renderStudentFiles = () => {
             const container = document.getElementById('student-files-container');
             container.innerHTML = '';
-
+        
             if (globalStudentFiles.length === 0) {
                 container.innerHTML = '<div style="padding: 20px; text-align: center; color: #8b949e;">No assignments uploaded yet.</div>';
                 return;
             }
-
+        
             // Filter files based on user role and assignments
             let filesToShow = globalStudentFiles;
             
@@ -2689,7 +2779,7 @@
             } else if (userRole === 'lecturer') {
                 filesToShow = globalStudentFiles.filter(f => f.assignedLecturer === currentUser);
             }
-
+        
             if (filesToShow.length === 0) {
                 const message = userRole === 'lecturer' ? 
                     'No submissions from your assigned students yet.' : 
@@ -2697,7 +2787,7 @@
                 container.innerHTML = `<div style="padding: 20px; text-align: center; color: #8b949e;">${message}</div>`;
                 return;
             }
-
+        
             filesToShow.forEach((file, index) => {
                 const isOwnFile = file.uploadedBy === currentUser;
                 const canComment = userRole === 'lecturer' || userRole === 'admin';
@@ -2754,7 +2844,7 @@
                 container.appendChild(fileDiv);
             });
         };
-
+        
         // Download student file
         const downloadStudentFile = (fileId) => {
             const file = globalStudentFiles.find(f => f.id == fileId);
@@ -2762,7 +2852,7 @@
                 showToast('File not found', 'error');
                 return;
             }
-
+        
             const link = document.createElement('a');
             link.download = file.name;
             link.href = '#';
@@ -2773,7 +2863,7 @@
             const extension = file.name.split('.').pop();
             showToast(`${file.name} downloaded successfully! (.${extension} format)`);
         };
-
+        
         // Show comment modal
         const showCommentModal = (fileId) => {
             selectedFile = fileId;
@@ -2782,7 +2872,7 @@
             document.getElementById('gradeInput').value = '';
             document.getElementById('commentText').value = '';
         };
-
+        
         // Show grade modal
         const showGradeModal = (fileId) => {
             selectedFile = fileId;
@@ -2794,7 +2884,7 @@
             document.getElementById('commentTitle').textContent = 'Grade Assignment';
             document.getElementById('commentText').value = '';
         };
-
+        
         // Close comment modal
         const closeCommentModal = () => {
             document.getElementById('commentModal').style.display = 'none';
@@ -2804,7 +2894,7 @@
             document.getElementById('commentSuccess').style.display = 'none';
             selectedFile = null;
         };
-
+        
         // Submit comment and grade
         const submitComment = () => {
             const grade = document.getElementById('gradeInput').value;
@@ -2884,32 +2974,32 @@
                 showToast(isNewGrade ? 'Grade assigned and student notified!' : 'Comment added and student notified!');
             }, 2000);
         };
-
+        
         // Refresh submissions
         const refreshSubmissions = () => {
             renderStudentFiles();
             updateStats();
             showToast('Submissions refreshed!', 'info');
         };
-
+        
         // Download file function
         const downloadFile = (fileName, fileType) => {
             if (!isLoggedIn) {
                 showToast('Please log in first', 'error');
                 return;
             }
-
+        
             let fileData = null;
             Object.values(dataCategories).forEach(category => {
                 const found = category.files.find(f => f.name === fileName || f.name.startsWith(fileName));
                 if (found) fileData = found;
             });
-
+        
             if (!fileData) {
                 showToast('File not found', 'error');
                 return;
             }
-
+        
             showToast(`Preparing download for ${fileName}...`);
             
             setTimeout(() => {
@@ -2923,14 +3013,14 @@
                             document.body.appendChild(link);
                             link.click();
                             document.body.removeChild(link);
-
+        
                             if (index === 0) {
                                 const extension = file.split('.').pop();
                                 showToast(`Downloaded ${file} (.${extension} format)`);
                             }
                         }, index * 200);
                     });
-
+        
                     setTimeout(() => {
                         showToast(`All ${fileName} shapefile components downloaded! Files: ${fileData.files.join(', ')}`);
                     }, fileData.files.length * 200 + 500);
@@ -2947,7 +3037,7 @@
                 }
             }, 800);
         };
-
+        
         // Logout function
         const logout = () => {
             if (confirm('Are you sure you want to logout?')) {
@@ -2976,18 +3066,18 @@
                 showToast('Logged out successfully.');
             }
         };
-
+        
         // Render categories and files
         const renderCategories = () => {
             const container = document.getElementById('categories-container');
             container.innerHTML = '';
-
+        
             Object.keys(dataCategories).forEach((key, index) => {
                 const category = dataCategories[key];
-
+        
                 const categoryDiv = document.createElement('div');
                 categoryDiv.classList.add('category');
-
+        
                 const headerButton = document.createElement('button');
                 headerButton.classList.add('category-header');
                 headerButton.setAttribute('aria-expanded', 'false');
@@ -2998,13 +3088,13 @@
                 `;
                 headerButton.addEventListener('click', () => toggleCategory(key));
                 categoryDiv.appendChild(headerButton);
-
+        
                 const filesDiv = document.createElement('div');
                 filesDiv.classList.add('files');
                 filesDiv.id = `files-${key}`;
                 filesDiv.setAttribute('role', 'region');
                 filesDiv.setAttribute('aria-label', `${category.name} files`);
-
+        
                 category.files.forEach((file, fileIndex) => {
                     const fileDiv = document.createElement('div');
                     fileDiv.classList.add('file');
@@ -3024,12 +3114,12 @@
                     `;
                     filesDiv.appendChild(fileDiv);
                 });
-
+        
                 categoryDiv.appendChild(filesDiv);
                 container.appendChild(categoryDiv);
             });
         };
-
+        
         // Toggle category visibility
         const toggleCategory = (categoryKey) => {
             const filesDiv = document.getElementById(`files-${categoryKey}`);
@@ -3046,14 +3136,15 @@
                 headerButton.setAttribute('aria-expanded', 'true');
             }
         };
-
-        // Update statistics
+        
+        // Update statistics with locked assignments counter
         const updateStats = () => {
             let totalFiles = 0;
             let totalSizeKB = 0;
             let pendingGrades = 0;
             let unreadMessages = 0;
             let overdueAssignments = 0;
+            let lockedAssignments = 0; // New counter for locked assignments
             
             // Count main repository files
             Object.values(dataCategories).forEach(category => {
@@ -3072,15 +3163,25 @@
             totalFiles += globalStudentFiles.length;
             pendingGrades = globalStudentFiles.filter(f => f.grade === null).length;
             
-            // Count overdue assignments for current user
+            // Count overdue and locked assignments for current user
             if (userRole === 'student') {
-                overdueAssignments = weeklyAssignments.filter(assignment => {
-                    const isOverdue = new Date(assignment.dueDate) < new Date();
+                weeklyAssignments.forEach(assignment => {
+                    const dueDate = new Date(assignment.dueDate);
+                    const currentDate = new Date();
+                    const daysUntilDue = Math.ceil((dueDate - currentDate) / (1000 * 60 * 60 * 24));
+                    const isOverdue = dueDate < currentDate;
+                    const isAvailable = daysUntilDue <= 7;
+                    
                     const hasSubmission = globalStudentFiles.some(f => 
                         f.weekNumber == assignment.week && f.uploadedBy === currentUser
                     );
-                    return isOverdue && !hasSubmission;
-                }).length;
+                    
+                    if (isOverdue && !hasSubmission) {
+                        overdueAssignments++;
+                    } else if (!isAvailable && !hasSubmission) {
+                        lockedAssignments++;
+                    }
+                });
             }
             
             // Count unread messages for current user
@@ -3109,14 +3210,20 @@
             document.getElementById('pendingGrades').textContent = pendingGrades;
             document.getElementById('unreadNotifications').textContent = unreadMessages;
             document.getElementById('overdueAssignments').textContent = overdueAssignments;
+            
+            // Update locked assignments if element exists
+            const lockedElement = document.getElementById('lockedAssignments');
+            if (lockedElement) {
+                lockedElement.textContent = lockedAssignments;
+            }
         };
-
+        
         // Show toast notification
         const showToast = (message, type = 'success') => {
             if (currentToast) {
                 clearTimeout(currentToast);
             }
-
+        
             const toast = document.getElementById('toast');
             toast.textContent = message;
             toast.className = `toast ${type}`;
@@ -3127,7 +3234,7 @@
                 currentToast = null;
             }, 4000);
         };
-
+        
         // Update notifications display in sidebar
         const updateNotifications = () => {
             const notificationsList = document.getElementById('notifications-list');
@@ -3174,7 +3281,7 @@
                 `;
             }).join('');
         };
-
+        
         // Add sample data for demo
         const addSampleData = () => {
             // Add sample student files if none exist
@@ -3227,7 +3334,7 @@
                         status: 'submitted'
                     }
                 );
-
+        
                 // Add sample messages
                 globalMessages.push(
                     {
@@ -3257,7 +3364,7 @@
                 );
             }
         };
-
+        
         // Initialize application
         document.addEventListener('DOMContentLoaded', () => {
             // Set up file input handler
@@ -3267,37 +3374,37 @@
                     handleFileSelect(e.target.files);
                 });
             }
-
+        
             // Set up drag and drop
             const uploadArea = document.querySelector('.upload-area');
             if (uploadArea) {
                 ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
                     uploadArea.addEventListener(eventName, preventDefaults, false);
                 });
-
+        
                 function preventDefaults(e) {
                     e.preventDefault();
                     e.stopPropagation();
                 }
-
+        
                 ['dragenter', 'dragover'].forEach(eventName => {
                     uploadArea.addEventListener(eventName, () => {
                         uploadArea.classList.add('dragover');
                     }, false);
                 });
-
+        
                 ['dragleave', 'drop'].forEach(eventName => {
                     uploadArea.addEventListener(eventName, () => {
                         uploadArea.classList.remove('dragover');
                     }, false);
                 });
-
+        
                 uploadArea.addEventListener('drop', (e) => {
                     const files = e.dataTransfer.files;
                     handleFileSelect(files);
                 }, false);
             }
-
+        
             // Set up login
             const loginBtn = document.getElementById('loginButton');
             const usernameInput = document.getElementById('username');
@@ -3313,7 +3420,7 @@
                     }
                 });
             }
-
+        
             if (passwordInput) {
                 passwordInput.addEventListener('keypress', (e) => {
                     if (e.key === 'Enter') {
@@ -3322,13 +3429,13 @@
                     }
                 });
             }
-
+        
             // Initialize data and show login
             initializeWeeklyAssignments();
             addSampleData();
             updateStats();
             showLoginModal();
-
+        
             // Load initial week content
             loadWeekContent(currentWeek);
         });

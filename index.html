@@ -1639,6 +1639,7 @@
 
     <script>
         // Global state
+        // Global state
         let isLoggedIn = false;
         let currentUser = null;
         let userRole = null;
@@ -1826,19 +1827,11 @@
                 }
             ];
         
-            weeklyAssignments = assignments.map(assignment => {
-                const dueDate = new Date(assignment.dueDate);
-                const currentDate = new Date();
-                const daysUntilDue = Math.ceil((dueDate - currentDate) / (1000 * 60 * 60 * 24));
-                
-                return {
-                    ...assignment,
-                    submissions: [],
-                    isOverdue: dueDate < currentDate,
-                    isAvailable: daysUntilDue <= 7, // Available only 7 days or less before due date
-                    daysUntilAvailable: Math.max(0, daysUntilDue - 7)
-                };
-            });
+            weeklyAssignments = assignments.map(assignment => ({
+                ...assignment,
+                submissions: [],
+                isOverdue: new Date(assignment.dueDate) < new Date()
+            }));
         };
         
         // Sample files for each category
@@ -2198,20 +2191,7 @@
             updateNotifications();
         };
         
-        // Add a refresh function to update assignment availability
-        const refreshAssignmentAvailability = () => {
-            weeklyAssignments.forEach(assignment => {
-                const dueDate = new Date(assignment.dueDate);
-                const currentDate = new Date();
-                const daysUntilDue = Math.ceil((dueDate - currentDate) / (1000 * 60 * 60 * 24));
-                
-                assignment.isOverdue = dueDate < currentDate;
-                assignment.isAvailable = daysUntilDue <= 7;
-                assignment.daysUntilAvailable = Math.max(0, daysUntilDue - 7);
-            });
-        };
-        
-        // Render weekly assignments with locking functionality
+        // Render weekly assignments
         const renderAssignments = () => {
             const container = document.getElementById('assignments-container');
             container.innerHTML = '';
@@ -2222,23 +2202,14 @@
             }
         
             weeklyAssignments.forEach((assignment, index) => {
-                const dueDate = new Date(assignment.dueDate);
-                const currentDate = new Date();
-                const daysUntilDue = Math.ceil((dueDate - currentDate) / (1000 * 60 * 60 * 24));
-                const isOverdue = dueDate < currentDate;
-                const isAvailable = daysUntilDue <= 7;
-                const daysUntilAvailable = Math.max(0, daysUntilDue - 7);
-                
+                const isOverdue = new Date(assignment.dueDate) < new Date();
                 const hasSubmission = userRole === 'student' && 
                     globalStudentFiles.some(f => f.weekNumber == assignment.week && f.uploadedBy === currentUser);
                 
                 let statusClass = 'pending';
                 let statusText = 'Not Submitted';
                 
-                if (!isAvailable && !hasSubmission) {
-                    statusClass = 'locked';
-                    statusText = `Locked (${daysUntilAvailable} days)`;
-                } else if (hasSubmission) {
+                if (hasSubmission) {
                     const submission = globalStudentFiles.find(f => f.weekNumber == assignment.week && f.uploadedBy === currentUser);
                     if (submission.grade !== null) {
                         statusClass = 'graded';
@@ -2250,54 +2221,36 @@
                 } else if (isOverdue) {
                     statusClass = 'overdue';
                     statusText = 'Overdue';
-                } else if (isAvailable) {
-                    statusClass = 'available';
-                    statusText = 'Available';
                 }
         
                 const assignmentDiv = document.createElement('div');
                 assignmentDiv.classList.add('assignment-card', statusClass);
                 
-                let dueText;
-                if (!isAvailable && !hasSubmission) {
-                    dueText = `Available in ${daysUntilAvailable} days (${assignment.dueDate})`;
-                } else {
-                    dueText = isOverdue ? `${Math.abs(daysUntilDue)} days overdue` : 
+                const daysUntilDue = Math.ceil((new Date(assignment.dueDate) - new Date()) / (1000 * 60 * 60 * 24));
+                const dueText = isOverdue ? `${Math.abs(daysUntilDue)} days overdue` : 
                                daysUntilDue === 0 ? 'Due today' : `${daysUntilDue} days remaining`;
-                }
         
                 assignmentDiv.innerHTML = `
                     <div class="assignment-header">
-                        <div class="assignment-title">
-                            ${!isAvailable && !hasSubmission ? '🔒 ' : ''}Week ${assignment.week}: ${assignment.title}
-                        </div>
+                        <div class="assignment-title">Week ${assignment.week}: ${assignment.title}</div>
                         <div class="assignment-status ${statusClass}">${statusText}</div>
                     </div>
                     <div class="assignment-meta">
                         <div><strong>Course:</strong> ${assignment.course}</div>
-                        <div><strong>Due:</strong> ${dueText}</div>
+                        <div><strong>Due:</strong> ${assignment.dueDate} (${dueText})</div>
                         <div><strong>Points:</strong> ${assignment.totalPoints}</div>
                         <div><strong>Requirements:</strong> ${assignment.requirements.length} items</div>
                     </div>
-                    <div class="assignment-description">
-                        ${!isAvailable && !hasSubmission ? 
-                            `<div style="color: #f85149; font-weight: 500; margin-bottom: 10px;">🔒 This assignment will be available ${daysUntilAvailable} days before the due date.</div>` : 
-                            ''
-                        }
-                        ${assignment.description}
-                    </div>
+                    <div class="assignment-description">${assignment.description}</div>
                     <div class="assignment-actions">
-                        ${userRole === 'student' && !hasSubmission && isAvailable ? 
+                        ${userRole === 'student' && !hasSubmission ? 
                             `<button class="upload-btn" onclick="openUploadForAssignment(${assignment.week})">Submit Assignment</button>` : ''
-                        }
-                        ${userRole === 'student' && !hasSubmission && !isAvailable ? 
-                            `<button class="upload-btn" style="opacity: 0.5; cursor: not-allowed;" disabled title="Assignment locked until ${daysUntilAvailable} days before due date">Submit Assignment (Locked)</button>` : ''
                         }
                         ${hasSubmission ? 
                             `<button class="download-btn" onclick="viewSubmission(${assignment.week})">View Submission</button>` : ''
                         }
                         ${userRole === 'lecturer' || userRole === 'admin' ? 
-                            `<button class="comment-btn" onclick="viewAssignmentSubmissions(${assignment.week})">View Submissions</button>` : ''
+                            `<button class="comment-btn" onclick="viewAssignmentSubmissions(${assignment.week})">View Submissions (${globalStudentFiles.filter(f => f.weekNumber == assignment.week).length})</button>` : ''
                         }
                     </div>
                     <div style="margin-top: 10px; padding: 10px; background: #0d1117; border-radius: 4px; font-size: 12px;">
@@ -2305,12 +2258,6 @@
                         <ul style="margin: 5px 0 0 20px; color: #8b949e;">
                             ${assignment.requirements.map(req => `<li>${req}</li>`).join('')}
                         </ul>
-                        ${!isAvailable && !hasSubmission ? 
-                            `<div style="margin-top: 10px; padding: 8px; background: rgba(248, 81, 73, 0.1); border-radius: 4px; border-left: 3px solid #f85149;">
-                                <strong style="color: #f85149;">Assignment Policy:</strong> Assignments become available 7 days before the due date to encourage proper time management and prevent last-minute submissions.
-                            </div>` : 
-                            ''
-                        }
                     </div>
                 `;
                 container.appendChild(assignmentDiv);
@@ -2564,45 +2511,244 @@
             }
         };
         
-        // Assignment handling functions with locking checks
+        // Assignment handling functions
         const openUploadForAssignment = (weekNumber) => {
-            const assignment = weeklyAssignments.find(a => a.week === weekNumber);
-            if (!assignment) {
-                showToast('Assignment not found', 'error');
-                return;
-            }
-            
-            const dueDate = new Date(assignment.dueDate);
-            const currentDate = new Date();
-            const daysUntilDue = Math.ceil((dueDate - currentDate) / (1000 * 60 * 60 * 24));
-            const isAvailable = daysUntilDue <= 7;
-            
-            if (!isAvailable) {
-                const daysUntilAvailable = daysUntilDue - 7;
-                showToast(`Assignment is locked. It will be available in ${daysUntilAvailable} days.`, 'error');
-                return;
-            }
-            
             document.getElementById('weekNumber').value = weekNumber;
             showUploadModal();
         };
         
+        // Enhanced function to view student's own submission
         const viewSubmission = (weekNumber) => {
-            const submission = globalStudentFiles.find(f => f.weekNumber == weekNumber && f.uploadedBy === currentUser);
+            const submission = globalStudentFiles.find(f => 
+                f.weekNumber == weekNumber && f.uploadedBy === currentUser
+            );
+            
             if (submission) {
-                showToast(`Viewing submission for Week ${weekNumber}: ${submission.title}`);
-                // In a real app, this would open the file or show details
+                // Show detailed submission info
+                const submissionInfo = `
+                    <div style="text-align: left;">
+                        <h3>Your Submission - Week ${weekNumber}</h3>
+                        <p><strong>Title:</strong> ${submission.title}</p>
+                        <p><strong>Course:</strong> ${submission.course}</p>
+                        <p><strong>File:</strong> ${submission.name} (${submission.size})</p>
+                        <p><strong>Submitted:</strong> ${submission.uploadDate}</p>
+                        <p><strong>Status:</strong> ${submission.grade !== null ? `Graded (${submission.grade}%)` : 'Pending Review'}</p>
+                        <p><strong>Description:</strong> ${submission.description || 'No description provided'}</p>
+                        ${submission.comments.length > 0 ? `
+                            <div style="margin-top: 15px;">
+                                <strong>Instructor Feedback:</strong>
+                                ${submission.comments.map(comment => `
+                                    <div style="background: #161b22; padding: 10px; margin: 5px 0; border-radius: 4px;">
+                                        <strong>${comment.authorName}:</strong> ${comment.text}
+                                        <br><small style="color: #8b949e;">${comment.date}</small>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        ` : ''}
+                    </div>
+                `;
+                
+                // Create a temporary modal
+                const modal = document.createElement('div');
+                modal.className = 'modal';
+                modal.style.display = 'flex';
+                modal.innerHTML = `
+                    <div class="modal-content">
+                        <h2>📄 Submission Details</h2>
+                        ${submissionInfo}
+                        <div style="margin-top: 20px;">
+                            <button class="download-btn" onclick="downloadStudentFile('${submission.id}')">Download File</button>
+                            <button class="cancel-btn" onclick="this.closest('.modal').remove()" style="margin-left: 10px;">Close</button>
+                        </div>
+                    </div>
+                `;
+                document.body.appendChild(modal);
+                
+                // Auto-remove modal when clicking outside
+                modal.addEventListener('click', (e) => {
+                    if (e.target === modal) {
+                        modal.remove();
+                    }
+                });
+            } else {
+                showToast('No submission found for this week', 'error');
             }
         };
         
+        // Enhanced function for lecturers to view assignment submissions
         const viewAssignmentSubmissions = (weekNumber) => {
             const submissions = globalStudentFiles.filter(f => f.weekNumber == weekNumber);
-            showToast(`Week ${weekNumber} has ${submissions.length} submission(s)`);
-            // In a real app, this would show all submissions for grading
+            const assignment = weeklyAssignments.find(a => a.week == weekNumber);
+            
+            if (!assignment) {
+                showToast('Assignment not found', 'error');
+                return;
+            }
+        
+            // Create a detailed modal showing all submissions for this week
+            const modal = document.createElement('div');
+            modal.className = 'modal';
+            modal.style.display = 'flex';
+            
+            const gradedCount = submissions.filter(s => s.grade !== null).length;
+            const pendingCount = submissions.length - gradedCount;
+            
+            modal.innerHTML = `
+                <div class="modal-content" style="max-width: 800px; width: 90%;">
+                    <h2>📚 Week ${weekNumber} Submissions</h2>
+                    <div style="background: #0d1117; padding: 15px; border-radius: 6px; margin-bottom: 20px;">
+                        <h3>${assignment.title}</h3>
+                        <p><strong>Course:</strong> ${assignment.course}</p>
+                        <p><strong>Due Date:</strong> ${assignment.dueDate}</p>
+                        <p><strong>Total Points:</strong> ${assignment.totalPoints}</p>
+                        <div style="margin-top: 10px;">
+                            <span style="color: #238636;">✅ Graded: ${gradedCount}</span> | 
+                            <span style="color: #f85149;">⏳ Pending: ${pendingCount}</span> | 
+                            <span style="color: #58a6ff;">📁 Total: ${submissions.length}</span>
+                        </div>
+                    </div>
+                    
+                    ${submissions.length === 0 ? `
+                        <div style="text-align: center; color: #8b949e; padding: 40px;">
+                            No submissions yet for this assignment.
+                        </div>
+                    ` : `
+                        <div style="max-height: 500px; overflow-y: auto;">
+                            ${submissions.map(submission => {
+                                const student = userDatabase[submission.uploadedBy];
+                                const isGraded = submission.grade !== null;
+                                const isOverdue = new Date(assignment.dueDate) < new Date(submission.uploadDate);
+                                
+                                return `
+                                    <div class="file" style="margin-bottom: 15px; background: #161b22; border: 1px solid #30363d;">
+                                        <div class="file-header">
+                                            <div class="file-name">${submission.icon} ${submission.name}</div>
+                                            <div class="file-meta">
+                                                ${isGraded ? 
+                                                    `<div class="file-grade">${submission.grade}%</div>` : 
+                                                    '<div class="file-grade pending">Pending</div>'
+                                                }
+                                                <div class="file-size">${submission.size}</div>
+                                                ${isOverdue ? '<div style="color: #f85149; font-size: 10px;">LATE</div>' : ''}
+                                            </div>
+                                        </div>
+                                        <div class="file-description">
+                                            <strong>${submission.title}</strong><br>
+                                            <strong>Student:</strong> ${student ? student.fullName : submission.uploadedBy} (${submission.uploadedByEmail})<br>
+                                            <strong>Submitted:</strong> ${submission.uploadDate}<br>
+                                            ${submission.description ? `<strong>Description:</strong> ${submission.description}<br>` : ''}
+                                            ${submission.comments.length > 0 ? `<strong>Comments:</strong> ${submission.comments.length} feedback(s)` : ''}
+                                        </div>
+                                        <div class="file-actions" style="margin-top: 10px;">
+                                            <button class="download-btn" onclick="downloadStudentFile('${submission.id}')">Download</button>
+                                            <button class="comment-btn" onclick="showCommentModal('${submission.id}'); document.querySelector('.modal[style*=\\"flex\\"]').style.display='none';">
+                                                ${isGraded ? 'Update Grade' : 'Grade Assignment'}
+                                            </button>
+                                            ${submission.comments.length > 0 ? 
+                                                `<button class="grade-btn" onclick="showSubmissionDetails('${submission.id}')">View Details</button>` : ''
+                                            }
+                                        </div>
+                                    </div>
+                                `;
+                            }).join('')}
+                        </div>
+                    `}
+                    
+                    <div style="margin-top: 20px; text-align: center;">
+                        <button class="cancel-btn" onclick="this.closest('.modal').remove()">Close</button>
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(modal);
+            
+            // Auto-remove modal when clicking outside
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    modal.remove();
+                }
+            });
+        };
+        
+        // Function to show detailed submission information
+        const showSubmissionDetails = (submissionId) => {
+            const submission = globalStudentFiles.find(f => f.id == submissionId);
+            if (!submission) {
+                showToast('Submission not found', 'error');
+                return;
+            }
+            
+            const student = userDatabase[submission.uploadedBy];
+            const assignment = weeklyAssignments.find(a => a.week == submission.weekNumber);
+            
+            const modal = document.createElement('div');
+            modal.className = 'modal';
+            modal.style.display = 'flex';
+            
+            modal.innerHTML = `
+                <div class="modal-content" style="max-width: 600px;">
+                    <h2>📄 Submission Details</h2>
+                    <div style="text-align: left; background: #0d1117; padding: 15px; border-radius: 6px;">
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px;">
+                            <div>
+                                <strong>Student:</strong> ${student ? student.fullName : submission.uploadedBy}<br>
+                                <strong>Email:</strong> ${submission.uploadedByEmail}<br>
+                                <strong>Assignment:</strong> Week ${submission.weekNumber}<br>
+                                <strong>Course:</strong> ${submission.course}
+                            </div>
+                            <div>
+                                <strong>File:</strong> ${submission.name}<br>
+                                <strong>Size:</strong> ${submission.size}<br>
+                                <strong>Submitted:</strong> ${submission.uploadDate}<br>
+                                <strong>Status:</strong> ${submission.grade !== null ? `Graded (${submission.grade}%)` : 'Pending'}
+                            </div>
+                        </div>
+                        
+                        <div style="margin-bottom: 15px;">
+                            <strong>Title:</strong> ${submission.title}<br>
+                            ${submission.description ? `<strong>Description:</strong> ${submission.description}<br>` : ''}
+                            ${assignment ? `<strong>Worth:</strong> ${assignment.totalPoints} points<br>` : ''}
+                        </div>
+                        
+                        ${submission.comments.length > 0 ? `
+                            <div style="margin-top: 15px;">
+                                <strong>Feedback History:</strong>
+                                <div style="max-height: 200px; overflow-y: auto; margin-top: 5px;">
+                                    ${submission.comments.map(comment => `
+                                        <div style="background: #161b22; padding: 10px; margin: 5px 0; border-radius: 4px; border-left: 3px solid #6f42c1;">
+                                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;">
+                                                <strong style="color: #58a6ff;">${comment.authorName}</strong>
+                                                <small style="color: #8b949e;">${comment.date}</small>
+                                            </div>
+                                            <div>${comment.text}</div>
+                                        </div>
+                                    `).join('')}
+                                </div>
+                            </div>
+                        ` : ''}
+                    </div>
+                    
+                    <div style="margin-top: 20px;">
+                        <button class="download-btn" onclick="downloadStudentFile('${submission.id}')">Download File</button>
+                        <button class="comment-btn" onclick="showCommentModal('${submission.id}'); this.closest('.modal').remove();" style="margin-left: 10px;">
+                            ${submission.grade !== null ? 'Update Grade' : 'Add Grade & Feedback'}
+                        </button>
+                        <button class="cancel-btn" onclick="this.closest('.modal').remove()" style="margin-left: 10px;">Close</button>
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(modal);
+            
+            // Auto-remove modal when clicking outside
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    modal.remove();
+                }
+            });
         };
         
         const refreshAssignments = () => {
-            refreshAssignmentAvailability(); // Update availability before rendering
             renderAssignments();
             updateStats();
             showToast('Assignments refreshed!', 'info');
@@ -2683,22 +2829,6 @@
                 uploadError.textContent = 'Please fill in all required fields and select files.';
                 uploadError.style.display = 'block';
                 return;
-            }
-            
-            // Check if assignment is still available for submission
-            const assignment = weeklyAssignments.find(a => a.week == weekNumber);
-            if (assignment) {
-                const dueDate = new Date(assignment.dueDate);
-                const currentDate = new Date();
-                const daysUntilDue = Math.ceil((dueDate - currentDate) / (1000 * 60 * 60 * 24));
-                const isAvailable = daysUntilDue <= 7;
-                
-                if (!isAvailable) {
-                    const daysUntilAvailable = daysUntilDue - 7;
-                    uploadError.textContent = `Assignment is locked. It will be available in ${daysUntilAvailable} days.`;
-                    uploadError.style.display = 'block';
-                    return;
-                }
             }
             
             const currentUserData = userDatabase[currentUser];
@@ -2872,7 +3002,7 @@
             });
         };
         
-        // Download student file
+        // Enhanced download student file function
         const downloadStudentFile = (fileId) => {
             const file = globalStudentFiles.find(f => f.id == fileId);
             if (!file) {
@@ -2880,15 +3010,39 @@
                 return;
             }
         
-            const link = document.createElement('a');
-            link.download = file.name;
-            link.href = '#';
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
+            // Check if user has permission to download
+            const canDownload = file.uploadedBy === currentUser || 
+                               userRole === 'lecturer' || 
+                               userRole === 'admin' ||
+                               (userRole === 'lecturer' && file.assignedLecturer === currentUser);
+        
+            if (!canDownload) {
+                showToast('You do not have permission to download this file', 'error');
+                return;
+            }
+        
+            // In a real application, this would create a proper download link
+            showToast(`Downloading: ${file.name}...`, 'info');
             
-            const extension = file.name.split('.').pop();
-            showToast(`${file.name} downloaded successfully! (.${extension} format)`);
+            // Simulate file download process
+            setTimeout(() => {
+                // Create a blob URL for demonstration (in real app, this would be the actual file)
+                const link = document.createElement('a');
+                link.download = file.name;
+                
+                // In a real application, you would set this to the actual file URL or blob
+                link.href = `data:application/octet-stream;base64,`; // Placeholder
+                
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                
+                const extension = file.name.split('.').pop();
+                showToast(`${file.name} downloaded successfully! (.${extension} format)`, 'success');
+                
+                // Log download activity (in real app, this would go to server)
+                console.log(`Download logged: ${currentUser} downloaded ${file.name} (${file.id})`);
+            }, 1000);
         };
         
         // Show comment modal
@@ -3009,7 +3163,7 @@
             showToast('Submissions refreshed!', 'info');
         };
         
-        // Download file function
+        // Download file function for main repository
         const downloadFile = (fileName, fileType) => {
             if (!isLoggedIn) {
                 showToast('Please log in first', 'error');
@@ -3164,14 +3318,13 @@
             }
         };
         
-        // Update statistics with locked assignments counter
+        // Update statistics
         const updateStats = () => {
             let totalFiles = 0;
             let totalSizeKB = 0;
             let pendingGrades = 0;
             let unreadMessages = 0;
             let overdueAssignments = 0;
-            let lockedAssignments = 0; // New counter for locked assignments
             
             // Count main repository files
             Object.values(dataCategories).forEach(category => {
@@ -3190,25 +3343,15 @@
             totalFiles += globalStudentFiles.length;
             pendingGrades = globalStudentFiles.filter(f => f.grade === null).length;
             
-            // Count overdue and locked assignments for current user
+            // Count overdue assignments for current user
             if (userRole === 'student') {
-                weeklyAssignments.forEach(assignment => {
-                    const dueDate = new Date(assignment.dueDate);
-                    const currentDate = new Date();
-                    const daysUntilDue = Math.ceil((dueDate - currentDate) / (1000 * 60 * 60 * 24));
-                    const isOverdue = dueDate < currentDate;
-                    const isAvailable = daysUntilDue <= 7;
-                    
+                overdueAssignments = weeklyAssignments.filter(assignment => {
+                    const isOverdue = new Date(assignment.dueDate) < new Date();
                     const hasSubmission = globalStudentFiles.some(f => 
                         f.weekNumber == assignment.week && f.uploadedBy === currentUser
                     );
-                    
-                    if (isOverdue && !hasSubmission) {
-                        overdueAssignments++;
-                    } else if (!isAvailable && !hasSubmission) {
-                        lockedAssignments++;
-                    }
-                });
+                    return isOverdue && !hasSubmission;
+                }).length;
             }
             
             // Count unread messages for current user
@@ -3237,12 +3380,6 @@
             document.getElementById('pendingGrades').textContent = pendingGrades;
             document.getElementById('unreadNotifications').textContent = unreadMessages;
             document.getElementById('overdueAssignments').textContent = overdueAssignments;
-            
-            // Update locked assignments if element exists
-            const lockedElement = document.getElementById('lockedAssignments');
-            if (lockedElement) {
-                lockedElement.textContent = lockedAssignments;
-            }
         };
         
         // Show toast notification

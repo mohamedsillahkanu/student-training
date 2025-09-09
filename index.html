@@ -3331,11 +3331,6 @@
                 currentUser = null;
                 userRole = null;
                 currentUserEmail = null;
-                
-                // Clear user session from localStorage (but keep the data)
-                localStorage.removeItem('currentUserSession');
-                
-                // Reset UI
                 document.getElementById('userInfo').style.display = 'none';
                 document.getElementById('categories-container').innerHTML = '';
                 document.getElementById('assignments-container').innerHTML = '';
@@ -3353,7 +3348,6 @@
                 document.getElementById('pendingGrades').textContent = '0';
                 document.getElementById('unreadNotifications').textContent = '0';
                 document.getElementById('overdueAssignments').textContent = '0';
-                
                 showLoginModal();
                 showToast('Logged out successfully.');
             }
@@ -3731,18 +3725,17 @@
         
             // Initialize data and show login
             initializeWeeklyAssignments();
-            loadData(); // Load saved data first
-            addSampleData(); // Add sample data only if none exists
+            addSampleData();
             updateStats();
             showLoginModal();
         
             // Load initial week content
             loadWeekContent(currentWeek);
         });
+                
+               
 
-       
-            
-        
+   
         
        
     </script>

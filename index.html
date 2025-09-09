@@ -1744,11 +1744,9 @@
                 `;
             } 
         };
-
-        // File content loading function
-        const loadFileContent = async (fileNumber) => {
+        // Fixed file content loading function
+        const loadFileContent = async (fileName) => {
             const container = document.getElementById('file-content-container');
-            const fileName = `file${fileNumber}.html`;
             
             try {
                 container.innerHTML = '<div class="loading-message">Loading file content...</div>';
@@ -1768,13 +1766,14 @@
                 console.error(`Error loading file content:`, error);
                 container.innerHTML = `
                     <div class="error-message-notes">
-                        <strong>Error loading file${fileNumber} content</strong><br>
+                        <strong>Error loading ${fileName}</strong><br>
                         Could not load ${fileName}. Please ensure the file exists in the same directory as this HTML file.<br>
                         <small>Error: ${error.message}</small><br><br>
-                        <em>Expected file structure:</em><br>
+                        <em>Expected files:</em><br>
+                        • allmis.html<br>
                         • file1.html<br>
                         • file2.html<br>
-                        • ... (up to file12.html)
+                        • ... (or whatever your actual file names are)
                     </div>
                 `;
             } 

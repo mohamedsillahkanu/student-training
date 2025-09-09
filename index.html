@@ -1816,81 +1816,30 @@
             } 
         };
 
-        // MPR content loading function
-        const loadMPRContent = (mprId) => {
+        // Simple function to load selected URL from dropdown
+        const loadSelectedMPR = () => {
+            const select = document.getElementById('mprSelect');
             const iframe = document.getElementById('mprFrame');
-            const container = document.getElementById('mpr-content-container');
+            const selectedUrl = select.value;
             
-            if (!iframe || !mprUrls[mprId]) {
-                console.error(`MPR content not found: ${mprId}`);
-                container.innerHTML = `
-                    <div class="url-error">
-                        <strong>Error loading MPR content</strong><br>
-                        Could not load content for ${mprId}. Please check the configuration.<br>
-                        <small>MPR ID: ${mprId}</small>
-                    </div>
-                `;
+            if (!selectedUrl) {
+                showToast('Please select a URL', 'error');
                 return;
             }
             
-            try {
-                container.innerHTML = '<div class="loading-message">Loading MPR content...</div>';
-                
-                // Create new iframe with the selected URL
-                const newIframe = iframe.cloneNode(true);
-                newIframe.src = mprUrls[mprId];
-                newIframe.onload = () => {
-                    container.innerHTML = '';
-                    container.appendChild(newIframe);
-                    showToast(`MPR ${mprId.replace('mpr', '')} content loaded successfully`, 'success');
-                };
-                newIframe.onerror = () => handleMPRFrameError(mprId);
-                
-                // Replace the iframe
-                iframe.parentNode.replaceChild(newIframe, iframe);
-                
-                console.log(`Successfully loading MPR content: ${mprId} from ${mprUrls[mprId]}`);
-                
-            } catch (error) {
-                console.error(`Error loading MPR content:`, error);
-                container.innerHTML = `
-                    <div class="url-error">
-                        <strong>Error loading MPR ${mprId.replace('mpr', '')} content</strong><br>
-                        Could not load the requested content. Please try refreshing or contact support.<br>
-                        <small>Error: ${error.message}</small>
-                    </div>
-                `;
-            }
-        };
-
-        // Switch between MPR files
-        const switchFile = () => {
-            const selectedMPR = document.getElementById('fileSelect').value;
-            loadMPRContent(selectedMPR);
-        };
-
-        // Handle MPR iframe loading error
-        const handleMPRFrameError = (mprId = null) => {
-            const container = document.getElementById('mpr-content-container');
-            const iframe = document.getElementById('mprFrame');
-            const url = iframe ? iframe.src : (mprId ? mprUrls[mprId] : 'Unknown URL');
-            
-            container.innerHTML = `
-                <div class="url-error">
-                    <strong>Failed to load MPR content</strong><br>
-                    The website may not allow embedding, or there might be a connection issue.<br>
-                    <small>URL: ${url}</small><br><br>
-                    <button class="upload-btn" onclick="openInNewTab('${url}')">🔗 Open in New Tab</button>
-                    <button class="refresh-btn" onclick="refreshMPRFrame()" style="margin-left: 10px;">🔄 Try Again</button>
-                </div>
-            `;
+            iframe.src = selectedUrl;
+            showToast(`Loading ${select.options[select.selectedIndex].text}...`, 'info');
         };
 
         // Refresh the current MPR iframe
         const refreshMPRFrame = () => {
-            const selectedMPR = document.getElementById('fileSelect').value;
-            loadMPRContent(selectedMPR);
-            showToast('Refreshing MPR content...', 'info');
+            const iframe = document.getElementById('mprFrame');
+            if (iframe && iframe.src) {
+                iframe.src = iframe.src;
+                showToast('Refreshing content...', 'info');
+            } else {
+                showToast('No URL loaded', 'error');
+            }
         };
 
         // Refresh other frames

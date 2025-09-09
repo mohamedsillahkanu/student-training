@@ -1827,11 +1827,19 @@
                 }
             ];
         
-            weeklyAssignments = assignments.map(assignment => ({
-                ...assignment,
-                submissions: [],
-                isOverdue: new Date(assignment.dueDate) < new Date()
-            }));
+            weeklyAssignments = assignments.map(assignment => {
+                const dueDate = new Date(assignment.dueDate);
+                const currentDate = new Date();
+                const daysUntilDue = Math.ceil((dueDate - currentDate) / (1000 * 60 * 60 * 24));
+                
+                return {
+                    ...assignment,
+                    submissions: [],
+                    isOverdue: dueDate < currentDate,
+                    isAvailable: daysUntilDue <= 7, // Available only 7 days or less before due date
+                    daysUntilAvailable: Math.max(0, daysUntilDue - 7)
+                };
+            });
         };
         
         // Sample files for each category
@@ -1958,8 +1966,6 @@
                 }
                 
                 const content = await response.text();
-                
-                // Simply wrap the entire content in the content-wrapper
                 container.innerHTML = `<div class="content-wrapper">${content}</div>`;
                 
                 console.log(`Successfully loaded ${fileName}`);
@@ -2191,7 +2197,20 @@
             updateNotifications();
         };
         
-        // Render weekly assignments
+        // Add a refresh function to update assignment availability
+        const refreshAssignmentAvailability = () => {
+            weeklyAssignments.forEach(assignment => {
+                const dueDate = new Date(assignment.dueDate);
+                const currentDate = new Date();
+                const daysUntilDue = Math.ceil((dueDate - currentDate) / (1000 * 60 * 60 * 24));
+                
+                assignment.isOverdue = dueDate < currentDate;
+                assignment.isAvailable = daysUntilDue <= 7;
+                assignment.daysUntilAvailable = Math.max(0, daysUntilDue - 7);
+            });
+        };
+        
+        // Render weekly assignments with locking functionality
         const renderAssignments = () => {
             const container = document.getElementById('assignments-container');
             container.innerHTML = '';
@@ -2202,14 +2221,23 @@
             }
         
             weeklyAssignments.forEach((assignment, index) => {
-                const isOverdue = new Date(assignment.dueDate) < new Date();
+                const dueDate = new Date(assignment.dueDate);
+                const currentDate = new Date();
+                const daysUntilDue = Math.ceil((dueDate - currentDate) / (1000 * 60 * 60 * 24));
+                const isOverdue = dueDate < currentDate;
+                const isAvailable = daysUntilDue <= 7;
+                const daysUntilAvailable = Math.max(0, daysUntilDue - 7);
+                
                 const hasSubmission = userRole === 'student' && 
                     globalStudentFiles.some(f => f.weekNumber == assignment.week && f.uploadedBy === currentUser);
                 
                 let statusClass = 'pending';
                 let statusText = 'Not Submitted';
                 
-                if (hasSubmission) {
+                if (!isAvailable && !hasSubmission) {
+                    statusClass = 'locked';
+                    statusText = `Locked (${daysUntilAvailable} days)`;
+                } else if (hasSubmission) {
                     const submission = globalStudentFiles.find(f => f.weekNumber == assignment.week && f.uploadedBy === currentUser);
                     if (submission.grade !== null) {
                         statusClass = 'graded';
@@ -2221,30 +2249,48 @@
                 } else if (isOverdue) {
                     statusClass = 'overdue';
                     statusText = 'Overdue';
+                } else if (isAvailable) {
+                    statusClass = 'available';
+                    statusText = 'Available';
                 }
         
                 const assignmentDiv = document.createElement('div');
                 assignmentDiv.classList.add('assignment-card', statusClass);
                 
-                const daysUntilDue = Math.ceil((new Date(assignment.dueDate) - new Date()) / (1000 * 60 * 60 * 24));
-                const dueText = isOverdue ? `${Math.abs(daysUntilDue)} days overdue` : 
+                let dueText;
+                if (!isAvailable && !hasSubmission) {
+                    dueText = `Available in ${daysUntilAvailable} days (${assignment.dueDate})`;
+                } else {
+                    dueText = isOverdue ? `${Math.abs(daysUntilDue)} days overdue` : 
                                daysUntilDue === 0 ? 'Due today' : `${daysUntilDue} days remaining`;
+                }
         
                 assignmentDiv.innerHTML = `
                     <div class="assignment-header">
-                        <div class="assignment-title">Week ${assignment.week}: ${assignment.title}</div>
+                        <div class="assignment-title">
+                            ${!isAvailable && !hasSubmission ? '🔒 ' : ''}Week ${assignment.week}: ${assignment.title}
+                        </div>
                         <div class="assignment-status ${statusClass}">${statusText}</div>
                     </div>
                     <div class="assignment-meta">
                         <div><strong>Course:</strong> ${assignment.course}</div>
-                        <div><strong>Due:</strong> ${assignment.dueDate} (${dueText})</div>
+                        <div><strong>Due:</strong> ${dueText}</div>
                         <div><strong>Points:</strong> ${assignment.totalPoints}</div>
                         <div><strong>Requirements:</strong> ${assignment.requirements.length} items</div>
                     </div>
-                    <div class="assignment-description">${assignment.description}</div>
+                    <div class="assignment-description">
+                        ${!isAvailable && !hasSubmission ? 
+                            `<div style="color: #f85149; font-weight: 500; margin-bottom: 10px;">🔒 This assignment will be available ${daysUntilAvailable} days before the due date.</div>` : 
+                            ''
+                        }
+                        ${assignment.description}
+                    </div>
                     <div class="assignment-actions">
-                        ${userRole === 'student' && !hasSubmission ? 
+                        ${userRole === 'student' && !hasSubmission && isAvailable ? 
                             `<button class="upload-btn" onclick="openUploadForAssignment(${assignment.week})">Submit Assignment</button>` : ''
+                        }
+                        ${userRole === 'student' && !hasSubmission && !isAvailable ? 
+                            `<button class="upload-btn" style="opacity: 0.5; cursor: not-allowed;" disabled title="Assignment locked until ${daysUntilAvailable} days before due date">Submit Assignment (Locked)</button>` : ''
                         }
                         ${hasSubmission ? 
                             `<button class="download-btn" onclick="viewSubmission(${assignment.week})">View Submission</button>` : ''
@@ -2258,6 +2304,12 @@
                         <ul style="margin: 5px 0 0 20px; color: #8b949e;">
                             ${assignment.requirements.map(req => `<li>${req}</li>`).join('')}
                         </ul>
+                        ${!isAvailable && !hasSubmission ? 
+                            `<div style="margin-top: 10px; padding: 8px; background: rgba(248, 81, 73, 0.1); border-radius: 4px; border-left: 3px solid #f85149;">
+                                <strong style="color: #f85149;">Assignment Policy:</strong> Assignments become available 7 days before the due date to encourage proper time management and prevent last-minute submissions.
+                            </div>` : 
+                            ''
+                        }
                     </div>
                 `;
                 container.appendChild(assignmentDiv);
@@ -2332,6 +2384,23 @@
                         }
                     </div>
                 `;
+                
+                // Add recipient information for lecturers to see who they're messaging
+                if (userRole === 'lecturer' || userRole === 'admin') {
+                    if (message.senderEmail === currentUserEmail && message.recipients.length > 0) {
+                        // Find recipient names for messages sent by current lecturer
+                        const recipientNames = message.recipients.map(email => {
+                            const user = Object.values(userDatabase).find(u => u.email === email);
+                            return user ? user.fullName : email;
+                        });
+                        
+                        const recipientInfo = document.createElement('div');
+                        recipientInfo.style.cssText = 'font-size: 11px; color: #6f42c1; margin-top: 5px; font-style: italic;';
+                        recipientInfo.innerHTML = `To: ${recipientNames.join(', ')}`;
+                        messageDiv.querySelector('.message-body').appendChild(recipientInfo);
+                    }
+                }
+                
                 container.appendChild(messageDiv);
             });
         };
@@ -2511,8 +2580,25 @@
             }
         };
         
-        // Assignment handling functions
+        // Assignment handling functions with locking checks
         const openUploadForAssignment = (weekNumber) => {
+            const assignment = weeklyAssignments.find(a => a.week === weekNumber);
+            if (!assignment) {
+                showToast('Assignment not found', 'error');
+                return;
+            }
+            
+            const dueDate = new Date(assignment.dueDate);
+            const currentDate = new Date();
+            const daysUntilDue = Math.ceil((dueDate - currentDate) / (1000 * 60 * 60 * 24));
+            const isAvailable = daysUntilDue <= 7;
+            
+            if (!isAvailable) {
+                const daysUntilAvailable = daysUntilDue - 7;
+                showToast(`Assignment is locked. It will be available in ${daysUntilAvailable} days.`, 'error');
+                return;
+            }
+            
             document.getElementById('weekNumber').value = weekNumber;
             showUploadModal();
         };
@@ -2641,7 +2727,7 @@
                                         </div>
                                         <div class="file-actions" style="margin-top: 10px;">
                                             <button class="download-btn" onclick="downloadStudentFile('${submission.id}')">Download</button>
-                                            <button class="comment-btn" onclick="showCommentModal('${submission.id}'); document.querySelector('.modal[style*=\\"flex\\"]').style.display='none';">
+                                            <button class="comment-btn" onclick="showCommentModal('${submission.id}'); document.querySelector('.modal[style*=\\"display: flex\\"]').remove();">
                                                 ${isGraded ? 'Update Grade' : 'Grade Assignment'}
                                             </button>
                                             ${submission.comments.length > 0 ? 
@@ -2749,6 +2835,7 @@
         };
         
         const refreshAssignments = () => {
+            refreshAssignmentAvailability(); // Update availability before rendering
             renderAssignments();
             updateStats();
             showToast('Assignments refreshed!', 'info');
@@ -2831,6 +2918,22 @@
                 return;
             }
             
+            // Check if assignment is still available for submission
+            const assignment = weeklyAssignments.find(a => a.week == weekNumber);
+            if (assignment) {
+                const dueDate = new Date(assignment.dueDate);
+                const currentDate = new Date();
+                const daysUntilDue = Math.ceil((dueDate - currentDate) / (1000 * 60 * 60 * 24));
+                const isAvailable = daysUntilDue <= 7;
+                
+                if (!isAvailable) {
+                    const daysUntilAvailable = daysUntilDue - 7;
+                    uploadError.textContent = `Assignment is locked. It will be available in ${daysUntilAvailable} days.`;
+                    uploadError.style.display = 'block';
+                    return;
+                }
+            }
+            
             const currentUserData = userDatabase[currentUser];
             const assignedLecturerUsername = currentUserData.assignedLecturer;
             
@@ -2873,14 +2976,15 @@
                 const newMessage = {
                     id: Date.now() + Math.random(),
                     type: 'individual',
-                    subject: `New Assignment Submission - Week ${weekNumber}`,
-                    body: `Student ${currentUserData.fullName} has submitted "${title}" for Week ${weekNumber} in course ${course}.`,
+                    subject: `New Assignment Submission - Week ${weekNumber} from ${currentUserData.fullName}`,
+                    body: `Student ${currentUserData.fullName} (${currentUserEmail}) has submitted "${title}" for Week ${weekNumber} in course ${course}. Please review and grade when convenient.`,
                     senderEmail: currentUserEmail,
                     senderName: currentUserData.fullName,
                     recipients: [lecturerData.email],
                     timestamp: new Date().toLocaleString(),
                     readBy: [currentUserEmail],
-                    replies: []
+                    replies: [],
+                    studentName: currentUserData.fullName // Add student name for easy identification
                 };
                 globalMessages.push(newMessage);
             }
@@ -2976,10 +3080,10 @@
                         }
                         ${canComment && file.assignedLecturer === currentUser ? 
                             `<button class="comment-btn" onclick="showCommentModal('${file.id}')">
-                                Comment ${file.comments.length > 0 ? `(${file.comments.length})` : ''}
+                                Add Comment ${file.comments.length > 0 ? `(${file.comments.length})` : ''}
                             </button>
                             <button class="grade-btn" onclick="showGradeModal('${file.id}')">
-                                ${file.grade !== null ? 'Update Grade' : 'Grade'}
+                                ${file.grade !== null ? 'Update Grade' : 'Grade Assignment'}
                             </button>` : ''
                         }
                     </div>
@@ -3131,8 +3235,8 @@
                 `Grade Posted: ${file.title}` : 
                 `New Comment: ${file.title}`;
             const notificationMessage = isNewGrade ? 
-                `Your assignment "${file.title}" has been graded: ${grade}%. Feedback: ${commentText}` :
-                `New comment on your assignment "${file.title}": ${commentText}`;
+                `Your assignment "${file.title}" has been graded by ${currentUserData.fullName}: ${grade}%. Feedback: ${commentText}` :
+                `New comment from ${currentUserData.fullName} on your assignment "${file.title}": ${commentText}`;
                 
             const newMessage = {
                 id: Date.now() + Math.random(),
@@ -3144,7 +3248,8 @@
                 recipients: [file.uploadedByEmail],
                 timestamp: new Date().toLocaleString(),
                 readBy: [currentUserEmail],
-                replies: []
+                replies: [],
+                studentName: userDatabase[file.uploadedBy] ? userDatabase[file.uploadedBy].fullName : file.uploadedBy // Add student name
             };
             globalMessages.push(newMessage);
             
@@ -3318,7 +3423,7 @@
             }
         };
         
-        // Update statistics
+        // Update statistics with locked assignments counter
         const updateStats = () => {
             let totalFiles = 0;
             let totalSizeKB = 0;
@@ -3343,15 +3448,32 @@
             totalFiles += globalStudentFiles.length;
             pendingGrades = globalStudentFiles.filter(f => f.grade === null).length;
             
-            // Count overdue assignments for current user
+            // Count overdue and locked assignments for current user
             if (userRole === 'student') {
-                overdueAssignments = weeklyAssignments.filter(assignment => {
-                    const isOverdue = new Date(assignment.dueDate) < new Date();
+                let lockedCount = 0;
+                weeklyAssignments.forEach(assignment => {
+                    const dueDate = new Date(assignment.dueDate);
+                    const currentDate = new Date();
+                    const daysUntilDue = Math.ceil((dueDate - currentDate) / (1000 * 60 * 60 * 24));
+                    const isOverdue = dueDate < currentDate;
+                    const isAvailable = daysUntilDue <= 7;
+                    
                     const hasSubmission = globalStudentFiles.some(f => 
                         f.weekNumber == assignment.week && f.uploadedBy === currentUser
                     );
-                    return isOverdue && !hasSubmission;
-                }).length;
+                    
+                    if (isOverdue && !hasSubmission) {
+                        overdueAssignments++;
+                    } else if (!isAvailable && !hasSubmission) {
+                        lockedCount++;
+                    }
+                });
+                
+                // Update locked assignments if element exists
+                const lockedElement = document.getElementById('lockedAssignments');
+                if (lockedElement) {
+                    lockedElement.textContent = lockedCount;
+                }
             }
             
             // Count unread messages for current user
@@ -3430,11 +3552,17 @@
                 const typeIcon = msg.type === 'announcement' ? '📢' : '✉️';
                 const isUnread = !msg.readBy.includes(currentUserEmail);
                 
+                // For lecturers, show student name in notifications when relevant
+                let displaySubject = msg.subject;
+                if (userRole === 'lecturer' && msg.studentName && msg.senderEmail !== currentUserEmail) {
+                    displaySubject = `${msg.studentName}: ${msg.subject}`;
+                }
+                
                 return `
                     <div style="padding: 10px 0; border-bottom: 1px solid #21262d; font-size: 12px; cursor: pointer;" onclick="markMessageRead('${msg.id}')">
                         <div style="display: flex; align-items: center; gap: 5px; margin-bottom: 3px;">
                             <span style="color: #58a6ff;">${typeIcon}</span>
-                            <span style="color: #58a6ff; font-weight: 600;">${msg.subject}</span>
+                            <span style="color: #58a6ff; font-weight: 600;">${displaySubject}</span>
                             ${isUnread ? '<span class="notification-badge">NEW</span>' : ''}
                         </div>
                         <div style="color: #e6edf3; margin-bottom: 5px; font-size: 11px;">${msg.body.substring(0, 80)}${msg.body.length > 80 ? '...' : ''}</div>
@@ -3517,13 +3645,14 @@
                         id: 2002,
                         type: 'individual',
                         subject: 'Grade Posted: Malaria Data Analysis',
-                        body: 'Your assignment has been graded: 85%. Excellent work on the statistical analysis! Keep up the good work.',
+                        body: 'Your assignment has been graded by Dr. Sarah Smith: 85%. Excellent work on the statistical analysis! Keep up the good work.',
                         senderEmail: 'dr.smith@university.edu',
                         senderName: 'Dr. Sarah Smith',
                         recipients: ['student@university.edu'],
                         timestamp: new Date(Date.now() - 3600000).toLocaleString(),
                         readBy: ['dr.smith@university.edu'],
-                        replies: []
+                        replies: [],
+                        studentName: 'Demo Student'
                     }
                 );
             }

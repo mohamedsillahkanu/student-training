@@ -1640,6 +1640,7 @@
     <script>
         // Global state
         // Global state
+        // Global state
         let isLoggedIn = false;
         let currentUser = null;
         let userRole = null;
@@ -3725,13 +3726,16 @@
         
             // Initialize data and show login
             initializeWeeklyAssignments();
-            addSampleData();
+            loadData(); // Load saved data first
+            addSampleData(); // Add sample data only if none exists
             updateStats();
             showLoginModal();
         
             // Load initial week content
             loadWeekContent(currentWeek);
         });
+        
+       
     </script>
 </body>
 </html>

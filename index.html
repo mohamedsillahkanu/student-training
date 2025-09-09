@@ -1,4 +1,4 @@
-<!DOCTYPE html>                                
+<!DOCTYPE html>                                    
 <html lang="en">     
 <head>  
     <meta charset="UTF-8">  
@@ -27,7 +27,7 @@
         .container {
             max-width: 1400px;
             margin: 0 auto;
-            padding: 0 5px;
+            padding: 0 20px;
         }
 
         .repo-header {
@@ -129,6 +129,7 @@
             border-radius: 6px;
             border: 1px solid #30363d;
             margin-bottom: 30px;
+            flex-wrap: wrap;
         }
 
         .stat-item {
@@ -146,8 +147,8 @@
 
         .main-content {
             display: grid;
-            grid-template-columns: 80% 20%;  
-            gap: 5px;
+            grid-template-columns: 1fr 300px;  
+            gap: 20px;
         }
 
         .categories-container {
@@ -431,7 +432,7 @@
         .sidebar {
             display: flex;
             flex-direction: column;
-            gap: 5px;
+            gap: 20px;
         }
 
         .info-card {
@@ -528,7 +529,7 @@
             display: block;
         }
 
-        .notes-content {
+        .notes-content, .files-content {
             padding: 20px;
             background: #0d1117;
             min-height: 400px;
@@ -579,33 +580,33 @@
         .upload-area {
             border: 2px dashed #30363d;
             border-radius: 6px;
-            padding: 40px;
+            padding: 40px 20px;
             text-align: center;
-            cursor: pointer;
             margin-bottom: 20px;
-            transition: border-color 0.2s;
+            cursor: pointer;
+            transition: all 0.2s;
+            background: #161b22;
         }
 
-        .upload-area:hover,
-        .upload-area.dragover {
+        .upload-area:hover, .upload-area.dragover {
             border-color: #58a6ff;
-            background: rgba(88, 166, 255, 0.05);
+            background: rgba(88, 166, 255, 0.1);
         }
 
         .upload-icon {
             font-size: 48px;
-            margin-bottom: 15px;
-        }
-
-        .upload-text {
-            font-size: 16px;
-            color: #e6edf3;
             margin-bottom: 10px;
         }
 
+        .upload-text {
+            color: #e6edf3;
+            font-size: 16px;
+            margin-bottom: 5px;
+        }
+
         .supported-formats {
-            font-size: 12px;
             color: #8b949e;
+            font-size: 12px;
         }
 
         .file-input {
@@ -616,7 +617,7 @@
             background: #161b22;
             padding: 20px;
             border-radius: 6px;
-            margin-top: 20px;
+            border: 1px solid #30363d;
         }
 
         /* Assignment Card Styles */
@@ -792,8 +793,10 @@
             border-radius: 8px;
             border: 1px solid #30363d;
             width: 90%;
-            max-width: 450px;
+            max-width: 500px;
             text-align: center;
+            max-height: 90vh;
+            overflow-y: auto;
         }
 
         .modal h2 {
@@ -942,6 +945,10 @@
         }
 
         @media (max-width: 768px) {
+            .container {
+                padding: 0 10px;
+            }
+
             .main-content {
                 grid-template-columns: 1fr;
             }
@@ -974,6 +981,127 @@
 
             .assignment-meta {
                 grid-template-columns: 1fr;
+            }
+
+            .tab-btn {
+                padding: 10px 8px;
+                font-size: 12px;
+            }
+
+            .modal-content {
+                width: 95%;
+                padding: 20px;
+            }
+
+            /* Content wrapper for loaded files */
+            .content-wrapper {
+                background: #0d1117;
+                color: #e6edf3;
+                padding: 20px;
+                border-radius: 6px;
+                max-height: 600px;
+                overflow-y: auto;
+                font-family: inherit;
+                line-height: 1.6;
+            }
+            
+            .content-wrapper h1,
+            .content-wrapper h2,
+            .content-wrapper h3,
+            .content-wrapper h4,
+            .content-wrapper h5,
+            .content-wrapper h6 {
+                color: #58a6ff;
+                margin-top: 1.5em;
+                margin-bottom: 0.5em;
+            }
+            
+            .content-wrapper h1:first-child,
+            .content-wrapper h2:first-child,
+            .content-wrapper h3:first-child {
+                margin-top: 0;
+            }
+            
+            .content-wrapper p {
+                margin-bottom: 1em;
+                color: #e6edf3;
+            }
+            
+            .content-wrapper a {
+                color: #58a6ff;
+                text-decoration: none;
+            }
+            
+            .content-wrapper a:hover {
+                text-decoration: underline;
+            }
+            
+            .content-wrapper code {
+                background: #161b22;
+                color: #f85149;
+                padding: 2px 4px;
+                border-radius: 3px;
+                font-family: 'Courier New', monospace;
+            }
+            
+            .content-wrapper pre {
+                background: #161b22;
+                color: #e6edf3;
+                padding: 15px;
+                border-radius: 6px;
+                overflow-x: auto;
+                border-left: 3px solid #58a6ff;
+            }
+            
+            .content-wrapper blockquote {
+                border-left: 3px solid #6f42c1;
+                padding-left: 15px;
+                margin-left: 0;
+                color: #8b949e;
+                font-style: italic;
+            }
+            
+            .content-wrapper table {
+                border-collapse: collapse;
+                width: 100%;
+                margin: 1em 0;
+            }
+            
+            .content-wrapper th,
+            .content-wrapper td {
+                border: 1px solid #30363d;
+                padding: 8px 12px;
+                text-align: left;
+            }
+            
+            .content-wrapper th {
+                background: #161b22;
+                color: #58a6ff;
+                font-weight: 600;
+            }
+            
+            .content-wrapper ul,
+            .content-wrapper ol {
+                padding-left: 20px;
+                margin-bottom: 1em;
+            }
+            
+            .content-wrapper li {
+                margin-bottom: 0.5em;
+            }
+            
+            /* Override any external styles that might conflict */
+            .content-wrapper * {
+                max-width: 100% !important;
+                box-sizing: border-box;
+            }
+            
+            /* Ensure images fit within container */
+            .content-wrapper img {
+                max-width: 100%;
+                height: auto;
+                border-radius: 4px;
+                border: 1px solid #30363d;
             }
         }
     </style>
@@ -1032,14 +1160,14 @@
             <div>
                 <!-- Tab Navigation -->
                 <div class="tab-navigation">
-                    <button class="tab-btn active" onclick="switchTab('datasets')">Dataset Categories</button>
-                    <button class="tab-btn" onclick="switchTab('assignments')">Weekly Assignments</button>
-                    <button class="tab-btn" onclick="switchTab('messages')">Messages</button>
-                    <button class="tab-btn" onclick="switchTab('notes')">Course Notes</button>
-                    <button class="tab-btn" onclick="switchTab('webtools')">Chatbot</button>
-                    <button class="tab-btn" onclick="switchTab('code')">R Coding Practice</button>
-                    <button class="tab-btn" onclick="switchTab('snt')">SNT Code Library</button>
-                    <button class="tab-btn" onclick="switchTab('files')">MPR Outputs</button>
+                    <button class="tab-btn active" onclick="switchTab(event, 'datasets')">Dataset Categories</button>
+                    <button class="tab-btn" onclick="switchTab(event, 'assignments')">Weekly Assignments</button>
+                    <button class="tab-btn" onclick="switchTab(event, 'messages')">Messages</button>
+                    <button class="tab-btn" onclick="switchTab(event, 'notes')">Course Notes</button>
+                    <button class="tab-btn" onclick="switchTab(event, 'webtools')">Chatbot</button>
+                    <button class="tab-btn" onclick="switchTab(event, 'code')">R Coding Practice</button>
+                    <button class="tab-btn" onclick="switchTab(event, 'snt')">SNT Code Library</button>
+                    <button class="tab-btn" onclick="switchTab(event, 'files')">MPR Outputs</button>
                 </div>
 
                 <!-- Dataset Categories Tab -->
@@ -1114,32 +1242,25 @@
                         <div class="categories-title">MPR Outputs</div>
                         <div>
                             <select id="fileSelect" onchange="switchFile()" style="background: #0d1117; color: #e6edf3; border: 1px solid #30363d; padding: 8px 12px; border-radius: 4px;">
-                                <option value="mpr1">MPR 1: Introduction to R Output</option>
-                                <option value="mpr2">MPR 2: Data Cleaning & Visualization</option>
-                                <option value="mpr3">MPR 3: Statistical Analysis</option>
-                                <option value="mpr4">MPR 4: Geospatial Data</option>
-                                <option value="mpr5">MPR 5: Time Series Analysis</option>
-                                <option value="mpr6">MPR 6: Machine Learning Basics</option>
-                                <option value="mpr7">MPR 7: Advanced Visualization</option>
-                                <option value="mpr8">MPR 8: Database Integration</option>
-                                <option value="mpr9">MPR 9: Report Generation</option>
-                                <option value="mpr10">MPR 10: Reproducible Research</option>
-                                <option value="mpr11">MPR 11: Web Applications</option>
-                                <option value="mpr12">MPR 12: Final Project</option>
+                                <option value="file1">File 1: Introduction to R</option>
+                                <option value="file2">File 2: Data Cleaning & Visualization</option>
+                                <option value="file3">File 3: Statistical Analysis</option>
+                                <option value="file4">File 4: Geospatial Data</option>
+                                <option value="file5">File 5: Time Series Analysis</option>
+                                <option value="file6">File 6: Machine Learning Basics</option>
+                                <option value="file7">File 7: Advanced Visualization</option>
+                                <option value="file8">File 8: Database Integration</option>
+                                <option value="file9">File 9: Report Generation</option>
+                                <option value="file10">File 10: Reproducible Research</option>
+                                <option value="file11">File 11: Web Applications</option>
+                                <option value="file12">File 12: Final Project</option>
                             </select>
-                            <button class="refresh-btn" onclick="refreshMPRFrame()">🔄 Refresh</button>
                         </div>
                     </div>
                     
-                    <!-- MPR Content Container -->
-                    <div class="web-content" id="mpr-content-container">
-                        <iframe 
-                            id="mprFrame"
-                            src="https://icf-sl-chatbox.streamlit.app?embed=true" 
-                            class="web-frame"
-                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                            sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-presentation">
-                        </iframe>
+                    <!-- File Content Container -->
+                    <div class="files-content" id="file-content-container">
+                        <div class="loading-message">Loading file content...</div>
                     </div>
                 </div>
 
@@ -1160,7 +1281,9 @@
                             src="https://icf-sl-chatbox.streamlit.app?embed=true" 
                             class="web-frame"
                             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                            sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-presentation">
+                            sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-presentation"
+                            onload="showToast('Content loaded successfully', 'success')"
+                            onerror="handleFrameError()">
                         </iframe>
                     </div>
                 </div>
@@ -1170,7 +1293,7 @@
                     <div class="categories-header">
                         <div class="categories-title">R Coding Practice</div>
                         <div>
-                            <button class="refresh-btn" onclick="refreshCodeFrame()">🔄 Refresh</button>
+                            <button class="refresh-btn" onclick="refreshFrame('code')">🔄 Refresh</button>
                         </div>
                     </div>
                     
@@ -1182,7 +1305,9 @@
                             src="https://webr.sh/?embed=true" 
                             class="web-frame"
                             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                            sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-presentation">
+                            sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-presentation"
+                            onload="showToast('R coding environment loaded', 'success')"
+                            onerror="handleFrameError('code')">
                         </iframe>
                     </div>
                 </div>
@@ -1192,7 +1317,7 @@
                     <div class="categories-header">
                         <div class="categories-title">SNT Code Library</div>
                         <div>
-                            <button class="refresh-btn" onclick="refreshSNTFrame()">🔄 Refresh</button>
+                            <button class="refresh-btn" onclick="refreshFrame('snt')">🔄 Refresh</button>
                         </div>
                     </div>
                     
@@ -1204,7 +1329,9 @@
                             src="https://ahadi-analytics.github.io/snt-code-library/?embed=true" 
                             class="web-frame"
                             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                            sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-presentation">
+                            sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-presentation"
+                            onload="showToast('SNT code library loaded', 'success')"
+                            onerror="handleFrameError('snt')">
                         </iframe>
                     </div>
                 </div>
@@ -1609,6 +1736,66 @@
                     dueDate: '2025-10-20',
                     totalPoints: 25,
                     requirements: ['Model building script', 'Model evaluation', 'Performance comparison']
+                },
+                {
+                    id: 'w7-viz',
+                    week: 7,
+                    title: 'Advanced Visualization Dashboard',
+                    course: 'VIZ401',
+                    description: 'Create an interactive dashboard using Shiny to display epidemiological data.',
+                    dueDate: '2025-10-27',
+                    totalPoints: 30,
+                    requirements: ['Shiny application', 'Interactive elements', 'User documentation']
+                },
+                {
+                    id: 'w8-db',
+                    week: 8,
+                    title: 'Database Integration',
+                    course: 'DATA301',
+                    description: 'Connect R to databases, perform queries, and analyze large datasets.',
+                    dueDate: '2025-11-03',
+                    totalPoints: 20,
+                    requirements: ['Database connection script', 'SQL queries', 'Analysis report']
+                },
+                {
+                    id: 'w9-report',
+                    week: 9,
+                    title: 'Automated Report Generation',
+                    course: 'DATA301',
+                    description: 'Create automated reports using R Markdown for weekly epidemiological summaries.',
+                    dueDate: '2025-11-10',
+                    totalPoints: 25,
+                    requirements: ['R Markdown template', 'Automated report', 'Professional formatting']
+                },
+                {
+                    id: 'w10-repro',
+                    week: 10,
+                    title: 'Reproducible Research Project',
+                    course: 'DATA301',
+                    description: 'Create a fully reproducible analysis with version control and documentation.',
+                    dueDate: '2025-11-17',
+                    totalPoints: 30,
+                    requirements: ['Git repository', 'Complete documentation', 'Reproducible analysis']
+                },
+                {
+                    id: 'w11-web',
+                    week: 11,
+                    title: 'Web Application Development',
+                    course: 'VIZ401',
+                    description: 'Build a web application for epidemiological data visualization and exploration.',
+                    dueDate: '2025-11-24',
+                    totalPoints: 35,
+                    requirements: ['Web application', 'User interface', 'Data visualization features']
+                },
+                {
+                    id: 'w12-final',
+                    week: 12,
+                    title: 'Final Project - Comprehensive Analysis',
+                    course: 'DATA301',
+                    description: 'Complete epidemiological analysis project incorporating all course concepts.',
+                    dueDate: '2025-12-01',
+                    totalPoints: 50,
+                    requirements: ['Complete analysis', 'Final presentation', 'All source code', 'Written report']
                 }
             ];
 
@@ -1620,165 +1807,78 @@
         };
 
         // Sample files for each category
+        const shapefiles = [
+            { 
+                name: 'Chiefdom2021', 
+                size: '1 MB', 
+                type: 'shapefile', 
+                icon: '🗺️', 
+                path: '/data/shapefiles/Chiefdom2021', 
+                content: 'Shapefile for chiefdom boundaries in 2021 containing geographic data for administrative divisions.',
+                files: ['Chiefdom2021.shp', 'Chiefdom2021.shx', 'Chiefdom2021.dbf']
+            },
+            { 
+                name: 'District2021', 
+                size: '900 KB', 
+                type: 'shapefile', 
+                icon: '🗺️', 
+                path: '/data/shapefiles/District2021', 
+                content: 'Shapefile for district boundaries in 2021 with complete administrative mapping data.',
+                files: ['District2021.shp', 'District2021.shx', 'District2021.dbf']
+            }
+        ];
+
+        const epiRoutineFiles = [
+            { name: 'epi_data_2021.xlsx', size: '856 KB', type: 'excel', icon: '📊', path: '/data/epi/epi_data_2021.xlsx', content: 'Excel file with comprehensive epidemiological data at district and chiefdom level including case counts and demographics.' }
+        ];
+
+        const interventionFiles = [
+            { name: 'intervention_2021.xlsx', size: '512 KB', type: 'excel', icon: '📊', path: '/data/intervention/intervention_2021.xlsx', content: 'Intervention coverage data for 2021 including vaccination rates and treatment coverage statistics.' }
+        ];
+
+        const campaignSurveyFiles = [
+            { name: 'survey_2021.xlsx', size: '768 KB', type: 'excel', icon: '📊', path: '/data/survey/survey_2021.xlsx', content: 'Survey and campaign data for 2021 with population health indicators and campaign effectiveness metrics.' }
+        ];
+
+        const reportFiles = [
+            { name: 'annual_report_2021.pdf', size: '1.2 MB', type: 'pdf', icon: '📄', path: '/data/reports/annual_report_2021.pdf', content: 'Comprehensive annual epidemiological report for 2021 with analysis and recommendations.' }
+        ];
+
+        const otherFiles = [
+            { name: 'comparative_analysis_2021.xlsx', size: '856 KB', type: 'excel', icon: '📊', path: '/data/historical/comparative_analysis_2021.xlsx', content: 'Excel file containing 2021 epidemiological data with district and chiefdom comparative analysis.' }
+        ];
+
+        const notesFiles = [
+            { name: 'research_notes_2021.md', size: '125 KB', type: 'markdown', icon: '📝', path: '/notes/research_notes_2021.md', content: 'Comprehensive research notes and methodology documentation for 2021 epidemiological studies.' },
+            { name: 'field_observations.txt', size: '89 KB', type: 'text', icon: '📋', path: '/notes/field_observations.txt', content: 'Field observation notes from data collection activities across various districts and chiefdoms.' },
+            { name: 'meeting_minutes_Q3.docx', size: '256 KB', type: 'document', icon: '📄', path: '/notes/meeting_minutes_Q3.docx', content: 'Meeting minutes from Q3 2021 stakeholder meetings and project planning sessions.' }
+        ];
+
+        const codeRepositoryFiles = [
+            { name: 'data_cleaning.R', size: '78 KB', type: 'r-script', icon: '🧹', path: '/code/data_cleaning.R', content: 'R script for cleaning and preprocessing epidemiological datasets before analysis.' },
+            { name: 'visualization_toolkit.R', size: '156 KB', type: 'r-script', icon: '📊', path: '/code/visualization_toolkit.R', content: 'Comprehensive R toolkit for creating epidemiological data visualizations and maps.' },
+            { name: 'analysis_pipeline.py', size: '134 KB', type: 'python', icon: '🐍', path: '/code/analysis_pipeline.py', content: 'Python pipeline for automated epidemiological data analysis and reporting.' },
+            { name: 'spatial_analysis.R', size: '203 KB', type: 'r-script', icon: '🗺️', path: '/code/spatial_analysis.R', content: 'Advanced spatial analysis functions for geographic epidemiological data processing.' }
+        ];
+
+        const sntCodeLibraryFiles = [
+            { name: 'snt_core_functions.R', size: '267 KB', type: 'r-script', icon: '⚙️', path: '/snt-lib/snt_core_functions.R', content: 'SNT Core library with essential functions for surveillance and tracking analysis.' },
+            { name: 'snt_data_models.R', size: '198 KB', type: 'r-script', icon: '🔧', path: '/snt-lib/snt_data_models.R', content: 'SNT data modeling framework for epidemiological surveillance systems.' },
+            { name: 'snt_dashboard_components.js', size: '345 KB', type: 'javascript', icon: '📱', path: '/snt-lib/snt_dashboard_components.js', content: 'JavaScript components for SNT surveillance dashboards and real-time monitoring.' },
+            { name: 'snt_api_client.py', size: '112 KB', type: 'python', icon: '🔌', path: '/snt-lib/snt_api_client.py', content: 'Python API client for SNT surveillance system integration and data synchronization.' }
+        ];
+
+        // Data categories
         const dataCategories = {
-            'shapefiles': { 
-                name: 'Shapefiles', 
-                files: [
-                    { 
-                        name: 'Chiefdom2021', 
-                        size: '1 MB', 
-                        type: 'shapefile', 
-                        icon: '🗺️', 
-                        content: 'Shapefile for chiefdom boundaries in 2021 containing geographic data for administrative divisions.',
-                        files: ['Chiefdom2021.shp', 'Chiefdom2021.shx', 'Chiefdom2021.dbf']
-                    },
-                    { 
-                        name: 'District2021', 
-                        size: '900 KB', 
-                        type: 'shapefile', 
-                        icon: '🗺️', 
-                        content: 'Shapefile for district boundaries in 2021 with complete administrative mapping data.',
-                        files: ['District2021.shp', 'District2021.shx', 'District2021.dbf']
-                    }
-                ]
-            },
-            'epi_routine': { 
-                name: 'Epi Routine Data', 
-                files: [
-                    { 
-                        name: 'epi_data_2021.xlsx', 
-                        size: '856 KB', 
-                        type: 'excel', 
-                        icon: '📊', 
-                        content: 'Excel file with comprehensive epidemiological data at district and chiefdom level including case counts and demographics.' 
-                    }
-                ]
-            },
-            'intervention': { 
-                name: 'Intervention Data', 
-                files: [
-                    { 
-                        name: 'intervention_2021.xlsx', 
-                        size: '512 KB', 
-                        type: 'excel', 
-                        icon: '📊', 
-                        content: 'Intervention coverage data for 2021 including vaccination rates and treatment coverage statistics.' 
-                    }
-                ]
-            },
-            'campaign_survey': { 
-                name: 'Campaign/Survey Data', 
-                files: [
-                    { 
-                        name: 'survey_2021.xlsx', 
-                        size: '768 KB', 
-                        type: 'excel', 
-                        icon: '📊', 
-                        content: 'Survey and campaign data for 2021 with population health indicators and campaign effectiveness metrics.' 
-                    }
-                ]
-            },
-            'reports': { 
-                name: 'Reports', 
-                files: [
-                    { 
-                        name: 'annual_report_2021.pdf', 
-                        size: '1.2 MB', 
-                        type: 'pdf', 
-                        icon: '📄', 
-                        content: 'Comprehensive annual epidemiological report for 2021 with analysis and recommendations.' 
-                    }
-                ]
-            },
-            'notes': { 
-                name: 'Notes & Documentation', 
-                files: [
-                    { 
-                        name: 'research_notes_2021.md', 
-                        size: '125 KB', 
-                        type: 'markdown', 
-                        icon: '📝', 
-                        content: 'Comprehensive research notes and methodology documentation for 2021 epidemiological studies.' 
-                    },
-                    { 
-                        name: 'field_observations.txt', 
-                        size: '89 KB', 
-                        type: 'text', 
-                        icon: '📋', 
-                        content: 'Field observation notes from data collection activities across various districts and chiefdoms.' 
-                    }
-                ]
-            },
-            'code_repository': { 
-                name: 'Code Repository', 
-                files: [
-                    { 
-                        name: 'data_cleaning.R', 
-                        size: '78 KB', 
-                        type: 'r-script', 
-                        icon: '🧹', 
-                        content: 'R script for cleaning and preprocessing epidemiological datasets before analysis.' 
-                    },
-                    { 
-                        name: 'visualization_toolkit.R', 
-                        size: '156 KB', 
-                        type: 'r-script', 
-                        icon: '📊', 
-                        content: 'Comprehensive R toolkit for creating epidemiological data visualizations and maps.' 
-                    }
-                ]
-            },
-            'snt_code_library': { 
-                name: 'SNT Code Library', 
-                files: [
-                    { 
-                        name: 'snt_core_functions.R', 
-                        size: '267 KB', 
-                        type: 'r-script', 
-                        icon: '⚙️', 
-                        content: 'SNT Core library with essential functions for surveillance and tracking analysis.' 
-                    },
-                    { 
-                        name: 'snt_data_models.R', 
-                        size: '198 KB', 
-                        type: 'r-script', 
-                        icon: '🔧', 
-                        content: 'SNT data modeling framework for epidemiological surveillance systems.' 
-                    }
-                ]
-            }
-        };   
-
-        // MPR URLs mapping
-        const mprUrls = {
-            'mpr1': 'https://raw.githack.com/mohamedsillahkanu/nmcp-mpr/main/impact_indicator.html?embed=true',
-            'mpr2': 'https://webr.sh/?embed=true',
-            'mpr3': 'https://ahadi-analytics.github.io/snt-code-library/?embed=true',
-            'mpr4': 'https://icf-sl-chatbox.streamlit.app?embed=true',
-            'mpr5': 'https://webr.sh/?embed=true',
-            'mpr6': 'https://ahadi-analytics.github.io/snt-code-library/?embed=true',
-            'mpr7': 'https://icf-sl-chatbox.streamlit.app?embed=true',
-            'mpr8': 'https://webr.sh/?embed=true',
-            'mpr9': 'https://ahadi-analytics.github.io/snt-code-library/?embed=true',
-            'mpr10': 'https://icf-sl-chatbox.streamlit.app?embed=true',
-            'mpr11': 'https://webr.sh/?embed=true',
-            'mpr12': 'https://ahadi-analytics.github.io/snt-code-library/?embed=true'
-        };
-
-        // Show toast notification
-        const showToast = (message, type = 'success') => {
-            if (currentToast) {
-                clearTimeout(currentToast);
-            }
-            
-            const toast = document.getElementById('toast');
-            toast.textContent = message;
-            toast.className = `toast ${type}`;
-            toast.classList.add('show');
-            
-            currentToast = setTimeout(() => {
-                toast.classList.remove('show');
-            }, 3000);
+            'shapefiles': { name: 'Shapefiles', files: [...shapefiles] },
+            'epi_routine': { name: 'Epi Routine Data', files: [...epiRoutineFiles] },
+            'intervention': { name: 'Intervention Data', files: [...interventionFiles] },
+            'campaign_survey': { name: 'Campaign/Survey Data', files: [...campaignSurveyFiles] },
+            'reports': { name: 'Reports', files: [...reportFiles] },
+            'notes': { name: 'Notes & Documentation', files: [...notesFiles] },
+            'code_repository': { name: 'Code Repository', files: [...codeRepositoryFiles] },
+            'snt_code_library': { name: 'SNT Code Library', files: [...sntCodeLibraryFiles] },
+            'other': { name: 'Other Files', files: [...otherFiles] }
         };
 
         // Week content loading function
@@ -1796,7 +1896,7 @@
                 }
                 
                 const content = await response.text();
-                container.innerHTML = content;
+                container.innerHTML = `<div class="content-wrapper">${content}</div>`;
                 
                 console.log(`Successfully loaded ${weekFile}`);
                 
@@ -1815,58 +1915,41 @@
                 `;
             } 
         };
-
-        // Simple function to load selected URL from dropdown
-        const loadSelectedMPR = () => {
-            const select = document.getElementById('mprSelect');
-            const iframe = document.getElementById('mprFrame');
-            const selectedUrl = select.value;
+        // Load file content
+        const loadFileContent = async (fileName) => {
+            const container = document.getElementById('file-content-container');
             
-            if (!selectedUrl) {
-                showToast('Please select a URL', 'error');
-                return;
-            }
-            
-            iframe.src = selectedUrl;
-            showToast(`Loading ${select.options[select.selectedIndex].text}...`, 'info');
+            try {
+                container.innerHTML = '<div class="loading-message">Loading file content...</div>';
+                
+                const response = await fetch(fileName);
+                
+                if (!response.ok) {
+                    throw new Error(`Failed to load ${fileName}: ${response.status}`);
+                }
+                
+                const content = await response.text();
+                
+                // Simply wrap the entire content in the content-wrapper
+                container.innerHTML = `<div class="content-wrapper">${content}</div>`;
+                
+                console.log(`Successfully loaded ${fileName}`);
+                
+            } catch (error) {
+                console.error(`Error loading file content:`, error);
+                container.innerHTML = `
+                    <div class="error-message-notes">
+                        <strong>Error loading ${fileName}</strong><br>
+                        Could not load ${fileName}. Please ensure the file exists in the same directory as this HTML file.<br>
+                        <small>Error: ${error.message}</small><br><br>
+                        <em>Expected files:</em><br>
+                        • file1.html<br>
+                        • file2.html<br>
+                        • ... (or whatever your actual file names are)
+                    </div>
+                `;
+            } 
         };
-
-        // Refresh the current MPR iframe
-        const refreshMPRFrame = () => {
-            const iframe = document.getElementById('mprFrame');
-            if (iframe && iframe.src) {
-                iframe.src = iframe.src;
-                showToast('Refreshing content...', 'info');
-            } else {
-                showToast('No URL loaded', 'error');
-            }
-        };
-
-        // Refresh other frames
-        const refreshFrame = () => {
-            const iframe = document.getElementById('embeddedFrame');
-            if (iframe) {
-                iframe.src = iframe.src;
-                showToast('Refreshing content...', 'info');
-            }
-        };
-
-        const refreshCodeFrame = () => {
-            const iframe = document.getElementById('codeFrame');
-            if (iframe) {
-                iframe.src = iframe.src;
-                showToast('Refreshing R coding environment...', 'info');
-            }
-        };
-
-        const refreshSNTFrame = () => {
-            const iframe = document.getElementById('sntFrame');
-            if (iframe) {
-                iframe.src = iframe.src;
-                showToast('Refreshing SNT code library...', 'info');
-            }
-        };
-
         // Switch between weeks in notes
         const switchWeek = async () => {
             const selectedWeek = document.getElementById('weekSelect').value;
@@ -1874,11 +1957,15 @@
             await loadWeekContent(selectedWeek);
         };
 
+        // Switch between files in MPR outputs
+        const switchFile = async () => {
+            const selectedFile = document.getElementById('fileSelect').value;
+            await loadFileContent(selectedFile + '.html');
+        };
+
         // Switch between tabs
-        const switchTab = async (tabName, event) => {
-            // Get the clicked button from event or find it by tabName
-            const clickedButton = event ? event.target : document.querySelector(`[onclick="switchTab('${tabName}')"]`);
-            
+        const switchTab = async (event, tabName) => {
+            // Remove active class from all tabs and buttons
             document.querySelectorAll('.tab-content').forEach(tab => {
                 tab.classList.remove('active');
             });
@@ -1887,11 +1974,11 @@
                 btn.classList.remove('active');
             });
             
+            // Add active class to selected tab and button
             document.getElementById(`${tabName}-tab`).classList.add('active');
-            if (clickedButton) {
-                clickedButton.classList.add('active');
-            }
+            event.target.classList.add('active');
             
+            // Load content based on tab
             if (tabName === 'datasets') {
                 renderCategories();
             } else if (tabName === 'assignments') {
@@ -1901,8 +1988,84 @@
             } else if (tabName === 'notes') {
                 await loadWeekContent(currentWeek);
             } else if (tabName === 'files') {
-                const selectedMPR = document.getElementById('fileSelect').value;
-                loadMPRContent(selectedMPR);
+                await loadFileContent('file1.html');
+            } else if (tabName === 'webtools') {
+                initializeWebTools();
+            } else if (tabName === 'code') {
+                initializeCodeTab();
+            } else if (tabName === 'snt') {
+                initializeSNTTab();
+            }
+        };
+
+        // Initialize web tools tab
+        const initializeWebTools = () => {
+            const iframe = document.getElementById('embeddedFrame');
+            if (iframe) {
+                console.log('Web Tools tab initialized with embedded URL:', iframe.src);
+            }
+        };
+
+        // Initialize code tab
+        const initializeCodeTab = () => {
+            const iframe = document.getElementById('codeFrame');
+            if (iframe) {
+                console.log('Code tab initialized with embedded URL:', iframe.src);
+            }
+        };
+
+        // Initialize SNT tab
+        const initializeSNTTab = () => {
+            const iframe = document.getElementById('sntFrame');
+            if (iframe) {
+                console.log('SNT tab initialized with embedded URL:', iframe.src);
+            }
+        };
+
+        // Handle iframe loading error
+        const handleFrameError = (frameType = 'web') => {
+            let container, iframe, url;
+            
+            if (frameType === 'code') {
+                container = document.getElementById('code-content-container');
+                iframe = document.getElementById('codeFrame');
+            } else if (frameType === 'snt') {
+                container = document.getElementById('snt-content-container');
+                iframe = document.getElementById('sntFrame');
+            } else {
+                container = document.getElementById('web-content-container');
+                iframe = document.getElementById('embeddedFrame');
+            }
+            
+            url = iframe ? iframe.src : 'Unknown URL';
+            
+            container.innerHTML = `
+                <div class="url-error">
+                    <strong>Failed to load embedded content</strong><br>
+                    The website may not allow embedding, or there might be a connection issue.<br>
+                    <small>URL: ${url}</small><br><br>
+                    <button class="upload-btn" onclick="openInNewTab('${url}')">🔗 Open in New Tab</button>
+                </div>
+            `;
+        };
+
+        // Refresh the current iframe
+        const refreshFrame = (frameType = 'web') => {
+            let iframe;
+            
+            if (frameType === 'code') {
+                iframe = document.getElementById('codeFrame');
+            } else if (frameType === 'snt') {
+                iframe = document.getElementById('sntFrame');
+            } else {
+                iframe = document.getElementById('embeddedFrame');
+            }
+            
+            if (iframe) {
+                iframe.src = iframe.src;
+                showToast('Refreshing content...', 'info');
+            } else {
+                showToast('No content to refresh', 'error');
             }
         };
 
@@ -1995,6 +2158,7 @@
             }
             
             renderStudentFiles();
+            updateNotifications();
         };
 
         // Render weekly assignments
@@ -2070,6 +2234,749 @@
             });
         };
 
+        // Render messages
+        const renderMessages = () => {
+            const container = document.getElementById('messages-container');
+            container.innerHTML = '';
+
+            if (globalMessages.length === 0) {
+                container.innerHTML = '<div style="padding: 20px; text-align: center; color: #8b949e;">No messages yet.</div>';
+                return;
+            }
+
+            // Filter messages based on user role
+            let messagesToShow = globalMessages;
+            
+            if (userRole === 'student') {
+                messagesToShow = globalMessages.filter(msg => 
+                    msg.type === 'announcement' || 
+                    msg.recipients.includes(currentUserEmail) ||
+                    msg.senderEmail === currentUserEmail
+                );
+            } else if (userRole === 'lecturer') {
+                messagesToShow = globalMessages.filter(msg => 
+                    msg.senderEmail === currentUserEmail ||
+                    msg.recipients.includes(currentUserEmail) ||
+                    msg.type === 'announcement'
+                );
+            }
+
+            messagesToShow.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+
+            messagesToShow.forEach((message, index) => {
+                const isUnread = !message.readBy.includes(currentUserEmail);
+                const messageDiv = document.createElement('div');
+                messageDiv.classList.add('message-card');
+                if (isUnread) messageDiv.classList.add('unread');
+                if (message.type === 'announcement') messageDiv.classList.add('announcement');
+
+                const typeIcon = message.type === 'announcement' ? '📢' : 
+                                message.type === 'individual' ? '✉️' : '👥';
+
+                messageDiv.innerHTML = `
+                    <div class="message-header">
+                        <div class="message-subject">${typeIcon} ${message.subject}</div>
+                        <div class="message-meta">
+                            From: ${message.senderName} | ${message.timestamp}
+                            ${isUnread ? '<span class="notification-badge">NEW</span>' : ''}
+                        </div>
+                    </div>
+                    <div class="message-body">${message.body}</div>
+                    ${message.replies && message.replies.length > 0 ? `
+                        <div style="margin-top: 10px; padding: 10px; background: #0d1117; border-radius: 4px;">
+                            <strong>Replies (${message.replies.length}):</strong>
+                            ${message.replies.map(reply => `
+                                <div style="margin-top: 5px; padding: 5px; background: #161b22; border-radius: 3px; font-size: 12px;">
+                                    <strong>${reply.senderName}:</strong> ${reply.text}
+                                    <div style="color: #8b949e; font-size: 10px;">${reply.timestamp}</div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    ` : ''}
+                    <div class="message-actions">
+                        ${message.senderEmail !== currentUserEmail ? 
+                            `<button class="reply-btn" onclick="showReplyModal('${message.id}')">Reply</button>` : ''
+                        }
+                        ${isUnread ? 
+                            `<button class="reply-btn" onclick="markMessageRead('${message.id}')">Mark Read</button>` : ''
+                        }
+                    </div>
+                `;
+                container.appendChild(messageDiv);
+            });
+        };
+
+        // Message handling functions
+        const showComposeModal = () => {
+            document.getElementById('composeModal').style.display = 'flex';
+            populateRecipients();
+        };
+
+        const closeComposeModal = () => {
+            document.getElementById('composeModal').style.display = 'none';
+            document.getElementById('messageType').value = '';
+            document.getElementById('messageSubject').value = '';
+            document.getElementById('messageBody').value = '';
+            document.getElementById('recipientGroup').style.display = 'none';
+            document.getElementById('composeError').style.display = 'none';
+            document.getElementById('composeSuccess').style.display = 'none';
+        };
+
+        const handleMessageTypeChange = () => {
+            const messageType = document.getElementById('messageType').value;
+            const recipientGroup = document.getElementById('recipientGroup');
+            
+            if (messageType === 'announcement') {
+                recipientGroup.style.display = 'none';
+            } else {
+                recipientGroup.style.display = 'block';
+                populateRecipients();
+            }
+        };
+
+        const populateRecipients = () => {
+            const messageType = document.getElementById('messageType').value;
+            const recipientSelect = document.getElementById('messageRecipient');
+            recipientSelect.innerHTML = '';
+            
+            if (messageType === 'individual' || messageType === 'group') {
+                Object.entries(userDatabase).forEach(([username, userData]) => {
+                    if (userData.email !== currentUserEmail) {
+                        const option = document.createElement('option');
+                        option.value = userData.email;
+                        option.textContent = `${userData.fullName} (${userData.role})`;
+                        recipientSelect.appendChild(option);
+                    }
+                });
+            }
+        };
+
+        const sendMessage = () => {
+            const messageType = document.getElementById('messageType').value;
+            const subject = document.getElementById('messageSubject').value.trim();
+            const body = document.getElementById('messageBody').value.trim();
+            const composeError = document.getElementById('composeError');
+            const composeSuccess = document.getElementById('composeSuccess');
+            
+            composeError.style.display = 'none';
+            composeSuccess.style.display = 'none';
+            
+            if (!messageType || !subject || !body) {
+                composeError.textContent = 'Please fill in all fields.';
+                composeError.style.display = 'block';
+                return;
+            }
+            
+            let recipients = [];
+            if (messageType === 'announcement') {
+                recipients = Object.values(userDatabase)
+                    .filter(user => user.role === 'student')
+                    .map(user => user.email);
+            } else {
+                const selectedRecipients = Array.from(document.getElementById('messageRecipient').selectedOptions)
+                    .map(option => option.value);
+                if (selectedRecipients.length === 0) {
+                    composeError.textContent = 'Please select at least one recipient.';
+                    composeError.style.display = 'block';
+                    return;
+                }
+                recipients = selectedRecipients;
+            }
+            
+            const currentUserData = userDatabase[currentUser];
+            const newMessage = {
+                id: Date.now() + Math.random(),
+                type: messageType,
+                subject: subject,
+                body: body,
+                senderEmail: currentUserEmail,
+                senderName: currentUserData.fullName,
+                recipients: recipients,
+                timestamp: new Date().toLocaleString(),
+                readBy: [currentUserEmail],
+                replies: []
+            };
+            
+            globalMessages.push(newMessage);
+            
+            composeSuccess.textContent = `Message sent to ${recipients.length} recipient(s)!`;
+            composeSuccess.style.display = 'block';
+            
+            setTimeout(() => {
+                closeComposeModal();
+                renderMessages();
+                updateStats();
+                updateNotifications();
+                showToast('Message sent successfully!');
+            }, 2000);
+        };
+
+        const showReplyModal = (messageId) => {
+            selectedMessageForReply = messageId;
+            const message = globalMessages.find(m => m.id == messageId);
+            if (message) {
+                document.getElementById('originalMessage').innerHTML = `
+                    <strong>From:</strong> ${message.senderName}<br>
+                    <strong>Subject:</strong> ${message.subject}<br>
+                    <strong>Message:</strong> ${message.body}
+                `;
+                document.getElementById('replyModal').style.display = 'flex';
+            }
+        };
+
+        const closeReplyModal = () => {
+            document.getElementById('replyModal').style.display = 'none';
+            document.getElementById('replyText').value = '';
+            document.getElementById('replyError').style.display = 'none';
+            document.getElementById('replySuccess').style.display = 'none';
+            selectedMessageForReply = null;
+        };
+
+        const sendReply = () => {
+            const replyText = document.getElementById('replyText').value.trim();
+            const replyError = document.getElementById('replyError');
+            const replySuccess = document.getElementById('replySuccess');
+            
+            replyError.style.display = 'none';
+            replySuccess.style.display = 'none';
+            
+            if (!replyText) {
+                replyError.textContent = 'Please enter a reply.';
+                replyError.style.display = 'block';
+                return;
+            }
+            
+            const message = globalMessages.find(m => m.id == selectedMessageForReply);
+            if (message) {
+                const currentUserData = userDatabase[currentUser];
+                const reply = {
+                    id: Date.now(),
+                    senderEmail: currentUserEmail,
+                    senderName: currentUserData.fullName,
+                    text: replyText,
+                    timestamp: new Date().toLocaleString()
+                };
+                
+                if (!message.replies) message.replies = [];
+                message.replies.push(reply);
+                
+                replySuccess.textContent = 'Reply sent successfully!';
+                replySuccess.style.display = 'block';
+                
+                setTimeout(() => {
+                    closeReplyModal();
+                    renderMessages();
+                    showToast('Reply sent!');
+                }, 2000);
+            }
+        };
+
+        const markMessageRead = (messageId) => {
+            const message = globalMessages.find(m => m.id == messageId);
+            if (message && !message.readBy.includes(currentUserEmail)) {
+                message.readBy.push(currentUserEmail);
+                renderMessages();
+                updateStats();
+                updateNotifications();
+            }
+        };
+
+        // Assignment handling functions
+        const openUploadForAssignment = (weekNumber) => {
+            document.getElementById('weekNumber').value = weekNumber;
+            showUploadModal();
+        };
+
+        const viewSubmission = (weekNumber) => {
+            const submission = globalStudentFiles.find(f => f.weekNumber == weekNumber && f.uploadedBy === currentUser);
+            if (submission) {
+                showToast(`Viewing submission for Week ${weekNumber}: ${submission.title}`);
+                // In a real app, this would open the file or show details
+            }
+        };
+
+        const viewAssignmentSubmissions = (weekNumber) => {
+            const submissions = globalStudentFiles.filter(f => f.weekNumber == weekNumber);
+            showToast(`Week ${weekNumber} has ${submissions.length} submission(s)`);
+            // In a real app, this would show all submissions for grading
+        };
+
+        const refreshAssignments = () => {
+            renderAssignments();
+            updateStats();
+            showToast('Assignments refreshed!', 'info');
+        };
+
+        const refreshMessages = () => {
+            renderMessages();
+            updateStats();
+            updateNotifications();
+            showToast('Messages refreshed!', 'info');
+        };
+
+        // Upload modal functions
+        const showUploadModal = () => {
+            if (userRole !== 'student') {
+                showToast('Only students can upload assignments', 'error');
+                return;
+            }
+            document.getElementById('uploadModal').style.display = 'flex';
+        };
+
+        const closeUploadModal = () => {
+            document.getElementById('uploadModal').style.display = 'none';
+            document.getElementById('uploadForm').style.display = 'none';
+            document.getElementById('fileInput').value = '';
+            document.getElementById('assignmentTitle').value = '';
+            document.getElementById('course').value = '';
+            document.getElementById('weekNumber').value = '';
+            document.getElementById('description').value = '';
+            document.getElementById('uploadError').style.display = 'none';
+            document.getElementById('uploadSuccess').style.display = 'none';
+        };
+
+        // Handle file selection
+        const handleFileSelect = (files) => {
+            const uploadForm = document.getElementById('uploadForm');
+            const uploadError = document.getElementById('uploadError');
+            
+            uploadError.style.display = 'none';
+            
+            if (files.length === 0) return;
+            
+            // Validate file types
+            const validExtensions = ['.r', '.R', '.pdf', '.mp4', '.mov', '.avi', '.html', '.htm'];
+            const invalidFiles = [];
+            
+            Array.from(files).forEach(file => {
+                const extension = '.' + file.name.split('.').pop().toLowerCase();
+                if (!validExtensions.includes(extension) && !validExtensions.includes(extension.toUpperCase())) {
+                    invalidFiles.push(file.name);
+                }
+            });
+            
+            if (invalidFiles.length > 0) {
+                uploadError.textContent = `Invalid file types: ${invalidFiles.join(', ')}. Please upload R scripts, PDFs, videos, or HTML files.`;
+                uploadError.style.display = 'block';
+                return;
+            }
+            
+            uploadForm.style.display = 'block';
+            showToast(`${files.length} file(s) selected for upload`);
+        };
+
+        // Submit upload
+        const submitUpload = () => {
+            const files = document.getElementById('fileInput').files;
+            const title = document.getElementById('assignmentTitle').value.trim();
+            const course = document.getElementById('course').value;
+            const weekNumber = document.getElementById('weekNumber').value;
+            const description = document.getElementById('description').value.trim();
+            const uploadError = document.getElementById('uploadError');
+            const uploadSuccess = document.getElementById('uploadSuccess');
+            
+            uploadError.style.display = 'none';
+            uploadSuccess.style.display = 'none';
+            
+            if (!files.length || !title || !course || !weekNumber) {
+                uploadError.textContent = 'Please fill in all required fields and select files.';
+                uploadError.style.display = 'block';
+                return;
+            }
+            
+            const currentUserData = userDatabase[currentUser];
+            const assignedLecturerUsername = currentUserData.assignedLecturer;
+            
+            if (!assignedLecturerUsername) {
+                uploadError.textContent = 'No lecturer assigned to your account. Please contact administration.';
+                uploadError.style.display = 'block';
+                return;
+            }
+            
+            // Add to global student files
+            Array.from(files).forEach(file => {
+                const fileIcon = getFileIcon(file.name);
+                const newFile = {
+                    id: Date.now() + Math.random(),
+                    name: file.name,
+                    title: title,
+                    course: course,
+                    weekNumber: parseInt(weekNumber),
+                    description: description,
+                    size: formatFileSize(file.size),
+                    type: file.type || 'application/octet-stream',
+                    icon: fileIcon,
+                    uploadedBy: currentUser,
+                    uploadedByEmail: currentUserEmail,
+                    assignedLecturer: assignedLecturerUsername,
+                    uploadDate: new Date().toLocaleString(),
+                    grade: null,
+                    comments: [],
+                    status: 'submitted'
+                };
+                globalStudentFiles.push(newFile);
+            });
+            
+            uploadSuccess.textContent = `Assignment "${title}" uploaded successfully!`;
+            uploadSuccess.style.display = 'block';
+            
+            // Send message to lecturer
+            const lecturerData = userDatabase[assignedLecturerUsername];
+            if (lecturerData) {
+                const newMessage = {
+                    id: Date.now() + Math.random(),
+                    type: 'individual',
+                    subject: `New Assignment Submission - Week ${weekNumber}`,
+                    body: `Student ${currentUserData.fullName} has submitted "${title}" for Week ${weekNumber} in course ${course}.`,
+                    senderEmail: currentUserEmail,
+                    senderName: currentUserData.fullName,
+                    recipients: [lecturerData.email],
+                    timestamp: new Date().toLocaleString(),
+                    readBy: [currentUserEmail],
+                    replies: []
+                };
+                globalMessages.push(newMessage);
+            }
+            
+            setTimeout(() => {
+                closeUploadModal();
+                renderStudentFiles();
+                renderAssignments();
+                updateStats();
+                showToast('Assignment uploaded and lecturer notified!');
+            }, 2000);
+        };
+
+        // Get file icon based on extension
+        const getFileIcon = (fileName) => {
+            const extension = fileName.split('.').pop().toLowerCase();
+            switch (extension) {
+                case 'r': return '📊';
+                case 'pdf': return '📄';
+                case 'mp4':
+                case 'mov':
+                case 'avi': return '🎥';
+                case 'html':
+                case 'htm': return '🌐';
+                default: return '📁';
+            }
+        };
+
+        // Format file size
+        const formatFileSize = (bytes) => {
+            if (bytes === 0) return '0 B';
+            const k = 1024;
+            const sizes = ['B', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
+        };
+
+        // Render student files
+        const renderStudentFiles = () => {
+            const container = document.getElementById('student-files-container');
+            container.innerHTML = '';
+
+            if (globalStudentFiles.length === 0) {
+                container.innerHTML = '<div style="padding: 20px; text-align: center; color: #8b949e;">No assignments uploaded yet.</div>';
+                return;
+            }
+
+            // Filter files based on user role and assignments
+            let filesToShow = globalStudentFiles;
+            
+            if (userRole === 'student') {
+                filesToShow = globalStudentFiles.filter(f => f.uploadedBy === currentUser);
+            } else if (userRole === 'lecturer') {
+                filesToShow = globalStudentFiles.filter(f => f.assignedLecturer === currentUser);
+            }
+
+            if (filesToShow.length === 0) {
+                const message = userRole === 'lecturer' ? 
+                    'No submissions from your assigned students yet.' : 
+                    'No assignments uploaded yet.';
+                container.innerHTML = `<div style="padding: 20px; text-align: center; color: #8b949e;">${message}</div>`;
+                return;
+            }
+
+            filesToShow.forEach((file, index) => {
+                const isOwnFile = file.uploadedBy === currentUser;
+                const canComment = userRole === 'lecturer' || userRole === 'admin';
+                const studentInfo = userDatabase[file.uploadedBy];
+                const lecturerInfo = userDatabase[file.assignedLecturer];
+                
+                const fileDiv = document.createElement('div');
+                fileDiv.classList.add('file');
+                fileDiv.innerHTML = `
+                    <div class="file-header">
+                        <div class="file-name">${file.icon} ${file.name}</div>
+                        <div class="file-meta">
+                            ${file.grade !== null ? `<div class="file-grade">${file.grade}%</div>` : '<div class="file-grade pending">Pending</div>'}
+                            <div class="file-size">${file.size}</div>
+                        </div>
+                    </div>
+                    <div class="file-description">
+                        <strong>${file.title}</strong> - ${file.course} (Week ${file.weekNumber})<br>
+                        ${file.description || 'No description provided'}<br>
+                        <small>
+                            Student: ${studentInfo ? studentInfo.fullName : file.uploadedBy} (${file.uploadedByEmail})<br>
+                            Lecturer: ${lecturerInfo ? lecturerInfo.fullName : file.assignedLecturer}<br>
+                            Submitted: ${file.uploadDate}
+                        </small>
+                    </div>
+                    <div class="file-actions">
+                        ${isOwnFile || userRole === 'lecturer' || userRole === 'admin' ? 
+                            `<button class="download-btn" onclick="downloadStudentFile('${file.id}')">Download</button>` : ''
+                        }
+                        ${canComment && file.assignedLecturer === currentUser ? 
+                            `<button class="comment-btn" onclick="showCommentModal('${file.id}')">
+                                Comment ${file.comments.length > 0 ? `(${file.comments.length})` : ''}
+                            </button>
+                            <button class="grade-btn" onclick="showGradeModal('${file.id}')">
+                                ${file.grade !== null ? 'Update Grade' : 'Grade'}
+                            </button>` : ''
+                        }
+                    </div>
+                    ${file.comments.length > 0 ? `
+                        <div class="comments-section expanded">
+                            <h4 style="color: #6f42c1; margin-bottom: 10px; font-size: 13px;">Comments & Feedback</h4>
+                            ${file.comments.map(comment => `
+                                <div class="comment">
+                                    <div class="comment-header">
+                                        <span class="comment-author">${comment.authorName} (${comment.role})</span>
+                                        <span class="comment-date">${comment.date}</span>
+                                    </div>
+                                    <div class="comment-text">${comment.text}</div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    ` : ''}
+                `;
+                container.appendChild(fileDiv);
+            });
+        };
+
+        // Download student file
+        const downloadStudentFile = (fileId) => {
+            const file = globalStudentFiles.find(f => f.id == fileId);
+            if (!file) {
+                showToast('File not found', 'error');
+                return;
+            }
+
+            const link = document.createElement('a');
+            link.download = file.name;
+            link.href = '#';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            
+            const extension = file.name.split('.').pop();
+            showToast(`${file.name} downloaded successfully! (.${extension} format)`);
+        };
+
+        // Show comment modal
+        const showCommentModal = (fileId) => {
+            selectedFile = fileId;
+            document.getElementById('commentModal').style.display = 'flex';
+            document.getElementById('commentTitle').textContent = 'Add Comment & Grade';
+            document.getElementById('gradeInput').value = '';
+            document.getElementById('commentText').value = '';
+        };
+
+        // Show grade modal
+        const showGradeModal = (fileId) => {
+            selectedFile = fileId;
+            const file = globalStudentFiles.find(f => f.id == fileId);
+            if (file && file.grade !== null) {
+                document.getElementById('gradeInput').value = file.grade;
+            }
+            document.getElementById('commentModal').style.display = 'flex';
+            document.getElementById('commentTitle').textContent = 'Grade Assignment';
+            document.getElementById('commentText').value = '';
+        };
+
+        // Close comment modal
+        const closeCommentModal = () => {
+            document.getElementById('commentModal').style.display = 'none';
+            document.getElementById('gradeInput').value = '';
+            document.getElementById('commentText').value = '';
+            document.getElementById('commentError').style.display = 'none';
+            document.getElementById('commentSuccess').style.display = 'none';
+            selectedFile = null;
+        };
+
+        // Submit comment and grade
+        const submitComment = () => {
+            const grade = document.getElementById('gradeInput').value;
+            const commentText = document.getElementById('commentText').value.trim();
+            const commentError = document.getElementById('commentError');
+            const commentSuccess = document.getElementById('commentSuccess');
+            
+            commentError.style.display = 'none';
+            commentSuccess.style.display = 'none';
+            
+            if (!commentText) {
+                commentError.textContent = 'Please enter a comment.';
+                commentError.style.display = 'block';
+                return;
+            }
+            
+            const file = globalStudentFiles.find(f => f.id == selectedFile);
+            if (!file) {
+                commentError.textContent = 'File not found.';
+                commentError.style.display = 'block';
+                return;
+            }
+            
+            // Add comment
+            const currentUserData = userDatabase[currentUser];
+            file.comments.push({
+                id: Date.now(),
+                author: currentUser,
+                authorName: currentUserData.fullName,
+                authorEmail: currentUserEmail,
+                role: userRole,
+                text: commentText,
+                date: new Date().toLocaleString()
+            });
+            
+            // Update grade if provided
+            let gradeMessage = '';
+            const isNewGrade = grade && grade >= 0 && grade <= 100;
+            if (isNewGrade) {
+                const oldGrade = file.grade;
+                file.grade = parseInt(grade);
+                file.status = 'graded';
+                gradeMessage = oldGrade !== null ? 
+                    ` Grade updated from ${oldGrade}% to ${grade}%.` : 
+                    ` Grade assigned: ${grade}%.`;
+            }
+            
+            commentSuccess.textContent = 'Comment added successfully!' + gradeMessage;
+            commentSuccess.style.display = 'block';
+            
+            // Send message to student
+            const notificationSubject = isNewGrade ? 
+                `Grade Posted: ${file.title}` : 
+                `New Comment: ${file.title}`;
+            const notificationMessage = isNewGrade ? 
+                `Your assignment "${file.title}" has been graded: ${grade}%. Feedback: ${commentText}` :
+                `New comment on your assignment "${file.title}": ${commentText}`;
+                
+            const newMessage = {
+                id: Date.now() + Math.random(),
+                type: 'individual',
+                subject: notificationSubject,
+                body: notificationMessage,
+                senderEmail: currentUserEmail,
+                senderName: currentUserData.fullName,
+                recipients: [file.uploadedByEmail],
+                timestamp: new Date().toLocaleString(),
+                readBy: [currentUserEmail],
+                replies: []
+            };
+            globalMessages.push(newMessage);
+            
+            setTimeout(() => {
+                closeCommentModal();
+                renderStudentFiles();
+                updateStats();
+                showToast(isNewGrade ? 'Grade assigned and student notified!' : 'Comment added and student notified!');
+            }, 2000);
+        };
+
+        // Refresh submissions
+        const refreshSubmissions = () => {
+            renderStudentFiles();
+            updateStats();
+            showToast('Submissions refreshed!', 'info');
+        };
+
+        // Download file function
+        const downloadFile = (fileName, fileType) => {
+            if (!isLoggedIn) {
+                showToast('Please log in first', 'error');
+                return;
+            }
+
+            let fileData = null;
+            Object.values(dataCategories).forEach(category => {
+                const found = category.files.find(f => f.name === fileName || f.name.startsWith(fileName));
+                if (found) fileData = found;
+            });
+
+            if (!fileData) {
+                showToast('File not found', 'error');
+                return;
+            }
+
+            showToast(`Preparing download for ${fileName}...`);
+            
+            setTimeout(() => {
+                if (fileType === 'shapefile' && fileData.files) {
+                    // Download all shapefile components
+                    fileData.files.forEach((file, index) => {
+                        setTimeout(() => {
+                            const link = document.createElement('a');
+                            link.download = file;
+                            link.href = '#';
+                            document.body.appendChild(link);
+                            link.click();
+                            document.body.removeChild(link);
+
+                            if (index === 0) {
+                                const extension = file.split('.').pop();
+                                showToast(`Downloaded ${file} (.${extension} format)`);
+                            }
+                        }, index * 200);
+                    });
+
+                    setTimeout(() => {
+                        showToast(`All ${fileName} shapefile components downloaded! Files: ${fileData.files.join(', ')}`);
+                    }, fileData.files.length * 200 + 500);
+                } else {
+                    const link = document.createElement('a');
+                    link.download = fileData.name;
+                    link.href = '#';
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                    
+                    const extension = fileData.name.split('.').pop();
+                    showToast(`${fileName} downloaded successfully! (.${extension} format)`);
+                }
+            }, 800);
+        };
+
+        // Logout function
+        const logout = () => {
+            if (confirm('Are you sure you want to logout?')) {
+                isLoggedIn = false;
+                currentUser = null;
+                userRole = null;
+                currentUserEmail = null;
+                document.getElementById('userInfo').style.display = 'none';
+                document.getElementById('categories-container').innerHTML = '';
+                document.getElementById('assignments-container').innerHTML = '';
+                document.getElementById('messages-container').innerHTML = '';
+                document.getElementById('student-files-container').innerHTML = '';
+                document.getElementById('studentUploads').style.display = 'none';
+                document.getElementById('notificationCard').style.display = 'none';
+                document.getElementById('uploadBtn').style.display = 'none';
+                document.getElementById('uploadBtn2').style.display = 'none';
+                document.getElementById('composeBtn').style.display = 'none';
+                document.getElementById('studentQuickStart').style.display = 'none';
+                document.getElementById('lecturerQuickStart').style.display = 'none';
+                document.getElementById('totalFiles').textContent = '0';
+                document.getElementById('totalSize').textContent = '0';
+                document.getElementById('pendingGrades').textContent = '0';
+                document.getElementById('unreadNotifications').textContent = '0';
+                document.getElementById('overdueAssignments').textContent = '0';
+                showLoginModal();
+                showToast('Logged out successfully.');
+            }
+        };
+
         // Render categories and files
         const renderCategories = () => {
             const container = document.getElementById('categories-container');
@@ -2140,93 +3047,220 @@
             }
         };
 
-        // Download file function
-        const downloadFile = (fileName, fileType) => {
-            if (!isLoggedIn) {
-                showToast('Please log in first', 'error');
-                return;
-            }
-
-            let fileData = null;
-            Object.values(dataCategories).forEach(category => {
-                const found = category.files.find(f => f.name === fileName || f.name.startsWith(fileName));
-                if (found) fileData = found;
-            });
-
-            if (!fileData) {
-                showToast('File not found', 'error');
-                return;
-            }
-
-            showToast(`Preparing download for ${fileName}...`);
+        // Update statistics
+        const updateStats = () => {
+            let totalFiles = 0;
+            let totalSizeKB = 0;
+            let pendingGrades = 0;
+            let unreadMessages = 0;
+            let overdueAssignments = 0;
             
-            setTimeout(() => {
-                if (fileType === 'shapefile' && fileData.files) {
-                    // Download all shapefile components
-                    fileData.files.forEach((file, index) => {
-                        setTimeout(() => {
-                            const link = document.createElement('a');
-                            link.download = file;
-                            link.href = '#';
-                            document.body.appendChild(link);
-                            link.click();
-                            document.body.removeChild(link);
-
-                            if (index === 0) {
-                                const extension = file.split('.').pop();
-                                showToast(`Downloaded ${file} (.${extension} format)`);
-                            }
-                        }, index * 200);
-                    });
-
-                    setTimeout(() => {
-                        showToast(`All ${fileName} shapefile components downloaded! Files: ${fileData.files.join(', ')}`);
-                    }, fileData.files.length * 200 + 500);
-                } else {
-                    const link = document.createElement('a');
-                    link.download = fileData.name;
-                    link.href = '#';
-                    document.body.appendChild(link);
-                    link.click();
-                    document.body.removeChild(link);
-                    
-                    const extension = fileData.name.split('.').pop();
-                    showToast(`${fileName} downloaded successfully! (.${extension} format)`);
+            // Count main repository files
+            Object.values(dataCategories).forEach(category => {
+                totalFiles += category.files.length;
+                category.files.forEach(file => {
+                    const sizeMatch = file.size.match(/(\d+(?:\.\d+)?)\s*(KB|MB)/i);
+                    if (sizeMatch) {
+                        const size = parseFloat(sizeMatch[1]);
+                        const unit = sizeMatch[2].toUpperCase();
+                        totalSizeKB += unit === 'MB' ? size * 1024 : size;
+                    }
+                });
+            });
+            
+            // Count student files
+            totalFiles += globalStudentFiles.length;
+            pendingGrades = globalStudentFiles.filter(f => f.grade === null).length;
+            
+            // Count overdue assignments for current user
+            if (userRole === 'student') {
+                overdueAssignments = weeklyAssignments.filter(assignment => {
+                    const isOverdue = new Date(assignment.dueDate) < new Date();
+                    const hasSubmission = globalStudentFiles.some(f => 
+                        f.weekNumber == assignment.week && f.uploadedBy === currentUser
+                    );
+                    return isOverdue && !hasSubmission;
+                }).length;
+            }
+            
+            // Count unread messages for current user
+            if (currentUserEmail) {
+                let messagesToCount = globalMessages;
+                if (userRole === 'student') {
+                    messagesToCount = globalMessages.filter(msg => 
+                        msg.type === 'announcement' || 
+                        msg.recipients.includes(currentUserEmail) ||
+                        msg.senderEmail === currentUserEmail
+                    );
+                } else if (userRole === 'lecturer') {
+                    messagesToCount = globalMessages.filter(msg => 
+                        msg.senderEmail === currentUserEmail ||
+                        msg.recipients.includes(currentUserEmail) ||
+                        msg.type === 'announcement'
+                    );
                 }
-            }, 800);
+                unreadMessages = messagesToCount.filter(msg => !msg.readBy.includes(currentUserEmail)).length;
+            }
+            
+            document.getElementById('totalFiles').textContent = totalFiles;
+            document.getElementById('totalSize').textContent = totalSizeKB > 1024 
+                ? `${(totalSizeKB / 1024).toFixed(1)} MB` 
+                : `${Math.round(totalSizeKB)} KB`;
+            document.getElementById('pendingGrades').textContent = pendingGrades;
+            document.getElementById('unreadNotifications').textContent = unreadMessages;
+            document.getElementById('overdueAssignments').textContent = overdueAssignments;
+        };
+
+        // Show toast notification
+        const showToast = (message, type = 'success') => {
+            if (currentToast) {
+                clearTimeout(currentToast);
+            }
+
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.className = `toast ${type}`;
+            toast.classList.add('show');
+            
+            currentToast = setTimeout(() => {
+                toast.classList.remove('show');
+                currentToast = null;
+            }, 4000);
+        };
+
+        // Update notifications display in sidebar
+        const updateNotifications = () => {
+            const notificationsList = document.getElementById('notifications-list');
+            if (!notificationsList) return;
+            
+            let messagesToShow = globalMessages;
+            if (userRole === 'student') {
+                messagesToShow = globalMessages.filter(msg => 
+                    msg.type === 'announcement' || 
+                    msg.recipients.includes(currentUserEmail) ||
+                    msg.senderEmail === currentUserEmail
+                );
+            } else if (userRole === 'lecturer') {
+                messagesToShow = globalMessages.filter(msg => 
+                    msg.senderEmail === currentUserEmail ||
+                    msg.recipients.includes(currentUserEmail) ||
+                    msg.type === 'announcement'
+                );
+            }
+            
+            const recentMessages = messagesToShow.slice(-5).reverse();
+            
+            if (recentMessages.length === 0) {
+                notificationsList.innerHTML = '<div style="color: #8b949e; font-size: 12px;">No messages yet</div>';
+                return;
+            }
+            
+            notificationsList.innerHTML = recentMessages.map(msg => {
+                const typeIcon = msg.type === 'announcement' ? '📢' : '✉️';
+                const isUnread = !msg.readBy.includes(currentUserEmail);
+                
+                return `
+                    <div style="padding: 10px 0; border-bottom: 1px solid #21262d; font-size: 12px; cursor: pointer;" onclick="markMessageRead('${msg.id}')">
+                        <div style="display: flex; align-items: center; gap: 5px; margin-bottom: 3px;">
+                            <span style="color: #58a6ff;">${typeIcon}</span>
+                            <span style="color: #58a6ff; font-weight: 600;">${msg.subject}</span>
+                            ${isUnread ? '<span class="notification-badge">NEW</span>' : ''}
+                        </div>
+                        <div style="color: #e6edf3; margin-bottom: 5px; font-size: 11px;">${msg.body.substring(0, 80)}${msg.body.length > 80 ? '...' : ''}</div>
+                        <div style="color: #8b949e; font-size: 10px;">
+                            From: ${msg.senderName} | ${msg.timestamp}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        };
+
+        // Add sample data for demo
+        const addSampleData = () => {
+            // Add sample student files if none exist
+            if (globalStudentFiles.length === 0) {
+                globalStudentFiles.push(
+                    {
+                        id: 1001,
+                        name: 'malaria_analysis.R',
+                        title: 'Malaria Data Analysis Project',
+                        course: 'DATA301',
+                        weekNumber: 3,
+                        description: 'Statistical analysis of malaria incidence data using R with advanced visualization techniques',
+                        size: '45 KB',
+                        type: 'application/x-r-script',
+                        icon: '📊',
+                        uploadedBy: 'student',
+                        uploadedByEmail: 'student@university.edu',
+                        assignedLecturer: 'dr_smith',
+                        uploadDate: '2025-08-28 14:30',
+                        grade: 85,
+                        comments: [
+                            {
+                                id: 1,
+                                author: 'dr_smith',
+                                authorName: 'Dr. Sarah Smith',
+                                authorEmail: 'dr.smith@university.edu',
+                                role: 'lecturer',
+                                text: 'Excellent statistical approach! Your use of ggplot2 for visualizations is particularly impressive. Consider adding confidence intervals to your trend analysis.',
+                                date: '2025-08-29 10:15'
+                            }
+                        ],
+                        status: 'graded'
+                    },
+                    {
+                        id: 1002,
+                        name: 'epi_report.pdf',
+                        title: 'Epidemiological Trends Report',
+                        course: 'EPI101',
+                        weekNumber: 4,
+                        description: 'Comprehensive analysis of epidemiological trends in West Africa with focus on vector-borne diseases',
+                        size: '2.1 MB',
+                        type: 'application/pdf',
+                        icon: '📄',
+                        uploadedBy: 'student',
+                        uploadedByEmail: 'student@university.edu',
+                        assignedLecturer: 'dr_smith',
+                        uploadDate: '2025-08-30 09:45',
+                        grade: null,
+                        comments: [],
+                        status: 'submitted'
+                    }
+                );
+
+                // Add sample messages
+                globalMessages.push(
+                    {
+                        id: 2001,
+                        type: 'announcement',
+                        subject: 'Welcome to the Fall 2025 Semester',
+                        body: 'Welcome everyone to the new semester! Please check your weekly assignments and make sure to submit all work on time. Office hours are Tuesdays and Thursdays 2-4 PM.',
+                        senderEmail: 'dr.smith@university.edu',
+                        senderName: 'Dr. Sarah Smith',
+                        recipients: ['student@university.edu'],
+                        timestamp: new Date(Date.now() - 86400000).toLocaleString(),
+                        readBy: ['dr.smith@university.edu'],
+                        replies: []
+                    },
+                    {
+                        id: 2002,
+                        type: 'individual',
+                        subject: 'Grade Posted: Malaria Data Analysis',
+                        body: 'Your assignment has been graded: 85%. Excellent work on the statistical analysis! Keep up the good work.',
+                        senderEmail: 'dr.smith@university.edu',
+                        senderName: 'Dr. Sarah Smith',
+                        recipients: ['student@university.edu'],
+                        timestamp: new Date(Date.now() - 3600000).toLocaleString(),
+                        readBy: ['dr.smith@university.edu'],
+                        replies: []
+                    }
+                );
+            }
         };
 
         // Initialize application
         document.addEventListener('DOMContentLoaded', () => {
-            // Initialize data
-            initializeWeeklyAssignments();
-            addSampleData();
-            
-            // Set up event listeners
-            setupEventListeners();
-            
-            // Show login modal on startup
-            showLoginModal();
-        });
-
-        // Setup event listeners
-        const setupEventListeners = () => {
-            // Login form
-            const loginButton = document.getElementById('loginButton');
-            if (loginButton) {
-                loginButton.addEventListener('click', simpleLogin);
-            }
-
-            // Login form enter key
-            const loginForm = document.getElementById('loginForm');
-            if (loginForm) {
-                loginForm.addEventListener('submit', (e) => {
-                    e.preventDefault();
-                    simpleLogin();
-                });
-            }
-
-            // File input handler
+            // Set up file input handler
             const fileInput = document.getElementById('fileInput');
             if (fileInput) {
                 fileInput.addEventListener('change', (e) => {
@@ -2264,106 +3298,40 @@
                 }, false);
             }
 
-            // Tab navigation with proper event handling
-            document.querySelectorAll('.tab-btn').forEach(btn => {
-                btn.addEventListener('click', (e) => {
-                    const tabName = e.target.getAttribute('onclick').match(/switchTab\('(.+?)'\)/)[1];
-                    switchTab(tabName, e);
+            // Set up login
+            const loginBtn = document.getElementById('loginButton');
+            const usernameInput = document.getElementById('username');
+            const passwordInput = document.getElementById('password');
+            
+            if (loginBtn) loginBtn.onclick = simpleLogin;
+            
+            if (usernameInput) {
+                usernameInput.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                        if (passwordInput) passwordInput.focus();
+                    }
                 });
-            });
-        };
-
-        // Add sample data for demo
-        const addSampleData = () => {
-            if (globalStudentFiles.length === 0) {
-                globalStudentFiles.push(
-                    {
-                        id: 1001,
-                        name: 'malaria_analysis.R',
-                        title: 'Malaria Data Analysis Project',
-                        course: 'DATA301',
-                        weekNumber: 3,
-                        description: 'Statistical analysis of malaria incidence data using R with advanced visualization techniques',
-                        size: '45 KB',
-                        type: 'application/x-r-script',
-                        icon: '📊',
-                        uploadedBy: 'student',
-                        uploadedByEmail: 'student@university.edu',
-                        assignedLecturer: 'dr_smith',
-                        uploadDate: '2025-08-28 14:30',
-                        grade: 85,
-                        comments: [
-                            {
-                                id: 1,
-                                author: 'dr_smith',
-                                authorName: 'Dr. Sarah Smith',
-                                authorEmail: 'dr.smith@university.edu',
-                                role: 'lecturer',
-                                text: 'Excellent statistical approach! Your use of ggplot2 for visualizations is particularly impressive. Consider adding confidence intervals to your trend analysis.',
-                                date: '2025-08-29 10:15'
-                            }
-                        ],
-                        status: 'graded'
-                    }
-                );
-
-                globalMessages.push(
-                    {
-                        id: 2001,
-                        type: 'announcement',
-                        subject: 'Welcome to the Fall 2025 Semester',
-                        body: 'Welcome everyone to the new semester! Please check your weekly assignments and make sure to submit all work on time. Office hours are Tuesdays and Thursdays 2-4 PM.',
-                        senderEmail: 'dr.smith@university.edu',
-                        senderName: 'Dr. Sarah Smith',
-                        recipients: ['student@university.edu'],
-                        timestamp: new Date(Date.now() - 86400000).toLocaleString(),
-                        readBy: ['dr.smith@university.edu'],
-                        replies: []
-                    }
-                );
             }
-        };
 
-        // Stub functions (implement as needed)
-        const renderMessages = () => { /* Implementation here */ };
-        const renderStudentFiles = () => { /* Implementation here */ };
-        const updateStats = () => { /* Implementation here */ };
-        const handleFileSelect = (files) => { /* Implementation here */ };
-        const showUploadModal = () => { /* Implementation here */ };
-        const closeUploadModal = () => { /* Implementation here */ };
-        const submitUpload = () => { /* Implementation here */ };
-        const openUploadForAssignment = (week) => { /* Implementation here */ };
-        const viewSubmission = (week) => { /* Implementation here */ };
-        const viewAssignmentSubmissions = (week) => { /* Implementation here */ };
-        const refreshAssignments = () => { renderAssignments(); };
-        const refreshMessages = () => { renderMessages(); };
-        const refreshSubmissions = () => { renderStudentFiles(); };
-        const showComposeModal = () => { /* Implementation here */ };
-        const closeComposeModal = () => { /* Implementation here */ };
-        const handleMessageTypeChange = () => { /* Implementation here */ };
-        const sendMessage = () => { /* Implementation here */ };
-        const showReplyModal = (id) => { /* Implementation here */ };
-        const closeReplyModal = () => { /* Implementation here */ };
-        const sendReply = () => { /* Implementation here */ };
-        const markMessageRead = (id) => { /* Implementation here */ };
-        const showCommentModal = (id) => { /* Implementation here */ };
-        const closeCommentModal = () => { /* Implementation here */ };
-        const submitComment = () => { /* Implementation here */ };
-        const downloadStudentFile = (id) => { /* Implementation here */ };
-        const showGradeModal = (id) => { /* Implementation here */ };
-        const logout = () => {
-            if (confirm('Are you sure you want to logout?')) {
-                isLoggedIn = false;
-                currentUser = null;
-                userRole = null;
-                currentUserEmail = null;
-                document.getElementById('userInfo').style.display = 'none';
-                document.getElementById('studentUploads').style.display = 'none';
-                document.getElementById('notificationCard').style.display = 'none';
-                showLoginModal();
-                showToast('Logged out successfully.');
+            if (passwordInput) {
+                passwordInput.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                        simpleLogin();
+                    }
+                });
             }
-        };
+
+            // Initialize data and show login
+            initializeWeeklyAssignments();
+            addSampleData();
+            updateStats();
+            showLoginModal();
+
+            // Load initial week content
+            loadWeekContent(currentWeek);
+        });
     </script>
 </body>
 </html>

@@ -1915,6 +1915,7 @@
                 `;
             } 
         };
+        // Load file content
         const loadFileContent = async (fileName) => {
             const container = document.getElementById('file-content-container');
             
@@ -1929,30 +1930,8 @@
                 
                 const content = await response.text();
                 
-                // Extract only the body content if it's a full HTML document
-                let htmlContent = content;
-                const bodyMatch = content.match(/<body[^>]*>([\s\S]*?)<\/body>/i);
-                if (bodyMatch) {
-                    htmlContent = bodyMatch[1];
-                } else {
-                    // If no body tag, check if there's HTML structure and extract content
-                    const htmlMatch = content.match(/<html[^>]*>([\s\S]*?)<\/html>/i);
-                    if (htmlMatch) {
-                        // Remove head section if present
-                        htmlContent = htmlMatch[1].replace(/<head[^>]*>[\s\S]*?<\/head>/i, '');
-                    }
-                }
-                
-                // Clean up any remaining HTML/body tags
-                htmlContent = htmlContent.replace(/<\/?html[^>]*>/gi, '');
-                htmlContent = htmlContent.replace(/<\/?body[^>]*>/gi, '');
-                htmlContent = htmlContent.replace(/<\/?head[^>]*>/gi, '');
-                
-                // Remove any script tags for security
-                htmlContent = htmlContent.replace(/<script[^>]*>[\s\S]*?<\/script>/gi, '');
-                
-                // Apply the content with wrapper styling
-                container.innerHTML = `<div class="content-wrapper">${htmlContent}</div>`;
+                // Simply wrap the entire content in the content-wrapper
+                container.innerHTML = `<div class="content-wrapper">${content}</div>`;
                 
                 console.log(`Successfully loaded ${fileName}`);
                 
@@ -1971,8 +1950,6 @@
                 `;
             } 
         };
- 
-
         // Switch between weeks in notes
         const switchWeek = async () => {
             const selectedWeek = document.getElementById('weekSelect').value;

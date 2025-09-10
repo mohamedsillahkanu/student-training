@@ -1639,18 +1639,79 @@
 
     <script>
         // Global state
+        // Complete Educational Platform with GitHub Storage Integration
         // Global state
-        // GitHub JSON Storage System for Cross-Device Data Persistence
-        // This system stores data in JSON files in your GitHub repository
+        let isLoggedIn = false;
+        let currentUser = null;
+        let userRole = null;
+        let currentUserEmail = null;
+        let selectedFile = null;
+        let currentToast = null;
+        let currentWeek = 'week1';
+        let selectedMessageForReply = null;
         
+        // Predefined users (managed in backend)
+        let userDatabase = {
+            'admin': { 
+                password: '1234', 
+                role: 'admin', 
+                email: 'admin@university.edu', 
+                fullName: 'System Administrator',
+                assignedLecturer: null
+            },
+            'researcher': { 
+                password: 'data2024', 
+                role: 'researcher', 
+                email: 'researcher@university.edu', 
+                fullName: 'Research Staff',
+                assignedLecturer: null
+            },
+            'student': { 
+                password: 'pass123', 
+                role: 'student', 
+                email: 'student@university.edu', 
+                fullName: 'Demo Student',
+                assignedLecturer: 'dr_smith'
+            },
+            'dr_smith': { 
+                password: 'smith2024', 
+                role: 'lecturer', 
+                email: 'dr.smith@university.edu', 
+                fullName: 'Dr. Sarah Smith',
+                courses: ['EPI101', 'DATA301'],
+                assignedLecturer: null
+            },
+            'dr_johnson': { 
+                password: 'johnson2024', 
+                role: 'lecturer', 
+                email: 'dr.johnson@university.edu', 
+                fullName: 'Dr. Michael Johnson',
+                courses: ['STAT202', 'VIZ401'],
+                assignedLecturer: null
+            },
+            'lecturer': { 
+                password: 'teach2024', 
+                role: 'lecturer', 
+                email: 'lecturer@university.edu', 
+                fullName: 'Dr. Teaching Staff',
+                courses: ['EPI101', 'DATA301', 'STAT202', 'VIZ401'],
+                assignedLecturer: null
+            }
+        };
+        
+        let globalMessages = [];
+        let globalStudentFiles = [];
+        let weeklyAssignments = [];
+        
+        // GitHub Storage System
         class GitHubDataManager {
             constructor(config) {
                 this.config = {
-                    owner: config.owner || 'your-username', // Replace with your GitHub username
-                    repo: config.repo || 'your-repo-name',   // Replace with your repository name
-                    branch: config.branch || 'main',
-                    token: config.token || null, // Personal Access Token (optional for public repos)
-                    dataPath: 'data/', // Folder in your repo to store JSON files
+                    owner: 'mohamedsillahkanu',
+                    repo: 'student-training',
+                    branch: 'main',
+                    token: null,
+                    dataPath: 'data/',
                 };
                 
                 this.endpoints = {
@@ -1671,12 +1732,10 @@
                 this.isSaving = false;
             }
         
-            // Get the base URL for GitHub API
             getApiUrl(path) {
                 return `https://api.github.com/repos/${this.config.owner}/${this.config.repo}/contents/${path}`;
             }
         
-            // Get request headers
             getHeaders() {
                 const headers = {
                     'Accept': 'application/vnd.github.v3+json',
@@ -1690,7 +1749,6 @@
                 return headers;
             }
         
-            // Load data from GitHub
             async loadFromGitHub(endpoint) {
                 try {
                     const response = await fetch(this.getApiUrl(this.endpoints[endpoint]), {
@@ -1699,7 +1757,6 @@
                     });
         
                     if (response.status === 404) {
-                        // File doesn't exist yet, return empty data
                         return { data: this.getEmptyData(endpoint), sha: null };
                     }
         
@@ -1717,7 +1774,6 @@
                 }
             }
         
-            // Save data to GitHub
             async saveToGitHub(endpoint, data) {
                 try {
                     const content = btoa(JSON.stringify(data, null, 2));
@@ -1729,7 +1785,6 @@
                         branch: this.config.branch
                     };
         
-                    // Include SHA if file exists (for updates)
                     if (cache.sha) {
                         body.sha = cache.sha;
                     }
@@ -1745,8 +1800,6 @@
                     }
         
                     const result = await response.json();
-                    
-                    // Update cache
                     this.cache[endpoint] = { data: data, sha: result.content.sha };
                     
                     return true;
@@ -1756,7 +1809,6 @@
                 }
             }
         
-            // Get empty data structure for each endpoint
             getEmptyData(endpoint) {
                 switch (endpoint) {
                     case 'messages':
@@ -1772,7 +1824,6 @@
                 }
             }
         
-            // Load all data from GitHub
             async loadAllData() {
                 if (this.isLoading) {
                     console.log('Already loading data...');
@@ -1783,7 +1834,6 @@
                 showToast('Loading data from GitHub...', 'info');
         
                 try {
-                    // Load all endpoints in parallel
                     const promises = Object.keys(this.endpoints).map(async (endpoint) => {
                         try {
                             const result = await this.loadFromGitHub(endpoint);
@@ -1797,7 +1847,6 @@
         
                     const results = await Promise.all(promises);
                     
-                    // Update global variables with loaded data
                     results.forEach(result => {
                         if (result.success) {
                             switch (result.endpoint) {
@@ -1814,7 +1863,6 @@
                                     break;
                                 case 'users':
                                     if (result.data && Object.keys(result.data).length > 0) {
-                                        // Merge with existing users, don't overwrite completely
                                         userDatabase = { ...userDatabase, ...result.data };
                                     }
                                     break;
@@ -1825,7 +1873,6 @@
                     const successCount = results.filter(r => r.success).length;
                     showToast(`Loaded ${successCount}/${results.length} data files from GitHub`, 'success');
                     
-                    // Refresh UI if user is logged in
                     if (isLoggedIn) {
                         renderCategories();
                         renderAssignments();
@@ -1845,7 +1892,6 @@
                 }
             }
         
-            // Save all data to GitHub
             async saveAllData() {
                 if (this.isSaving) {
                     console.log('Already saving data...');
@@ -1875,7 +1921,6 @@
                 }
             }
         
-            // Save specific data type
             async saveSpecific(type) {
                 if (this.isSaving) return false;
         
@@ -1906,78 +1951,741 @@
                     return false;
                 }
             }
-        
-            // Check GitHub API rate limit
-            async checkRateLimit() {
-                try {
-                    const response = await fetch('https://api.github.com/rate_limit', {
-                        headers: this.getHeaders()
-                    });
-                    
-                    if (response.ok) {
-                        const data = await response.json();
-                        return data.rate;
-                    }
-                } catch (error) {
-                    console.error('Error checking rate limit:', error);
-                }
-                return null;
-            }
         }
         
         // Initialize GitHub Data Manager
-        const githubManager = new GitHubDataManager({
-            owner: 'mohamedsillahkanu',     // Your GitHub username
-            repo: 'student-training',       // Your repository name
-            branch: 'main',                 // Your branch name
-            token: null                     // Optional: Personal Access Token for private repos
-        });
+        const githubManager = new GitHubDataManager();
         
-        // Enhanced functions that save to GitHub
-        const saveMessageToGitHub = async () => {
-            await githubManager.saveSpecific('messages');
+        // Weekly assignments with due dates
+        const initializeWeeklyAssignments = () => {
+            if (weeklyAssignments.length > 0) return; // Don't reinitialize if data exists
+            
+            const assignments = [
+                {
+                    id: 'w1-intro',
+                    week: 1,
+                    title: 'Introduction to R - Basic Operations',
+                    course: 'DATA301',
+                    description: 'Complete basic R operations: variables, data types, and simple calculations. Submit an R script with examples.',
+                    dueDate: '2025-09-15',
+                    totalPoints: 10,
+                    requirements: ['R script file', 'Comments explaining each operation', 'Output examples']
+                },
+                {
+                    id: 'w2-clean',
+                    week: 2,
+                    title: 'Data Cleaning & Visualization',
+                    course: 'DATA301',
+                    description: 'Clean a provided messy dataset and create 3 different visualizations using ggplot2.',
+                    dueDate: '2025-09-22',
+                    totalPoints: 15,
+                    requirements: ['Cleaned dataset', 'R script with cleaning steps', 'Three ggplot2 visualizations']
+                },
+                {
+                    id: 'w3-stats',
+                    week: 3,
+                    title: 'Statistical Analysis Assignment',
+                    course: 'STAT202',
+                    description: 'Perform descriptive and inferential statistics on epidemiological data. Include t-tests and ANOVA.',
+                    dueDate: '2025-09-29',
+                    totalPoints: 20,
+                    requirements: ['Statistical analysis report', 'R script', 'Interpretation of results']
+                }
+            ];
+        
+            weeklyAssignments = assignments.map(assignment => {
+                const dueDate = new Date(assignment.dueDate);
+                const currentDate = new Date();
+                const daysUntilDue = Math.ceil((dueDate - currentDate) / (1000 * 60 * 60 * 24));
+                
+                return {
+                    ...assignment,
+                    submissions: [],
+                    isOverdue: dueDate < currentDate,
+                    isAvailable: daysUntilDue <= 7,
+                    daysUntilAvailable: Math.max(0, daysUntilDue - 7)
+                };
+            });
         };
         
-        const saveSubmissionToGitHub = async () => {
-            await githubManager.saveSpecific('submissions');
+        // Sample files for data repository
+        const shapefiles = [
+            { 
+                name: 'Chiefdom2021', 
+                size: '1 MB', 
+                type: 'shapefile', 
+                icon: '🗺️', 
+                path: '/data/shapefiles/Chiefdom2021', 
+                content: 'Shapefile for chiefdom boundaries in 2021 containing geographic data for administrative divisions.',
+                files: ['Chiefdom2021.shp', 'Chiefdom2021.shx', 'Chiefdom2021.dbf']
+            }
+        ];
+        
+        const dataCategories = {
+            'shapefiles': { name: 'Shapefiles', files: [...shapefiles] }
         };
         
-        const saveAssignmentToGitHub = async () => {
-            await githubManager.saveSpecific('assignments');
+        // Show login modal
+        const showLoginModal = () => {
+            const modal = document.getElementById('loginModal');
+            if (modal) {
+                modal.style.display = 'flex';
+                setTimeout(() => {
+                    const usernameField = document.getElementById('username');
+                    if (usernameField) usernameField.focus();
+                }, 100);
+            }
         };
         
-        // Override existing functions to include GitHub saves
-        const originalSendMessage = sendMessage;
-        sendMessage = function() {
-            const result = originalSendMessage.apply(this, arguments);
-            // Save to GitHub after a short delay
+        // Simple login function
+        const simpleLogin = () => {
+            const user = document.getElementById('username')?.value.trim();
+            const pass = document.getElementById('password')?.value;
+            const errorMessage = document.getElementById('errorMessage');
+            const successMessage = document.getElementById('successMessage');
+            
+            if (errorMessage) errorMessage.style.display = 'none';
+            if (successMessage) successMessage.style.display = 'none';
+            
+            if (userDatabase[user] && userDatabase[user].password === pass) {
+                isLoggedIn = true;
+                currentUser = user;
+                userRole = userDatabase[user].role;
+                currentUserEmail = userDatabase[user].email;
+                
+                const loginModal = document.getElementById('loginModal');
+                if (loginModal) loginModal.style.display = 'none';
+                
+                const currentUserElement = document.getElementById('currentUser');
+                if (currentUserElement) currentUserElement.textContent = user;
+                
+                const currentEmailElement = document.getElementById('currentEmail');
+                if (currentEmailElement) currentEmailElement.textContent = currentUserEmail;
+                
+                const userRoleElement = document.getElementById('userRole');
+                if (userRoleElement) {
+                    userRoleElement.textContent = userRole;
+                    userRoleElement.className = `user-role ${userRole}`;
+                }
+                
+                const userInfo = document.getElementById('userInfo');
+                if (userInfo) userInfo.style.display = 'flex';
+                
+                setupUserInterface();
+                renderCategories();
+                renderAssignments();
+                renderMessages();
+                updateStats();
+                addGitHubSyncButton();
+                showToast(`Welcome, ${user}! Logged in as ${userRole}.`);
+                
+                // Clear form
+                const usernameField = document.getElementById('username');
+                const passwordField = document.getElementById('password');
+                if (usernameField) usernameField.value = '';
+                if (passwordField) passwordField.value = '';
+            } else {
+                if (errorMessage) errorMessage.style.display = 'block';
+                const passwordField = document.getElementById('password');
+                if (passwordField) passwordField.value = '';
+            }
+        };
+        
+        // Setup user interface based on role
+        const setupUserInterface = () => {
+            const elements = {
+                studentUploads: document.getElementById('studentUploads'),
+                uploadBtn: document.getElementById('uploadBtn'),
+                uploadBtn2: document.getElementById('uploadBtn2'),
+                composeBtn: document.getElementById('composeBtn'),
+                studentQuickStart: document.getElementById('studentQuickStart'),
+                lecturerQuickStart: document.getElementById('lecturerQuickStart'),
+                notificationCard: document.getElementById('notificationCard')
+            };
+        
+            // Reset visibility
+            Object.values(elements).forEach(el => {
+                if (el) el.style.display = 'none';
+            });
+        
+            if (userRole === 'student') {
+                if (elements.studentUploads) elements.studentUploads.style.display = 'block';
+                if (elements.uploadBtn) elements.uploadBtn.style.display = 'inline-block';
+                if (elements.uploadBtn2) elements.uploadBtn2.style.display = 'inline-block';
+                if (elements.studentQuickStart) elements.studentQuickStart.style.display = 'block';
+                if (elements.notificationCard) elements.notificationCard.style.display = 'block';
+            } else if (userRole === 'lecturer' || userRole === 'admin') {
+                if (elements.studentUploads) elements.studentUploads.style.display = 'block';
+                if (elements.composeBtn) elements.composeBtn.style.display = 'inline-block';
+                if (elements.lecturerQuickStart) elements.lecturerQuickStart.style.display = 'block';
+                if (elements.notificationCard) elements.notificationCard.style.display = 'block';
+            } else if (userRole === 'researcher') {
+                if (elements.studentUploads) elements.studentUploads.style.display = 'block';
+                if (elements.notificationCard) elements.notificationCard.style.display = 'block';
+            }
+            
+            renderStudentFiles();
+            updateNotifications();
+        };
+        
+        // Render weekly assignments
+        const renderAssignments = () => {
+            const container = document.getElementById('assignments-container');
+            if (!container) return;
+            
+            container.innerHTML = '';
+        
+            if (weeklyAssignments.length === 0) {
+                container.innerHTML = '<div style="padding: 20px; text-align: center; color: #8b949e;">No assignments available yet.</div>';
+                return;
+            }
+        
+            weeklyAssignments.forEach((assignment) => {
+                const dueDate = new Date(assignment.dueDate);
+                const currentDate = new Date();
+                const daysUntilDue = Math.ceil((dueDate - currentDate) / (1000 * 60 * 60 * 24));
+                const isOverdue = dueDate < currentDate;
+                const isAvailable = daysUntilDue <= 7;
+                
+                const hasSubmission = userRole === 'student' && 
+                    globalStudentFiles.some(f => f.weekNumber == assignment.week && f.uploadedBy === currentUser);
+                
+                let statusClass = 'pending';
+                let statusText = 'Not Submitted';
+                
+                if (!isAvailable && !hasSubmission) {
+                    statusClass = 'locked';
+                    statusText = `Locked (${Math.max(0, daysUntilDue - 7)} days)`;
+                } else if (hasSubmission) {
+                    const submission = globalStudentFiles.find(f => f.weekNumber == assignment.week && f.uploadedBy === currentUser);
+                    if (submission.grade !== null) {
+                        statusClass = 'graded';
+                        statusText = `Graded (${submission.grade}%)`;
+                    } else {
+                        statusClass = 'submitted';
+                        statusText = 'Submitted';
+                    }
+                } else if (isOverdue) {
+                    statusClass = 'overdue';
+                    statusText = 'Overdue';
+                } else if (isAvailable) {
+                    statusClass = 'available';
+                    statusText = 'Available';
+                }
+        
+                const assignmentDiv = document.createElement('div');
+                assignmentDiv.classList.add('assignment-card', statusClass);
+                
+                assignmentDiv.innerHTML = `
+                    <div class="assignment-header">
+                        <div class="assignment-title">
+                            Week ${assignment.week}: ${assignment.title}
+                        </div>
+                        <div class="assignment-status ${statusClass}">${statusText}</div>
+                    </div>
+                    <div class="assignment-meta">
+                        <div><strong>Course:</strong> ${assignment.course}</div>
+                        <div><strong>Due:</strong> ${assignment.dueDate}</div>
+                        <div><strong>Points:</strong> ${assignment.totalPoints}</div>
+                    </div>
+                    <div class="assignment-description">
+                        ${assignment.description}
+                    </div>
+                `;
+                container.appendChild(assignmentDiv);
+            });
+        };
+        
+        // Render messages
+        const renderMessages = () => {
+            const container = document.getElementById('messages-container');
+            if (!container) return;
+            
+            container.innerHTML = '';
+        
+            if (globalMessages.length === 0) {
+                container.innerHTML = '<div style="padding: 20px; text-align: center; color: #8b949e;">No messages yet.</div>';
+                return;
+            }
+        
+            let messagesToShow = globalMessages;
+            
+            if (userRole === 'student') {
+                messagesToShow = globalMessages.filter(msg => 
+                    msg.type === 'announcement' || 
+                    msg.recipients.includes(currentUserEmail) ||
+                    msg.senderEmail === currentUserEmail
+                );
+            } else if (userRole === 'lecturer') {
+                messagesToShow = globalMessages.filter(msg => 
+                    msg.senderEmail === currentUserEmail ||
+                    msg.recipients.includes(currentUserEmail) ||
+                    msg.type === 'announcement'
+                );
+            }
+        
+            messagesToShow.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+        
+            messagesToShow.forEach((message) => {
+                const isUnread = !message.readBy.includes(currentUserEmail);
+                const messageDiv = document.createElement('div');
+                messageDiv.classList.add('message-card');
+                if (isUnread) messageDiv.classList.add('unread');
+                if (message.type === 'announcement') messageDiv.classList.add('announcement');
+        
+                const typeIcon = message.type === 'announcement' ? '📢' : 
+                                message.type === 'individual' ? '✉️' : '👥';
+        
+                messageDiv.innerHTML = `
+                    <div class="message-header">
+                        <div class="message-subject">${typeIcon} ${message.subject}</div>
+                        <div class="message-meta">
+                            From: ${message.senderName} | ${message.timestamp}
+                            ${isUnread ? '<span class="notification-badge">NEW</span>' : ''}
+                        </div>
+                    </div>
+                    <div class="message-body">${message.body}</div>
+                `;
+                
+                container.appendChild(messageDiv);
+            });
+        };
+        
+        // Render student files
+        const renderStudentFiles = () => {
+            const container = document.getElementById('student-files-container');
+            if (!container) return;
+            
+            container.innerHTML = '';
+        
+            if (globalStudentFiles.length === 0) {
+                container.innerHTML = '<div style="padding: 20px; text-align: center; color: #8b949e;">No assignments uploaded yet.</div>';
+                return;
+            }
+        
+            let filesToShow = globalStudentFiles;
+            
+            if (userRole === 'student') {
+                filesToShow = globalStudentFiles.filter(f => f.uploadedBy === currentUser);
+            } else if (userRole === 'lecturer') {
+                filesToShow = globalStudentFiles.filter(f => f.assignedLecturer === currentUser);
+            }
+        
+            filesToShow.forEach((file) => {
+                const studentInfo = userDatabase[file.uploadedBy];
+                
+                const fileDiv = document.createElement('div');
+                fileDiv.classList.add('file');
+                fileDiv.innerHTML = `
+                    <div class="file-header">
+                        <div class="file-name">${file.icon || '📁'} ${file.name}</div>
+                        <div class="file-meta">
+                            ${file.grade !== null ? `<div class="file-grade">${file.grade}%</div>` : '<div class="file-grade pending">Pending</div>'}
+                            <div class="file-size">${file.size}</div>
+                        </div>
+                    </div>
+                    <div class="file-description">
+                        <strong>${file.title}</strong> - ${file.course} (Week ${file.weekNumber})<br>
+                        ${file.description || 'No description provided'}<br>
+                        <small>
+                            Student: ${studentInfo ? studentInfo.fullName : file.uploadedBy}<br>
+                            Submitted: ${file.uploadDate}
+                        </small>
+                    </div>
+                `;
+                container.appendChild(fileDiv);
+            });
+        };
+        
+        // Render categories
+        const renderCategories = () => {
+            const container = document.getElementById('categories-container');
+            if (!container) return;
+            
+            container.innerHTML = '';
+        
+            Object.keys(dataCategories).forEach((key) => {
+                const category = dataCategories[key];
+        
+                const categoryDiv = document.createElement('div');
+                categoryDiv.classList.add('category');
+        
+                const headerButton = document.createElement('button');
+                headerButton.classList.add('category-header');
+                headerButton.innerHTML = `
+                    <span>${category.name} (${category.files.length} files)</span>
+                    <span class="category-arrow">▶</span>
+                `;
+                categoryDiv.appendChild(headerButton);
+        
+                const filesDiv = document.createElement('div');
+                filesDiv.classList.add('files');
+                filesDiv.id = `files-${key}`;
+        
+                category.files.forEach((file) => {
+                    const fileDiv = document.createElement('div');
+                    fileDiv.classList.add('file');
+                    fileDiv.innerHTML = `
+                        <div class="file-header">
+                            <div class="file-name">${file.icon} ${file.name}</div>
+                            <div class="file-meta">
+                                <div class="file-size">${file.size}</div>
+                            </div>
+                        </div>
+                        <div class="file-description">${file.content}</div>
+                        <div class="file-actions">
+                            <button class="download-btn" onclick="downloadFile('${file.name}', '${file.type}')">
+                                Download
+                            </button>
+                        </div>
+                    `;
+                    filesDiv.appendChild(fileDiv);
+                });
+        
+                categoryDiv.appendChild(filesDiv);
+                container.appendChild(categoryDiv);
+            });
+        };
+        
+        // Download file function
+        const downloadFile = (fileName, fileType) => {
+            if (!isLoggedIn) {
+                showToast('Please log in first', 'error');
+                return;
+            }
+            showToast(`Downloading: ${fileName}...`);
+        };
+        
+        // Update statistics
+        const updateStats = () => {
+            const elements = {
+                totalFiles: document.getElementById('totalFiles'),
+                totalSize: document.getElementById('totalSize'),
+                pendingGrades: document.getElementById('pendingGrades'),
+                unreadNotifications: document.getElementById('unreadNotifications'),
+                overdueAssignments: document.getElementById('overdueAssignments')
+            };
+            
+            let totalFiles = 0;
+            let pendingGrades = 0;
+            let unreadMessages = 0;
+            let overdueAssignments = 0;
+            
+            // Count files
+            Object.values(dataCategories).forEach(category => {
+                totalFiles += category.files.length;
+            });
+            totalFiles += globalStudentFiles.length;
+            
+            // Count pending grades
+            pendingGrades = globalStudentFiles.filter(f => f.grade === null).length;
+            
+            // Count unread messages
+            if (currentUserEmail) {
+                let messagesToCount = globalMessages;
+                if (userRole === 'student') {
+                    messagesToCount = globalMessages.filter(msg => 
+                        msg.type === 'announcement' || 
+                        msg.recipients.includes(currentUserEmail) ||
+                        msg.senderEmail === currentUserEmail
+                    );
+                }
+                unreadMessages = messagesToCount.filter(msg => !msg.readBy.includes(currentUserEmail)).length;
+            }
+            
+            if (elements.totalFiles) elements.totalFiles.textContent = totalFiles;
+            if (elements.totalSize) elements.totalSize.textContent = '2.5 MB';
+            if (elements.pendingGrades) elements.pendingGrades.textContent = pendingGrades;
+            if (elements.unreadNotifications) elements.unreadNotifications.textContent = unreadMessages;
+            if (elements.overdueAssignments) elements.overdueAssignments.textContent = overdueAssignments;
+        };
+        
+        // Show toast notification
+        const showToast = (message, type = 'success') => {
+            if (currentToast) {
+                clearTimeout(currentToast);
+            }
+        
+            const toast = document.getElementById('toast');
+            if (toast) {
+                toast.textContent = message;
+                toast.className = `toast ${type}`;
+                toast.classList.add('show');
+                
+                currentToast = setTimeout(() => {
+                    toast.classList.remove('show');
+                    currentToast = null;
+                }, 4000);
+            }
+        };
+        
+        // Update notifications
+        const updateNotifications = () => {
+            const notificationsList = document.getElementById('notifications-list');
+            if (!notificationsList) return;
+            
+            let messagesToShow = globalMessages;
+            if (userRole === 'student') {
+                messagesToShow = globalMessages.filter(msg => 
+                    msg.type === 'announcement' || 
+                    msg.recipients.includes(currentUserEmail) ||
+                    msg.senderEmail === currentUserEmail
+                );
+            } else if (userRole === 'lecturer') {
+                messagesToShow = globalMessages.filter(msg => 
+                    msg.senderEmail === currentUserEmail ||
+                    msg.recipients.includes(currentUserEmail) ||
+                    msg.type === 'announcement'
+                );
+            }
+            
+            const recentMessages = messagesToShow.slice(-5).reverse();
+            
+            if (recentMessages.length === 0) {
+                notificationsList.innerHTML = '<div style="color: #8b949e; font-size: 12px;">No messages yet</div>';
+                return;
+            }
+            
+            notificationsList.innerHTML = recentMessages.map(msg => {
+                const typeIcon = msg.type === 'announcement' ? '📢' : '✉️';
+                const isUnread = !msg.readBy.includes(currentUserEmail);
+                
+                return `
+                    <div style="padding: 10px 0; border-bottom: 1px solid #21262d; font-size: 12px;">
+                        <div style="display: flex; align-items: center; gap: 5px; margin-bottom: 3px;">
+                            <span style="color: #58a6ff;">${typeIcon}</span>
+                            <span style="color: #58a6ff; font-weight: 600;">${msg.subject}</span>
+                            ${isUnread ? '<span class="notification-badge">NEW</span>' : ''}
+                        </div>
+                        <div style="color: #e6edf3; margin-bottom: 5px; font-size: 11px;">${msg.body.substring(0, 80)}${msg.body.length > 80 ? '...' : ''}</div>
+                        <div style="color: #8b949e; font-size: 10px;">
+                            From: ${msg.senderName} | ${msg.timestamp}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        };
+        
+        // Logout function
+        const logout = () => {
+            if (confirm('Are you sure you want to logout?')) {
+                isLoggedIn = false;
+                currentUser = null;
+                userRole = null;
+                currentUserEmail = null;
+                
+                const userInfo = document.getElementById('userInfo');
+                if (userInfo) userInfo.style.display = 'none';
+                
+                // Clear containers
+                const containers = ['categories-container', 'assignments-container', 'messages-container', 'student-files-container'];
+                containers.forEach(id => {
+                    const container = document.getElementById(id);
+                    if (container) container.innerHTML = '';
+                });
+                
+                // Hide elements
+                const elements = ['studentUploads', 'notificationCard', 'uploadBtn', 'uploadBtn2', 'composeBtn', 'studentQuickStart', 'lecturerQuickStart'];
+                elements.forEach(id => {
+                    const element = document.getElementById(id);
+                    if (element) element.style.display = 'none';
+                });
+                
+                // Reset stats
+                updateStats();
+                showLoginModal();
+                showToast('Logged out successfully.');
+            }
+        };
+        
+        // Switch between tabs
+        const switchTab = async (event, tabName) => {
+            // Remove active class from all tabs and buttons
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            // Add active class to selected tab and button
+            const targetTab = document.getElementById(`${tabName}-tab`);
+            if (targetTab) targetTab.classList.add('active');
+            if (event && event.target) event.target.classList.add('active');
+            
+            // Load content based on tab
+            if (tabName === 'datasets') {
+                renderCategories();
+            } else if (tabName === 'assignments') {
+                renderAssignments();
+            } else if (tabName === 'messages') {
+                renderMessages();
+            } else if (tabName === 'notes') {
+                await loadWeekContent(currentWeek);
+            }
+        };
+        
+        // Enhanced message sending with GitHub sync
+        const sendMessage = () => {
+            const messageType = document.getElementById('messageType')?.value;
+            const subject = document.getElementById('messageSubject')?.value.trim();
+            const body = document.getElementById('messageBody')?.value.trim();
+            
+            if (!messageType || !subject || !body) {
+                showToast('Please fill in all fields.', 'error');
+                return;
+            }
+            
+            let recipients = [];
+            if (messageType === 'announcement') {
+                recipients = Object.values(userDatabase)
+                    .filter(user => user.role === 'student')
+                    .map(user => user.email);
+            } else {
+                const selectedRecipients = Array.from(document.getElementById('messageRecipient')?.selectedOptions || [])
+                    .map(option => option.value);
+                if (selectedRecipients.length === 0) {
+                    showToast('Please select at least one recipient.', 'error');
+                    return;
+                }
+                recipients = selectedRecipients;
+            }
+            
+            const currentUserData = userDatabase[currentUser];
+            const newMessage = {
+                id: Date.now() + Math.random(),
+                type: messageType,
+                subject: subject,
+                body: body,
+                senderEmail: currentUserEmail,
+                senderName: currentUserData.fullName,
+                recipients: recipients,
+                timestamp: new Date().toLocaleString(),
+                readBy: [currentUserEmail],
+                replies: []
+            };
+            
+            globalMessages.push(newMessage);
+            
+            // Save to GitHub
             setTimeout(() => {
-                saveMessageToGitHub();
+                githubManager.saveSpecific('messages');
             }, 1000);
-            return result;
+            
+            // Close modal and refresh
+            const composeModal = document.getElementById('composeModal');
+            if (composeModal) composeModal.style.display = 'none';
+            
+            renderMessages();
+            updateStats();
+            updateNotifications();
+            showToast('Message sent successfully!');
         };
         
-        const originalSubmitUpload = submitUpload;
-        submitUpload = function() {
-            const result = originalSubmitUpload.apply(this, arguments);
+        // Enhanced file upload with GitHub sync
+        const submitUpload = () => {
+            const files = document.getElementById('fileInput')?.files;
+            const title = document.getElementById('assignmentTitle')?.value.trim();
+            const course = document.getElementById('course')?.value;
+            const weekNumber = document.getElementById('weekNumber')?.value;
+            const description = document.getElementById('description')?.value.trim();
+            
+            if (!files || !files.length || !title || !course || !weekNumber) {
+                showToast('Please fill in all required fields and select files.', 'error');
+                return;
+            }
+            
+            const currentUserData = userDatabase[currentUser];
+            const assignedLecturerUsername = currentUserData.assignedLecturer;
+            
+            if (!assignedLecturerUsername) {
+                showToast('No lecturer assigned to your account. Please contact administration.', 'error');
+                return;
+            }
+            
+            // Add to global student files
+            Array.from(files).forEach(file => {
+                const newFile = {
+                    id: Date.now() + Math.random(),
+                    name: file.name,
+                    title: title,
+                    course: course,
+                    weekNumber: parseInt(weekNumber),
+                    description: description,
+                    size: formatFileSize(file.size),
+                    type: file.type || 'application/octet-stream',
+                    icon: getFileIcon(file.name),
+                    uploadedBy: currentUser,
+                    uploadedByEmail: currentUserEmail,
+                    assignedLecturer: assignedLecturerUsername,
+                    uploadDate: new Date().toLocaleString(),
+                    grade: null,
+                    comments: [],
+                    status: 'submitted'
+                };
+                globalStudentFiles.push(newFile);
+            });
+            
+            // Send notification message to lecturer
+            const lecturerData = userDatabase[assignedLecturerUsername];
+            if (lecturerData) {
+                const newMessage = {
+                    id: Date.now() + Math.random(),
+                    type: 'individual',
+                    subject: `New Assignment Submission - Week ${weekNumber} from ${currentUserData.fullName}`,
+                    body: `Student ${currentUserData.fullName} (${currentUserEmail}) has submitted "${title}" for Week ${weekNumber} in course ${course}. Please review and grade when convenient.`,
+                    senderEmail: currentUserEmail,
+                    senderName: currentUserData.fullName,
+                    recipients: [lecturerData.email],
+                    timestamp: new Date().toLocaleString(),
+                    readBy: [currentUserEmail],
+                    replies: []
+                };
+                globalMessages.push(newMessage);
+            }
+            
+            // Save to GitHub
             setTimeout(() => {
-                saveSubmissionToGitHub();
-                saveMessageToGitHub(); // Also save messages since upload creates a message
+                githubManager.saveSpecific('submissions');
+                githubManager.saveSpecific('messages');
             }, 1000);
-            return result;
+            
+            // Close modal and refresh
+            const uploadModal = document.getElementById('uploadModal');
+            if (uploadModal) uploadModal.style.display = 'none';
+            
+            renderStudentFiles();
+            renderAssignments();
+            updateStats();
+            showToast('Assignment uploaded and lecturer notified!');
         };
         
-        const originalSubmitComment = submitComment;
-        submitComment = function() {
-            const result = originalSubmitComment.apply(this, arguments);
-            setTimeout(() => {
-                saveSubmissionToGitHub();
-                saveMessageToGitHub(); // Also save messages since grading creates a message
-            }, 1000);
-            return result;
+        // Get file icon based on extension
+        const getFileIcon = (fileName) => {
+            const extension = fileName.split('.').pop().toLowerCase();
+            switch (extension) {
+                case 'r': return '📊';
+                case 'pdf': return '📄';
+                case 'mp4':
+                case 'mov':
+                case 'avi': return '🎥';
+                case 'html':
+                case 'htm': return '🌐';
+                default: return '📁';
+            }
         };
         
-        // Add GitHub sync controls to the UI
+        // Format file size
+        const formatFileSize = (bytes) => {
+            if (bytes === 0) return '0 B';
+            const k = 1024;
+            const sizes = ['B', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
+        };
+        
+        // GitHub Sync UI Functions
         const showGitHubSyncModal = () => {
             const modal = document.createElement('div');
             modal.className = 'modal';
@@ -1988,16 +2696,16 @@
                     <h2>GitHub Data Sync</h2>
                     
                     <div style="background: #0d1117; padding: 15px; border-radius: 6px; margin-bottom: 20px;">
-                        <h3>Current Configuration</h3>
+                        <h3>Repository Configuration</h3>
                         <div style="font-family: monospace; font-size: 12px; color: #8b949e;">
-                            <div>Repository: ${githubManager.config.owner}/${githubManager.config.repo}</div>
-                            <div>Branch: ${githubManager.config.branch}</div>
-                            <div>Token: ${githubManager.config.token ? 'Configured' : 'Not set (public access only)'}</div>
+                            <div>Repository: mohamedsillahkanu/student-training</div>
+                            <div>Branch: main</div>
+                            <div>Status: ${githubManager.isLoading ? 'Loading...' : githubManager.isSaving ? 'Saving...' : 'Ready'}</div>
                         </div>
                     </div>
                     
                     <div style="background: #161b22; padding: 15px; border-radius: 6px; margin-bottom: 20px;">
-                        <h3>Data Status</h3>
+                        <h3>Current Data</h3>
                         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
                             <div>Messages: ${globalMessages.length}</div>
                             <div>Submissions: ${globalStudentFiles.length}</div>
@@ -2008,22 +2716,20 @@
                     
                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px;">
                         <button class="upload-btn" onclick="loadFromGitHub()" ${githubManager.isLoading ? 'disabled' : ''}>
-                            ${githubManager.isLoading ? 'Loading...' : 'Load from GitHub'}
+                            Load from GitHub
                         </button>
                         <button class="download-btn" onclick="saveToGitHub()" ${githubManager.isSaving ? 'disabled' : ''}>
-                            ${githubManager.isSaving ? 'Saving...' : 'Save to GitHub'}
+                            Save to GitHub
                         </button>
-                        <button class="comment-btn" onclick="checkGitHubStatus()">Check Status</button>
-                        <button class="grade-btn" onclick="showGitHubInstructions()">Setup Instructions</button>
                     </div>
                     
                     <div style="background: #0d1117; padding: 15px; border-radius: 6px; margin-bottom: 20px;">
-                        <h4>How it Works</h4>
+                        <h4>Auto-Sync Features</h4>
                         <ul style="color: #8b949e; font-size: 13px; margin: 10px 0; padding-left: 20px;">
-                            <li>Data is stored as JSON files in your GitHub repository</li>
-                            <li>Changes sync automatically when you add messages/grades</li>
-                            <li>Data persists across all devices that access your site</li>
-                            <li>Works with both public and private repositories</li>
+                            <li>Messages save automatically when sent</li>
+                            <li>Assignments save when uploaded or graded</li>
+                            <li>Data loads automatically on page refresh</li>
+                            <li>Works across all devices accessing your site</li>
                         </ul>
                     </div>
                     
@@ -2051,69 +2757,6 @@
             await githubManager.saveAllData();
         };
         
-        const checkGitHubStatus = async () => {
-            const rateLimit = await githubManager.checkRateLimit();
-            if (rateLimit) {
-                showToast(`GitHub API: ${rateLimit.remaining}/${rateLimit.limit} requests remaining`, 'info');
-            } else {
-                showToast('Unable to check GitHub status', 'error');
-            }
-        };
-        
-        const showGitHubInstructions = () => {
-            const modal = document.createElement('div');
-            modal.className = 'modal';
-            modal.style.display = 'flex';
-            
-            modal.innerHTML = `
-                <div class="modal-content" style="max-width: 700px;">
-                    <h2>GitHub Setup Instructions</h2>
-                    
-                    <div style="background: #0d1117; padding: 15px; border-radius: 6px; margin-bottom: 20px;">
-                        <h3>Step 1: Update Configuration</h3>
-                        <p>Edit the JavaScript code and replace these values:</p>
-                        <div style="font-family: monospace; background: #161b22; padding: 10px; border-radius: 4px; margin: 10px 0;">
-                            owner: 'your-github-username',<br>
-                            repo: 'your-repo-name',
-                        </div>
-                    </div>
-                    
-                    <div style="background: #0d1117; padding: 15px; border-radius: 6px; margin-bottom: 20px;">
-                        <h3>Step 2: Repository Structure</h3>
-                        <p>The system will create these files in your repo:</p>
-                        <div style="font-family: monospace; background: #161b22; padding: 10px; border-radius: 4px; margin: 10px 0;">
-                            data/messages.json<br>
-                            data/submissions.json<br>
-                            data/assignments.json<br>
-                            data/users.json
-                        </div>
-                    </div>
-                    
-                    <div style="background: #0d1117; padding: 15px; border-radius: 6px; margin-bottom: 20px;">
-                        <h3>Step 3: Optional - Personal Access Token</h3>
-                        <p>For private repos or higher rate limits:</p>
-                        <ol style="margin: 10px 0; padding-left: 20px; color: #8b949e;">
-                            <li>Go to GitHub Settings > Developer settings > Personal access tokens</li>
-                            <li>Create token with 'repo' or 'public_repo' scope</li>
-                            <li>Add token to the configuration</li>
-                        </ol>
-                    </div>
-                    
-                    <div style="text-align: center;">
-                        <button class="cancel-btn" onclick="this.closest('.modal').remove()">Close</button>
-                    </div>
-                </div>
-            `;
-            
-            document.body.appendChild(modal);
-            
-            modal.addEventListener('click', (e) => {
-                if (e.target === modal) {
-                    modal.remove();
-                }
-            });
-        };
-        
         // Add GitHub sync button to the interface
         const addGitHubSyncButton = () => {
             const userInfo = document.getElementById('userInfo');
@@ -2128,27 +2771,135 @@
             }
         };
         
-        // Auto-load data when the page loads
+        // Week content loading function
+        const loadWeekContent = async (weekNumber) => {
+            const container = document.getElementById('week-content-container');
+            if (!container) return;
+            
+            const weekFile = `${weekNumber}.html`;
+            
+            try {
+                container.innerHTML = '<div class="loading-message">Loading week content...</div>';
+                
+                const response = await fetch(weekFile);
+                
+                if (!response.ok) {
+                    throw new Error(`Failed to load ${weekFile}: ${response.status}`);
+                }
+                
+                const content = await response.text();
+                container.innerHTML = `<div class="content-wrapper">${content}</div>`;
+                
+                console.log(`Successfully loaded ${weekFile}`);
+                
+            } catch (error) {
+                console.error(`Error loading week content:`, error);
+                container.innerHTML = `
+                    <div class="error-message-notes">
+                        <strong>Error loading ${weekNumber} content</strong><br>
+                        Could not load ${weekFile}.<br>
+                        <small>Error: ${error.message}</small>
+                    </div>
+                `;
+            } 
+        };
+        
+        // Add sample data for demo
+        const addSampleData = () => {
+            if (globalMessages.length === 0) {
+                globalMessages.push(
+                    {
+                        id: 2001,
+                        type: 'announcement',
+                        subject: 'Welcome to the Fall 2025 Semester',
+                        body: 'Welcome everyone to the new semester! Please check your weekly assignments and make sure to submit all work on time.',
+                        senderEmail: 'dr.smith@university.edu',
+                        senderName: 'Dr. Sarah Smith',
+                        recipients: ['student@university.edu'],
+                        timestamp: new Date(Date.now() - 86400000).toLocaleString(),
+                        readBy: ['dr.smith@university.edu'],
+                        replies: []
+                    }
+                );
+            }
+        
+            if (globalStudentFiles.length === 0) {
+                globalStudentFiles.push(
+                    {
+                        id: 1001,
+                        name: 'malaria_analysis.R',
+                        title: 'Malaria Data Analysis Project',
+                        course: 'DATA301',
+                        weekNumber: 3,
+                        description: 'Statistical analysis of malaria incidence data using R',
+                        size: '45 KB',
+                        type: 'application/x-r-script',
+                        icon: '📊',
+                        uploadedBy: 'student',
+                        uploadedByEmail: 'student@university.edu',
+                        assignedLecturer: 'dr_smith',
+                        uploadDate: '2025-08-28 14:30',
+                        grade: 85,
+                        comments: [],
+                        status: 'graded'
+                    }
+                );
+            }
+        };
+        
+        // Initialize application
         document.addEventListener('DOMContentLoaded', () => {
-            // Load data from GitHub when page loads
+            // Set up file input handler
+            const fileInput = document.getElementById('fileInput');
+            if (fileInput) {
+                fileInput.addEventListener('change', (e) => {
+                    const files = e.target.files;
+                    // Handle file selection logic here
+                });
+            }
+        
+            // Set up login handlers
+            const loginBtn = document.getElementById('loginButton');
+            const usernameInput = document.getElementById('username');
+            const passwordInput = document.getElementById('password');
+            
+            if (loginBtn) loginBtn.onclick = simpleLogin;
+            
+            if (usernameInput) {
+                usernameInput.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                        if (passwordInput) passwordInput.focus();
+                    }
+                });
+            }
+        
+            if (passwordInput) {
+                passwordInput.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                        simpleLogin();
+                    }
+                });
+            }
+        
+            // Initialize data
+            initializeWeeklyAssignments();
+            addSampleData();
+            updateStats();
+            
+            // Load data from GitHub after a short delay
             setTimeout(() => {
                 githubManager.loadAllData();
             }, 2000);
+            
+            // Show login modal
+            showLoginModal();
         });
         
-        // Override existing setupUserInterface to add GitHub button
-        const originalSetupUserInterface = setupUserInterface;
-        setupUserInterface = function() {
-            const result = originalSetupUserInterface.apply(this, arguments);
-            addGitHubSyncButton();
-            return result;
-        };
+        console.log('Complete educational platform with GitHub storage loaded successfully');
         
-        console.log('GitHub JSON storage system loaded');
-                       
-        
-           
-        
+      
        
     </script>
 </body>

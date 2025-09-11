@@ -3,707 +3,1094 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Excel File Combiner - Automated Data Merging Tool</title>
+    <title>Enhanced File Combiner Tool - Dark</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
     <style>
-        body {
+        * {
             margin: 0;
-            padding: 20px;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+            line-height: 1.6;
+            color: #e2e8f0;
             background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%);
             min-height: 100vh;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    </script>
-</body>
-</html>
-
-        .excel-combiner-widget {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
-            background: rgba(15, 23, 42, 0.95) !important;
-            backdrop-filter: blur(20px) !important;
-            color: #ffffff !important;
-            border: 1px solid rgba(59, 130, 246, 0.2) !important;
-            border-radius: 20px !important;
-            padding: 32px !important;
-            margin: 0 auto !important;
-            font-size: 14px !important;
-            line-height: 1.5 !important;
-            box-sizing: border-box !important;
-            width: 100% !important;
-            max-width: 1200px !important;
-            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(59, 130, 246, 0.1) !important;
         }
 
-        .excel-combiner-widget * {
-            box-sizing: border-box !important;
-            font-family: inherit !important;
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
         }
 
-        .excel-combiner-widget .ecw-header {
-            text-align: center !important;
-            margin-bottom: 32px !important;
-            padding-bottom: 24px !important;
-            border-bottom: 2px solid rgba(59, 130, 246, 0.2) !important;
+        .main-header {
+            text-align: center;
+            padding: 3rem 0;
+            background: linear-gradient(135deg, #1e1b4b 0%, #312e81 50%, #4338ca 100%);
+            color: white;
+            margin-bottom: 2rem;
+            border-radius: 0 0 1rem 1rem;
+            box-shadow: 0 8px 32px rgba(79, 70, 229, 0.3);
         }
 
-        .excel-combiner-widget .ecw-header h1 {
-            font-size: 36px !important;
-            color: #ffffff !important;
-            margin: 0 0 12px 0 !important;
-            padding: 0 !important;
-            font-weight: 800 !important;
-            line-height: 1.2 !important;
-            text-shadow: 0 2px 10px rgba(59, 130, 246, 0.3) !important;
-            background: linear-gradient(135deg, #60a5fa 0%, #3b82f6 100%) !important;
-            -webkit-background-clip: text !important;
-            -webkit-text-fill-color: transparent !important;
-            background-clip: text !important;
+        .main-header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.4);
         }
 
-        .excel-combiner-widget .ecw-header p {
-            font-size: 16px !important;
-            color: #cbd5e1 !important;
-            margin: 0 0 8px 0 !important;
-            padding: 0 !important;
-            font-weight: 400 !important;
+        .main-header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
         }
 
-        .excel-combiner-widget .ecw-upload-section {
-            background: rgba(30, 41, 59, 0.6) !important;
-            backdrop-filter: blur(10px) !important;
-            border: 1px solid rgba(59, 130, 246, 0.2) !important;
-            padding: 32px !important;
-            border-radius: 16px !important;
-            margin-bottom: 32px !important;
+        .upload-section {
+            background: rgba(30, 41, 59, 0.9);
+            backdrop-filter: blur(10px);
+            padding: 2rem;
+            border-radius: 15px;
+            border: 2px dashed #6366f1;
+            text-align: center;
+            margin: 2rem 0;
+            box-shadow: 0 8px 32px rgba(99, 102, 241, 0.15);
+            transition: all 0.3s ease;
         }
 
-        .excel-combiner-widget .ecw-upload-area {
-            border: 2px dashed rgba(59, 130, 246, 0.4) !important;
-            border-radius: 12px !important;
-            padding: 48px 32px !important;
-            text-align: center !important;
-            transition: all 0.3s ease !important;
-            cursor: pointer !important;
-            background: rgba(30, 41, 59, 0.3) !important;
+        .upload-section:hover {
+            border-color: #4f46e5;
+            box-shadow: 0 12px 40px rgba(99, 102, 241, 0.25);
         }
 
-        .excel-combiner-widget .ecw-upload-area:hover,
-        .excel-combiner-widget .ecw-upload-area.dragover {
-            border-color: #3b82f6 !important;
-            background: rgba(59, 130, 246, 0.1) !important;
-            transform: translateY(-2px) !important;
-            box-shadow: 0 10px 30px rgba(59, 130, 246, 0.2) !important;
+        .upload-section h3 {
+            color: #c7d2fe;
+            margin-bottom: 1rem;
+            font-size: 1.4rem;
         }
 
-        .excel-combiner-widget .ecw-upload-icon {
-            font-size: 64px !important;
-            margin-bottom: 20px !important;
-            color: #60a5fa !important;
-            filter: drop-shadow(0 2px 4px rgba(59, 130, 246, 0.3)) !important;
+        .file-input {
+            margin: 1rem 0;
+            padding: 12px 16px;
+            border: 2px solid #475569;
+            border-radius: 12px;
+            background: rgba(51, 65, 85, 0.8);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: #e2e8f0;
         }
 
-        .excel-combiner-widget .ecw-upload-text {
-            font-size: 18px !important;
-            margin-bottom: 12px !important;
-            font-weight: 600 !important;
-            color: #ffffff !important;
+        .file-input:hover {
+            border-color: #6366f1;
+            background: rgba(71, 85, 105, 0.9);
         }
 
-        .excel-combiner-widget .ecw-upload-subtext {
-            color: #94a3b8 !important;
-            font-size: 14px !important;
+        .btn {
+            background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px 5px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
+            font-weight: 600;
         }
 
-        .excel-combiner-widget .ecw-file-input {
-            display: none !important;
+        .btn:hover {
+            background: linear-gradient(135deg, #4f46e5 0%, #4338ca 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(99, 102, 241, 0.4);
         }
 
-        .excel-combiner-widget .ecw-file-list {
-            margin-top: 24px !important;
+        .btn:disabled {
+            background: #475569;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
         }
 
-        .excel-combiner-widget .ecw-file-item {
-            background: rgba(51, 65, 85, 0.8) !important;
-            backdrop-filter: blur(10px) !important;
-            border: 1px solid rgba(59, 130, 246, 0.3) !important;
-            padding: 20px !important;
-            border-radius: 12px !important;
-            margin: 12px 0 !important;
-            display: flex !important;
-            justify-content: space-between !important;
-            align-items: center !important;
-            transition: all 0.3s ease !important;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2) !important;
+        .btn-secondary {
+            background: linear-gradient(135deg, #64748b 0%, #475569 100%);
         }
 
-        .excel-combiner-widget .ecw-file-item:hover {
-            background: rgba(59, 130, 246, 0.15) !important;
-            border-color: #3b82f6 !important;
-            transform: translateY(-2px) !important;
-            box-shadow: 0 8px 25px rgba(59, 130, 246, 0.2) !important;
+        .btn-secondary:hover {
+            background: linear-gradient(135deg, #475569 0%, #334155 100%);
         }
 
-        .excel-combiner-widget .ecw-file-info {
-            display: flex !important;
-            align-items: center !important;
-            gap: 16px !important;
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin: 2rem 0;
         }
 
-        .excel-combiner-widget .ecw-file-icon {
-            font-size: 28px !important;
-            color: #60a5fa !important;
-            filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.2)) !important;
+        .stats-card {
+            background: rgba(30, 41, 59, 0.9);
+            backdrop-filter: blur(10px);
+            padding: 1.5rem;
+            border-radius: 15px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            border-top: 3px solid #6366f1;
+            transition: all 0.3s ease;
         }
 
-        .excel-combiner-widget .ecw-file-details h4 {
-            margin: 0 !important;
-            padding: 0 !important;
-            font-weight: 600 !important;
-            font-size: 16px !important;
-            color: #ffffff !important;
+        .stats-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 40px rgba(99, 102, 241, 0.2);
         }
 
-        .excel-combiner-widget .ecw-file-details p {
-            margin: 4px 0 0 0 !important;
-            padding: 0 !important;
-            color: #94a3b8 !important;
-            font-size: 13px !important;
+        .stats-card h3 {
+            font-size: 2rem;
+            color: #c7d2fe;
+            margin-bottom: 0.5rem;
+            font-weight: 700;
         }
 
-        .excel-combiner-widget .ecw-remove-btn {
-            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%) !important;
-            color: white !important;
-            border: none !important;
-            padding: 10px 14px !important;
-            border-radius: 8px !important;
-            cursor: pointer !important;
-            transition: all 0.2s ease !important;
-            font-size: 14px !important;
-            font-family: inherit !important;
-            font-weight: 600 !important;
-            box-shadow: 0 2px 8px rgba(239, 68, 68, 0.3) !important;
+        .file-card {
+            background: rgba(30, 41, 59, 0.9);
+            backdrop-filter: blur(10px);
+            padding: 1rem;
+            border-radius: 12px;
+            margin: 1rem 0;
+            border-left: 4px solid #6366f1;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
         }
 
-        .excel-combiner-widget .ecw-remove-btn:hover {
-            background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%) !important;
-            transform: translateY(-1px) !important;
-            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.4) !important;
+        .file-type-badge {
+            display: inline-block;
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 0.8rem;
+            margin-right: 0.5rem;
         }
 
-        .excel-combiner-widget .ecw-action-buttons {
-            display: flex !important;
-            gap: 16px !important;
-            margin: 28px 0 !important;
-            justify-content: center !important;
-            flex-wrap: wrap !important;
+        .file-type-badge.csv {
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
         }
 
-        .excel-combiner-widget .ecw-btn {
-            padding: 16px 32px !important;
-            border: none !important;
-            border-radius: 12px !important;
-            font-size: 15px !important;
-            font-weight: 700 !important;
-            cursor: pointer !important;
-            transition: all 0.3s ease !important;
-            text-decoration: none !important;
-            display: inline-flex !important;
-            align-items: center !important;
-            gap: 10px !important;
-            font-family: inherit !important;
-            margin: 0 !important;
-            text-transform: uppercase !important;
-            letter-spacing: 0.5px !important;
+        .file-type-badge.excel {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
         }
 
-        .excel-combiner-widget .ecw-btn-primary {
-            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%) !important;
-            color: white !important;
-            box-shadow: 0 6px 20px rgba(59, 130, 246, 0.4) !important;
+        .column-info {
+            background: linear-gradient(135deg, rgba(30, 41, 59, 0.8) 0%, rgba(51, 65, 85, 0.8) 100%);
+            backdrop-filter: blur(10px);
+            padding: 1rem;
+            border-radius: 12px;
+            margin: 1rem 0;
+            border-left: 3px solid #4f46e5;
         }
 
-        .excel-combiner-widget .ecw-btn-primary:hover:not(:disabled) {
-            background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%) !important;
-            transform: translateY(-3px) !important;
-            box-shadow: 0 10px 30px rgba(59, 130, 246, 0.5) !important;
+        .column-list {
+            background: rgba(15, 23, 42, 0.9);
+            backdrop-filter: blur(5px);
+            padding: 1rem;
+            border-radius: 10px;
+            margin: 0.5rem 0;
+            max-height: 200px;
+            overflow-y: auto;
+            border: 1px solid #475569;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            color: #cbd5e1;
         }
 
-        .excel-combiner-widget .ecw-btn-secondary {
-            background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%) !important;
-            color: white !important;
-            box-shadow: 0 6px 20px rgba(107, 114, 128, 0.4) !important;
+        .success-message {
+            background: linear-gradient(135deg, rgba(34, 197, 94, 0.2) 0%, rgba(22, 163, 74, 0.2) 100%);
+            backdrop-filter: blur(10px);
+            color: #86efac;
+            padding: 1rem;
+            border-radius: 12px;
+            border: 1px solid #22c55e;
+            margin: 1rem 0;
+            box-shadow: 0 4px 15px rgba(34, 197, 94, 0.1);
         }
 
-        .excel-combiner-widget .ecw-btn-secondary:hover {
-            background: linear-gradient(135deg, #4b5563 0%, #374151 100%) !important;
-            transform: translateY(-3px) !important;
-            box-shadow: 0 10px 30px rgba(107, 114, 128, 0.5) !important;
+        .warning-message {
+            background: linear-gradient(135deg, rgba(245, 158, 11, 0.2) 0%, rgba(217, 119, 6, 0.2) 100%);
+            backdrop-filter: blur(10px);
+            color: #fbbf24;
+            padding: 1rem;
+            border-radius: 12px;
+            border: 1px solid #f59e0b;
+            margin: 1rem 0;
+            box-shadow: 0 4px 15px rgba(245, 158, 11, 0.1);
         }
 
-        .excel-combiner-widget .ecw-btn:disabled {
-            opacity: 0.4 !important;
-            cursor: not-allowed !important;
-            transform: none !important;
+        .error-message {
+            background: linear-gradient(135deg, rgba(239, 68, 68, 0.2) 0%, rgba(220, 38, 38, 0.2) 100%);
+            backdrop-filter: blur(10px);
+            color: #fca5a5;
+            padding: 1rem;
+            border-radius: 12px;
+            border: 1px solid #ef4444;
+            margin: 1rem 0;
+            box-shadow: 0 4px 15px rgba(239, 68, 68, 0.1);
         }
 
-        .excel-combiner-widget .ecw-results-section {
-            background: rgba(30, 41, 59, 0.6) !important;
-            backdrop-filter: blur(10px) !important;
-            border: 1px solid rgba(59, 130, 246, 0.2) !important;
-            padding: 32px !important;
-            border-radius: 16px !important;
-            margin-bottom: 32px !important;
-            display: none !important;
+        .expandable {
+            border: 1px solid #475569;
+            border-radius: 12px;
+            margin: 1rem 0;
+            overflow: hidden;
+            background: rgba(30, 41, 59, 0.8);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
         }
 
-        .excel-combiner-widget .ecw-stats-grid {
-            display: grid !important;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)) !important;
-            gap: 20px !important;
-            margin-bottom: 32px !important;
+        .expandable-header {
+            background: linear-gradient(135deg, rgba(51, 65, 85, 0.9) 0%, rgba(71, 85, 105, 0.9) 100%);
+            backdrop-filter: blur(5px);
+            padding: 1rem;
+            cursor: pointer;
+            border-bottom: 1px solid #475569;
+            font-weight: 600;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: #c7d2fe;
+            transition: all 0.3s ease;
         }
 
-        .excel-combiner-widget .ecw-stat-card {
-            background: rgba(51, 65, 85, 0.8) !important;
-            backdrop-filter: blur(10px) !important;
-            border: 1px solid rgba(59, 130, 246, 0.2) !important;
-            padding: 24px !important;
-            border-radius: 12px !important;
-            text-align: center !important;
-            transition: all 0.3s ease !important;
+        .expandable-header:hover {
+            background: linear-gradient(135deg, rgba(71, 85, 105, 0.9) 0%, rgba(100, 116, 139, 0.9) 100%);
         }
 
-        .excel-combiner-widget .ecw-stat-card:hover {
-            background: rgba(59, 130, 246, 0.1) !important;
-            border-color: #3b82f6 !important;
-            transform: translateY(-3px) !important;
-            box-shadow: 0 10px 30px rgba(59, 130, 246, 0.2) !important;
+        .expandable-content {
+            padding: 1rem;
+            display: none;
         }
 
-        .excel-combiner-widget .ecw-stat-number {
-            font-size: 42px !important;
-            font-weight: 900 !important;
-            color: #60a5fa !important;
-            margin-bottom: 8px !important;
-            line-height: 1 !important;
-            text-shadow: 0 2px 8px rgba(96, 165, 250, 0.3) !important;
+        .expandable.open .expandable-content {
+            display: block;
         }
 
-        .excel-combiner-widget .ecw-stat-label {
-            color: #cbd5e1 !important;
-            font-size: 14px !important;
-            font-weight: 600 !important;
-            text-transform: uppercase !important;
-            letter-spacing: 0.5px !important;
+        .expandable-toggle {
+            font-size: 1.2rem;
+            margin-left: auto;
+            color: #6366f1;
+            transition: transform 0.3s ease;
         }
 
-        .excel-combiner-widget .ecw-preview-table {
-            overflow-x: auto !important;
-            margin: 20px 0 !important;
-            border-radius: 12px !important;
-            border: 1px solid rgba(59, 130, 246, 0.2) !important;
-            background: rgba(30, 41, 59, 0.4) !important;
+        .expandable.open .expandable-toggle {
+            transform: rotate(180deg);
         }
 
-        .excel-combiner-widget .ecw-table {
-            width: 100% !important;
-            border-collapse: collapse !important;
-            border-radius: 12px !important;
-            overflow: hidden !important;
-            margin: 0 !important;
+        .loading {
+            text-align: center;
+            padding: 2rem;
         }
 
-        .excel-combiner-widget .ecw-table th,
-        .excel-combiner-widget .ecw-table td {
-            padding: 16px !important;
-            text-align: left !important;
-            border-bottom: 1px solid rgba(59, 130, 246, 0.1) !important;
-            font-size: 14px !important;
-            color: #ffffff !important;
+        .spinner {
+            border: 4px solid rgba(99, 102, 241, 0.2);
+            border-top: 4px solid #6366f1;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
         }
 
-        .excel-combiner-widget .ecw-table th {
-            background: rgba(59, 130, 246, 0.2) !important;
-            font-weight: 700 !important;
-            border-bottom: 2px solid rgba(59, 130, 246, 0.3) !important;
-            text-transform: uppercase !important;
-            letter-spacing: 0.5px !important;
-            font-size: 13px !important;
-            color: #60a5fa !important;
-        }
-
-        .excel-combiner-widget .ecw-table tr:hover td {
-            background-color: rgba(59, 130, 246, 0.1) !important;
-        }
-
-        .excel-combiner-widget .ecw-loading {
-            display: none !important;
-            text-align: center !important;
-            padding: 32px !important;
-        }
-
-        .excel-combiner-widget .ecw-spinner {
-            border: 4px solid rgba(59, 130, 246, 0.2) !important;
-            border-top: 4px solid #60a5fa !important;
-            border-radius: 50% !important;
-            width: 50px !important;
-            height: 50px !important;
-            animation: ecw-spin 1s linear infinite !important;
-            margin: 0 auto 16px !important;
-        }
-
-        @keyframes ecw-spin {
+        @keyframes spin {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
 
-        .excel-combiner-widget .ecw-section-title {
-            font-weight: 800 !important;
-            margin-bottom: 24px !important;
-            color: #ffffff !important;
-            font-size: 28px !important;
-            padding: 0 !important;
-            text-shadow: 0 2px 8px rgba(96, 165, 250, 0.3) !important;
+        .hidden {
+            display: none;
         }
 
-        .excel-combiner-widget .ecw-subsection-title {
-            font-weight: 700 !important;
-            color: #cbd5e1 !important;
-            font-size: 20px !important;
-            margin: 28px 0 16px 0 !important;
-            padding-bottom: 12px !important;
-            border-bottom: 2px solid rgba(59, 130, 246, 0.3) !important;
+        .section {
+            background: rgba(30, 41, 59, 0.9);
+            backdrop-filter: blur(10px);
+            margin: 2rem 0;
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
         }
 
-        /* Modern Pop-up Notifications */
-        .ecw-notification {
-            position: fixed !important;
-            top: 30px !important;
-            right: 30px !important;
-            min-width: 350px !important;
-            max-width: 450px !important;
-            padding: 20px 24px !important;
-            border-radius: 16px !important;
-            font-size: 15px !important;
-            font-weight: 600 !important;
-            z-index: 10000 !important;
-            transform: translateX(500px) !important;
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3) !important;
-            backdrop-filter: blur(20px) !important;
-            border: 1px solid rgba(255, 255, 255, 0.2) !important;
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin: 2rem 0;
         }
 
-        .ecw-notification.show {
-            transform: translateX(0) !important;
+        .footer {
+            text-align: center;
+            color: #94a3b8;
+            padding: 2rem;
+            margin-top: 3rem;
+            border-top: 1px solid rgba(99, 102, 241, 0.2);
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(10px);
         }
 
-        .ecw-notification-success {
-            background: linear-gradient(135deg, rgba(16, 185, 129, 0.95) 0%, rgba(5, 150, 105, 0.95) 100%) !important;
-            color: #ffffff !important;
+        /* Scrollbar styling */
+        ::-webkit-scrollbar {
+            width: 8px;
         }
 
-        .ecw-notification-error {
-            background: linear-gradient(135deg, rgba(239, 68, 68, 0.95) 0%, rgba(220, 38, 38, 0.95) 100%) !important;
-            color: #ffffff !important;
+        ::-webkit-scrollbar-track {
+            background: rgba(51, 65, 85, 0.5);
+            border-radius: 4px;
         }
 
-        .ecw-notification-info {
-            background: linear-gradient(135deg, rgba(59, 130, 246, 0.95) 0%, rgba(37, 99, 235, 0.95) 100%) !important;
-            color: #ffffff !important;
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+            border-radius: 4px;
         }
 
-        .ecw-notification-icon {
-            font-size: 24px !important;
-            margin-right: 12px !important;
-            vertical-align: middle !important;
+        ::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(135deg, #4f46e5 0%, #4338ca 100%);
         }
 
-        .ecw-notification-close {
-            position: absolute !important;
-            top: 10px !important;
-            right: 15px !important;
-            background: none !important;
-            border: none !important;
-            color: rgba(255, 255, 255, 0.8) !important;
-            font-size: 20px !important;
-            cursor: pointer !important;
-            padding: 5px !important;
-            border-radius: 50% !important;
-            transition: all 0.2s ease !important;
-        }
-
-        .ecw-notification-close:hover {
-            background: rgba(255, 255, 255, 0.1) !important;
-            color: #ffffff !important;
-        }
-
-        @media (max-width: 640px) {
-            .excel-combiner-widget {
-                padding: 20px !important;
-                margin: 10px !important;
+        @media (max-width: 768px) {
+            .main-header h1 {
+                font-size: 2rem;
             }
             
-            .excel-combiner-widget .ecw-action-buttons {
-                flex-direction: column !important;
-                align-items: stretch !important;
+            .main-header p {
+                font-size: 1rem;
             }
             
-            .excel-combiner-widget .ecw-stats-grid {
-                grid-template-columns: 1fr !important;
+            .container {
+                padding: 0 10px;
             }
             
-            .excel-combiner-widget .ecw-header h1 {
-                font-size: 28px !important;
+            .upload-section {
+                padding: 1rem;
             }
+        }
 
-            .ecw-notification {
-                top: 20px !important;
-                right: 20px !important;
-                left: 20px !important;
-                min-width: auto !important;
-                max-width: none !important;
-                transform: translateY(-100px) !important;
-            }
+        /* Additional dark theme effects */
+        .section h2, .section h3 {
+            color: #c7d2fe;
+            margin-bottom: 1rem;
+        }
 
-            .ecw-notification.show {
-                transform: translateY(0) !important;
-            }
+        .section ul {
+            color: #cbd5e1;
+        }
+
+        .section ul li {
+            margin-bottom: 0.5rem;
+        }
+
+        /* Enhanced hover effects */
+        .file-card:hover {
+            transform: translateX(5px);
+            transition: transform 0.3s ease;
+            border-left-color: #8b5cf6;
+        }
+
+        /* Dark theme specific enhancements */
+        .stats-card p {
+            color: #94a3b8;
+        }
+
+        .file-card small {
+            color: #94a3b8;
+        }
+
+        .column-info strong {
+            color: #c7d2fe;
         }
     </style>
 </head>
 <body>
-    <div class="excel-combiner-widget">
-        <div class="ecw-header">
-            <h1>📊 Excel File Combiner</h1>
-            <p>Automatically merge multiple Excel files into one unified dataset</p>
-            <p><strong>Perfect for combining malaria surveillance data, research datasets, and more!</strong></p>
+    <div class="main-header">
+        <div class="container">
+            <h1>🔗 Enhanced File Combiner Tool</h1>
+            <p>Combine multiple XLS, XLSX, and CSV files with ALL columns (common + uncommon)</p>
         </div>
+    </div>
 
-        <div class="ecw-upload-section">
-            <div class="ecw-upload-area" onclick="document.getElementById('ecwFileInput').click()">
-                <div class="ecw-upload-icon">📁</div>
-                <div class="ecw-upload-text">Click to select Excel files or drag and drop</div>
-                <div class="ecw-upload-subtext">Supports .xlsx and .xls files</div>
-            </div>
-            <input type="file" id="ecwFileInput" class="ecw-file-input" multiple accept=".xlsx,.xls">
-            
-            <div class="ecw-file-list" id="ecwFileList"></div>
-            
-            <div class="ecw-action-buttons">
-                <button class="ecw-btn ecw-btn-primary" id="ecwCombineBtn" disabled onclick="ecwCombineFiles()">
-                    🔄 Combine Files
-                </button>
-                <button class="ecw-btn ecw-btn-secondary" id="ecwClearBtn" onclick="ecwClearFiles()">
-                    🗑️ Clear All
-                </button>
-            </div>
-            
-            <div class="ecw-loading" id="ecwLoading">
-                <div class="ecw-spinner"></div>
-                <p style="color: #cbd5e1; font-size: 16px; margin-top: 16px;">Processing files...</p>
+    <div class="container">
+        <!-- Upload Section -->
+        <div class="upload-section">
+            <h3>📁 Upload Multiple Files</h3>
+            <p>Upload multiple XLS, XLSX, and CSV files to combine them with ALL columns preserved</p>
+            <input type="file" id="fileInput" class="file-input" multiple accept=".csv,.xlsx,.xls">
+            <div style="margin-top: 1rem;">
+                <button id="processBtn" class="btn" disabled>🔗 Process Files</button>
+                <button id="resetBtn" class="btn btn-secondary hidden">🔄 Upload New Files</button>
             </div>
         </div>
 
-        <div class="ecw-results-section" id="ecwResultsSection">
-            <h2 class="ecw-section-title">📈 Combined Dataset Results</h2>
-            
-            <div class="ecw-stats-grid">
-                <div class="ecw-stat-card">
-                    <div class="ecw-stat-number" id="ecwTotalRows">0</div>
-                    <div class="ecw-stat-label">Total Rows</div>
+        <!-- Loading indicator -->
+        <div id="loading" class="loading hidden">
+            <div class="spinner"></div>
+            <p>Processing and cleaning uploaded files...</p>
+        </div>
+
+        <!-- Files Summary -->
+        <div id="filesSummary" class="hidden">
+            <h2>📋 Uploaded Files Summary</h2>
+            <div id="statsGrid" class="stats-grid"></div>
+            <div id="fileDetails"></div>
+            <div id="columnAnalysis"></div>
+            <button id="combineBtn" class="btn">🔗 Combine Files (ALL Columns)</button>
+        </div>
+
+        <!-- Combination Results -->
+        <div id="combinationResults" class="hidden">
+            <h2>📊 Combined Results</h2>
+            <div id="combinationSummary"></div>
+            <div id="downloadSection">
+                <h3>💾 Download Combined Data</h3>
+                <button id="downloadBtn" class="btn">📥 Download as CSV</button>
+            </div>
+        </div>
+
+        <!-- Features Section (shown when no files uploaded) -->
+        <div id="featuresSection" class="section">
+            <h2>ℹ️ How It Works - Enhanced Version</h2>
+            <div class="feature-grid">
+                <div>
+                    <h3>Enhanced Combination Logic:</h3>
+                    <ul style="margin-left: 2rem; margin-top: 1rem;">
+                        <li><strong>Data Cleaning:</strong> Removes empty rows and unnamed columns before merging</li>
+                        <li><strong>All Columns Preserved:</strong> Combines ALL columns (common + uncommon)</li>
+                        <li><strong>By File Type:</strong> Files are grouped by type (CSV, Excel)</li>
+                        <li><strong>Source Tracking:</strong> A 'source_file' column tracks original files</li>
+                        <li><strong>Missing Data Handling:</strong> Missing columns filled with empty values</li>
+                    </ul>
                 </div>
-                <div class="ecw-stat-card">
-                    <div class="ecw-stat-number" id="ecwTotalColumns">0</div>
-                    <div class="ecw-stat-label">Columns</div>
-                </div>
-                <div class="ecw-stat-card">
-                    <div class="ecw-stat-number" id="ecwFilesProcessed">0</div>
-                    <div class="ecw-stat-label">Files Combined</div>
-                </div>
-                <div class="ecw-stat-card">
-                    <div class="ecw-stat-number" id="ecwDataSize">0 KB</div>
-                    <div class="ecw-stat-label">Dataset Size</div>
+                <div>
+                    <h3>Data Cleaning Features:</h3>
+                    <ul style="margin-left: 2rem; margin-top: 1rem;">
+                        <li>Removes rows where first column is empty</li>
+                        <li>Removes "Unnamed" columns</li>
+                        <li>Removes completely empty rows</li>
+                        <li>Preserves all meaningful data</li>
+                        <li>Complete data preservation</li>
+                        <li>Clear source file tracking</li>
+                    </ul>
                 </div>
             </div>
-            
-            <h3 class="ecw-subsection-title">📋 Data Preview (First 10 rows)</h3>
-            <div class="ecw-preview-table" id="ecwPreviewTable"></div>
-            
-            <div class="ecw-action-buttons">
-                <button class="ecw-btn ecw-btn-primary" onclick="ecwDownloadExcel()">
-                    📥 Download Excel (.xlsx)
-                </button>
-                <button class="ecw-btn ecw-btn-secondary" onclick="ecwDownloadCSV()">
-                    📄 Download CSV
-                </button>
+
+            <h2>✨ Enhanced Tool Features</h2>
+            <div class="feature-grid">
+                <div>
+                    <h3>📋 Enhanced Processing:</h3>
+                    <ul style="margin-left: 2rem; margin-top: 1rem;">
+                        <li>Automatic data cleaning</li>
+                        <li>Preserve ALL columns (common + unique)</li>
+                        <li>Remove empty/unnamed data</li>
+                        <li>Smart column alignment</li>
+                        <li>Detailed progress reporting</li>
+                    </ul>
+                </div>
+                <div>
+                    <h3>🔗 Improved Combination:</h3>
+                    <ul style="margin-left: 2rem; margin-top: 1rem;">
+                        <li>No data loss (all columns preserved)</li>
+                        <li>Clean, organized output</li>
+                        <li>Comprehensive column analysis</li>
+                        <li>Statistics without data display</li>
+                        <li>CSV download option</li>
+                    </ul>
+                </div>
             </div>
         </div>
     </div>
 
+    <div class="footer">
+        <p>🔗 Enhanced File Combiner Tool v2.0 | Preserves ALL Columns</p>
+    </div>
+
     <script>
-        let ecwUploadedFiles = [];
-        let ecwCombinedData = [];
-
-        // Initialize event listeners
-        document.addEventListener('DOMContentLoaded', function() {
-            console.log('DOM loaded, setting up event listeners');
-            
-            // File input handling
-            const fileInput = document.getElementById('ecwFileInput');
-            if (fileInput) {
-                fileInput.addEventListener('change', ecwHandleFileSelect);
-                console.log('File input event listener added');
+        class FileCombiner {
+            constructor() {
+                this.filesData = [];
+                this.combinedData = null;
+                this.combinationLog = [];
+                this.initializeEventListeners();
             }
 
-            // Drag and drop handling
-            const ecwUploadArea = document.querySelector('.ecw-upload-area');
-            if (ecwUploadArea) {
-                ecwUploadArea.addEventListener('dragover', ecwHandleDragOver);
-                ecwUploadArea.addEventListener('drop', ecwHandleDrop);
-                ecwUploadArea.addEventListener('dragleave', ecwHandleDragLeave);
-                console.log('Drag and drop event listeners added');
-            }
-        });
-
-        function ecwHandleDragOver(e) {
-            e.preventDefault();
-            const ecwUploadArea = document.querySelector('.ecw-upload-area');
-            ecwUploadArea.classList.add('dragover');
-        }
-
-        function ecwHandleDragLeave(e) {
-            e.preventDefault();
-            const ecwUploadArea = document.querySelector('.ecw-upload-area');
-            ecwUploadArea.classList.remove('dragover');
-        }
-
-        function ecwHandleDrop(e) {
-            e.preventDefault();
-            const ecwUploadArea = document.querySelector('.ecw-upload-area');
-            ecwUploadArea.classList.remove('dragover');
-            const files = Array.from(e.dataTransfer.files);
-            ecwHandleFiles(files);
-        }
-
-        function ecwHandleFileSelect(e) {
-            console.log('File input changed', e.target.files);
-            const files = Array.from(e.target.files);
-            ecwHandleFiles(files);
-        }
-
-        function ecwHandleFiles(files) {
-            console.log('Handling files:', files);
-            
-            const excelFiles = files.filter(file => 
-                file.name.toLowerCase().endsWith('.xlsx') || 
-                file.name.toLowerCase().endsWith('.xls')
-            );
-
-            console.log('Excel files found:', excelFiles);
-
-            if (excelFiles.length === 0) {
-                ecwShowNotification('Please select valid Excel files (.xlsx or .xls)', 'error');
-                return;
+            initializeEventListeners() {
+                document.getElementById('fileInput').addEventListener('change', this.handleFileSelection.bind(this));
+                document.getElementById('processBtn').addEventListener('click', this.processFiles.bind(this));
+                document.getElementById('combineBtn').addEventListener('click', this.combineFiles.bind(this));
+                document.getElementById('resetBtn').addEventListener('click', this.resetApplication.bind(this));
+                document.getElementById('downloadBtn').addEventListener('click', this.downloadCombinedData.bind(this));
             }
 
-            let addedCount = 0;
-            excelFiles.forEach(file => {
-                if (!ecwUploadedFiles.find(f => f.name === file.name && f.size === file.size)) {
-                    ecwUploadedFiles.push(file);
-                    addedCount++;
-                    console.log('Added file:', file.name);
+            handleFileSelection(event) {
+                const files = event.target.files;
+                const processBtn = document.getElementById('processBtn');
+                
+                if (files.length > 0) {
+                    processBtn.disabled = false;
+                    processBtn.textContent = `🔗 Process ${files.length} File(s)`;
+                } else {
+                    processBtn.disabled = true;
+                    processBtn.textContent = '🔗 Process Files';
                 }
-            });
-
-            if (addedCount > 0) {
-                ecwShowNotification(`✅ ${addedCount} file(s) uploaded successfully!`, 'success');
-            } else {
-                ecwShowNotification('ℹ️ Files already uploaded', 'info');
             }
 
-            console.log('Total uploaded files:', ecwUploadedFiles.length);
-            ecwUpdateFileList();
-            ecwUpdateButtons();
-        }
+            async processFiles() {
+                const fileInput = document.getElementById('fileInput');
+                const files = fileInput.files;
+                
+                if (files.length === 0) return;
 
-        function ecwUpdateFileList() {
-            const fileList = document.getElementById('ecwFileList');
-            console.log('Updating file list, files count:', ecwUploadedFiles.length);
-            
-            if (ecwUploadedFiles.length === 0) {
-                fileList.innerHTML = '';
-                return;
+                this.showLoading(true);
+                this.hideElement('featuresSection');
+                this.filesData = [];
+
+                try {
+                    for (let file of files) {
+                        const data = await this.readFile(file);
+                        if (data) {
+                            this.filesData.push(data);
+                        }
+                    }
+
+                    if (this.filesData.length > 0) {
+                        this.displayFilesSummary();
+                    }
+                } catch (error) {
+                    this.showError('Error processing files: ' + error.message);
+                } finally {
+                    this.showLoading(false);
+                }
             }
 
-            const fileHTML = ecwUploadedFiles.map((file, index) => {
-                console.log('Creating HTML for file:', file.name);
-                return `
-                    <div class="ecw-file-item">
-                        <div class="ecw-file-info">
-                            <div class="ecw-file-icon">📄</div>
-                            <div class="ecw-file-details">
-                                <h4>${file.name}</h4>
-                                <p>${ecwFormatFileSize(file.size)} • ${file.type || 'Excel file'}</p>
-                            </div>
-                        </div>
-                        <button class="ecw-remove-btn" onclick="ecwRemoveFile(${index})">✕</button>
+            async readFile(file) {
+                return new Promise((resolve, reject) => {
+                    const fileExtension = file.name.toLowerCase().split('.').pop();
+                    const reader = new FileReader();
+
+                    reader.onload = (e) => {
+                        try {
+                            let data, fileType;
+
+                            if (fileExtension === 'csv') {
+                                const csvText = e.target.result;
+                                const parsed = Papa.parse(csvText, {
+                                    header: true,
+                                    skipEmptyLines: true,
+                                    dynamicTyping: true
+                                });
+                                data = parsed.data;
+                                fileType = 'CSV';
+                            } else if (fileExtension === 'xlsx' || fileExtension === 'xls') {
+                                const workbook = XLSX.read(e.target.result, { type: 'array' });
+                                const firstSheetName = workbook.SheetNames[0];
+                                const worksheet = workbook.Sheets[firstSheetName];
+                                data = XLSX.utils.sheet_to_json(worksheet);
+                                fileType = 'Excel';
+                            } else {
+                                reject(new Error(`Unsupported file type: ${fileExtension}`));
+                                return;
+                            }
+
+                            // Clean the data
+                            const cleanedData = this.cleanData(data, file.name);
+                            
+                            resolve({
+                                name: file.name,
+                                type: fileType,
+                                data: cleanedData,
+                                originalSize: data.length,
+                                cleanedSize: cleanedData.length,
+                                columns: Object.keys(cleanedData[0] || {})
+                            });
+                        } catch (error) {
+                            reject(new Error(`Error reading ${file.name}: ${error.message}`));
+                        }
+                    };
+
+                    reader.onerror = () => reject(new Error(`Error reading file: ${file.name}`));
+
+                    if (fileExtension === 'csv') {
+                        reader.readAsText(file);
+                    } else {
+                        reader.readAsArrayBuffer(file);
+                    }
+                });
+            }
+
+            cleanData(data, filename) {
+                if (!data || data.length === 0) return [];
+
+                // Remove rows with empty first column
+                const firstColumnKey = Object.keys(data[0] || {})[0];
+                let cleaned = data.filter(row => {
+                    const firstValue = row[firstColumnKey];
+                    return firstValue !== null && firstValue !== undefined && 
+                           String(firstValue).trim() !== '';
+                });
+
+                // Remove unnamed columns and clean column names
+                cleaned = cleaned.map(row => {
+                    const cleanRow = {};
+                    Object.keys(row).forEach(key => {
+                        const cleanKey = String(key).trim();
+                        if (!cleanKey.toLowerCase().startsWith('unnamed') && 
+                            cleanKey !== 'null' && cleanKey !== '') {
+                            cleanRow[cleanKey] = row[key];
+                        }
+                    });
+                    return cleanRow;
+                });
+
+                // Remove completely empty rows
+                cleaned = cleaned.filter(row => {
+                    return Object.values(row).some(value => 
+                        value !== null && value !== undefined && String(value).trim() !== ''
+                    );
+                });
+
+                return cleaned;
+            }
+
+            displayFilesSummary() {
+                const summaryDiv = document.getElementById('filesSummary');
+                const statsGrid = document.getElementById('statsGrid');
+                const fileDetails = document.getElementById('fileDetails');
+                const columnAnalysis = document.getElementById('columnAnalysis');
+
+                // Stats grid
+                const totalFiles = this.filesData.length;
+                const csvCount = this.filesData.filter(f => f.type === 'CSV').length;
+                const excelCount = this.filesData.filter(f => f.type === 'Excel').length;
+
+                statsGrid.innerHTML = `
+                    <div class="stats-card">
+                        <h3>${totalFiles}</h3>
+                        <p>Total Files</p>
+                    </div>
+                    <div class="stats-card">
+                        <h3>${csvCount}</h3>
+                        <p>CSV Files</p>
+                    </div>
+                    <div class="stats-card">
+                        <h3>${excelCount}</h3>
+                        <p>Excel Files</p>
                     </div>
                 `;
-            }).join('');
 
-            console.log('Setting file list HTML');
-            fileList.innerHTML = fileHTML;
-        }
+                // File details
+                let fileDetailsHTML = '<h3>📄 Individual File Details</h3>';
+                this.filesData.forEach((file, index) => {
+                    const badgeClass = file.type === 'CSV' ? 'csv' : 'excel';
+                    fileDetailsHTML += `
+                        <div class="expandable" id="file-${index}">
+                            <div class="expandable-header" onclick="this.parentElement.classList.toggle('open')">
+                                <div>
+                                    <span class="file-type-badge ${badgeClass}">${file.type}</span>
+                                    <strong>${file.name}</strong> (${file.cleanedSize} rows × ${file.columns.length} columns)
+                                </div>
+                                <span class="expandable-toggle">▼</span>
+                            </div>
+                            <div class="expandable-content">
+                                <div class="file-card">
+                                    <p><small>📏 Original: ${file.originalSize} rows → Cleaned: ${file.cleanedSize} rows</small></p>
+                                    <p><strong>All Columns:</strong></p>
+                                    <div class="column-list">${file.columns.join(', ')}</div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                });
+                fileDetails.innerHTML = fileDetailsHTML;
 
-        function ecwRemoveFile(index) {
-            const fileName = ecwUploadedFiles[index].name;
-            ecwUploadedFiles.splice(index, 1);
-            ecwUpdateFileList();
-            ecwUpdateButtons();
-            ecwShowNotification(`🗑️ Removed "${fileName}"`, 'info');
-        }
+                // Column analysis
+                this.displayColumnAnalysis(columnAnalysis);
 
-        function ecwClearFiles() {
-            const fileCount = ecwUploadedFiles.length;
-            ecwUploadedFiles = [];
-            ecwCombinedData = [];
-            ecwUpdateFileList();
-            ecwUpdateButtons();
-            
-            // Clear results and any summary sections
-            const resultsSection = document.getElementById('ecwResultsSection');
-            resultsSection.style.display = 'none';
-            
-            // Remove any existing file group summaries
-            const existingSummaries = resultsSection.querySelectorAll('div[style*="rgba(59, 130, 246, 0.1)"]');
-            existingSummaries.forEach(summary => summary.remove());
-            
-            document.getElementById('ecwFileInput').value = '';
-            
-            if (fileCount > 0) {
-                ecwShowNotification(`🗑️ Cleared ${fileCount} file(s)`, 'info');
-            }
-        }
-
-        function ecwUpdateButtons() {
-            const combineBtn = document.getElementById('ecwCombineBtn');
-            const hasFiles = ecwUploadedFiles.length > 0;
-            combineBtn.disabled = !hasFiles;
-            console.log('Button state updated. Files:', ecwUploadedFiles.length, 'Disabled:', !hasFiles);
-        }
-
-        async function ecwCombineFiles() {
-            console.log('Combine button clicked. Files count:', ecwUploadedFiles.length);
-            
-            if (ecwUploadedFiles.length === 0) {
-                ecwShowNotification('⚠️ Please upload files first', 'error');
-                return;
+                this.showElement('filesSummary');
             }
 
-            ecwShowLoading(true);
-            ecwCombinedData = [];
+            displayColumnAnalysis(container) {
+                const filesByType = this.groupFilesByType();
+                let analysisHTML = '<h3>🔍 Column Analysis by File Type</h3>';
 
-            try {
-                ecwShowNotification('🔄 Processing files...', 'info');
+                Object.entries(filesByType).forEach(([fileType, files]) => {
+                    if (files.length > 1) {
+                        const allColumns = this.getAllColumns(files);
+                        const commonColumns = this.getCommonColumns(files);
+                        
+                        analysisHTML += `
+                            <div class="column-info">
+                                <strong>${fileType} Files (${files.length} files)</strong><br>
+                                <strong>Total unique columns:</strong> ${allColumns.length}<br>
+                                <strong>Common columns (${commonColumns.length}):</strong> ${commonColumns.length > 0 ? commonColumns.join(', ') : 'None'}<br>
+                                <strong>All columns will be preserved in final output</strong><br>
+                                <small>Files: ${files.map(f => f.name).join(', ')}</small>
+                            </div>
+                            <div class="expandable">
+                                <div class="expandable-header" onclick="this.parentElement.classList.toggle('open')">
+                                    <span>View all ${allColumns.length} columns for ${fileType} files</span>
+                                    <span class="expandable-toggle">▼</span>
+                                </div>
+                                <div class="expandable-content">
+                                    <div class="column-list">${allColumns.join(', ')}</div>
+                                </div>
+                            </div>
+                        `;
+                    } else {
+                        analysisHTML += `
+                            <div class="column-info">
+                                <strong>${fileType} Files (1 file)</strong><br>
+                                <strong>All ${files[0].columns.length} columns will be preserved</strong><br>
+                                <small>File: ${files[0].name}</small>
+                            </div>
+                        `;
+                    }
+                });
+
+                container.innerHTML = analysisHTML;
+            }
+
+            combineFiles() {
+                this.showLoading(true, 'Combining files with ALL columns...');
+
+                try {
+                    const filesByType = this.groupFilesByType();
+                    this.combinedData = {};
+                    this.combinationLog = [];
+
+                    Object.entries(filesByType).forEach(([fileType, files]) => {
+                        if (files.length === 1) {
+                            // Single file
+                            const combinedData = files[0].data.map(row => ({
+                                ...row,
+                                source_file: files[0].name
+                            }));
+                            this.combinedData[fileType] = combinedData;
+
+                            this.combinationLog.push({
+                                fileType,
+                                filesCombined: 1,
+                                fileNames: [files[0].name],
+                                totalRowsBefore: files[0].cleanedSize,
+                                totalRowsAfter: combinedData.length,
+                                allColumns: [...files[0].columns, 'source_file']
+                            });
+                        } else {
+                            // Multiple files
+                            const allColumns = this.getAllColumns(files);
+                            const combinedRows = [];
+
+                            files.forEach(file => {
+                                file.data.forEach(row => {
+                                    const newRow = {};
+                                    // Add all columns with default empty values
+                                    allColumns.forEach(col => {
+                                        newRow[col] = row[col] || '';
+                                    });
+                                    newRow.source_file = file.name;
+                                    combinedRows.push(newRow);
+                                });
+                            });
+
+                            this.combinedData[fileType] = combinedRows;
+
+                            this.combinationLog.push({
+                                fileType,
+                                filesCombined: files.length,
+                                fileNames: files.map(f => f.name),
+                                totalRowsBefore: files.reduce((sum, f) => sum + f.cleanedSize, 0),
+                                totalRowsAfter: combinedRows.length,
+                                allColumns: [...allColumns, 'source_file'],
+                                commonColumns: this.getCommonColumns(files)
+                            });
+                        }
+                    });
+
+                    this.displayCombinationResults();
+                    this.showSuccess('✅ Files combined successfully with ALL columns preserved!');
+                } catch (error) {
+                    this.showError('❌ Error combining files: ' + error.message);
+                } finally {
+                    this.showLoading(false);
+                }
+            }
+
+            displayCombinationResults() {
+                const resultsDiv = document.getElementById('combinationResults');
+                const summaryDiv = document.getElementById('combinationSummary');
+
+                let summaryHTML = '<h3>📋 Combination Summary</h3>';
+
+                this.combinationLog.forEach(log => {
+                    summaryHTML += `
+                        <div class="success-message">
+                            <strong>${log.fileType} Files Combined</strong><br>
+                            <strong>Files:</strong> ${log.filesCombined} files combined<br>
+                            <strong>Names:</strong> ${log.fileNames.join(', ')}<br>
+                            ${log.commonColumns ? `<strong>Common Columns:</strong> ${log.commonColumns.length}<br>` : ''}
+                            <strong>Total Unique Columns:</strong> ${log.allColumns.length - 1}<br>
+                            <strong>Rows:</strong> ${log.totalRowsBefore} → ${log.totalRowsAfter}<br>
+                            <strong>Final Columns (including source_file):</strong> ${log.allColumns.length}
+                        </div>
+                        <div class="expandable">
+                            <div class="expandable-header" onclick="this.parentElement.classList.toggle('open')">
+                                <span>View all ${log.allColumns.length} columns in combined ${log.fileType} data</span>
+                                <span class="expandable-toggle">▼</span>
+                            </div>
+                            <div class="expandable-content">
+                                <div class="column-list">${log.allColumns.join(', ')}</div>
+                            </div>
+                        </div>
+                    `;
+                });
+
+                // Add data summary for each file type
+                Object.entries(this.combinedData).forEach(([fileType, data]) => {
+                    const numericColumns = this.getNumericColumns(data);
+                    const categoricalColumns = this.getCategoricalColumns(data);
+                    const sourceFiles = [...new Set(data.map(row => row.source_file))];
+
+                    summaryHTML += `
+                        <h3>📈 Combined ${fileType} Data Summary</h3>
+                        <div class="stats-grid">
+                            <div class="stats-card">
+                                <h3>${data.length}</h3>
+                                <p>Rows</p>
+                            </div>
+                            <div class="stats-card">
+                                <h3>${Object.keys(data[0] || {}).length}</h3>
+                                <p>Total Columns</p>
+                            </div>
+                            <div class="stats-card">
+                                <h3>${numericColumns.length}</h3>
+                                <p>Numeric Columns</p>
+                            </div>
+                            <div class="stats-card">
+                                <h3>${sourceFiles.length}</h3>
+                                <p>Source Files</p>
+                            </div>
+                        </div>
+                        <div class="expandable">
+                            <div class="expandable-header" onclick="this.parentElement.classList.toggle('open')">
+                                <span>📊 Column Data Types for ${fileType}</span>
+                                <span class="expandable-toggle">▼</span>
+                            </div>
+                            <div class="expandable-content">
+                                <p><strong>📝 Categorical/Text Columns</strong>: ${categoricalColumns.length}</p>
+                                ${categoricalColumns.length > 0 ? `<p style="margin-left: 1rem;">${categoricalColumns.slice(0, 10).join(', ')}${categoricalColumns.length > 10 ? '...' : ''}</p>` : ''}
+                                <p><strong>🔢 Numeric Columns</strong>: ${numericColumns.length}</p>
+                                ${numericColumns.length > 0 ? `<p style="margin-left: 1rem;">${numericColumns.slice(0, 10).join(', ')}${numericColumns.length > 10 ? '...' : ''}</p>` : ''}
+                                <p><strong>📁 Source Tracking</strong>: source_file column</p>
+                            </div>
+                        </div>
+                    `;
+                });
+
+                summaryDiv.innerHTML = summaryHTML;
+                this.showElement('combinationResults');
+                document.getElementById('resetBtn').classList.remove('hidden');
+            }
+
+            downloadCombinedData() {
+                if (!this.combinedData) return;
+
+                let finalData;
+                const fileTypes = Object.keys(this.combinedData);
+
+                if (fileTypes.length === 1) {
+                    // Single file type
+                    finalData = this.combinedData[fileTypes[0]];
+                } else {
+                    // Multiple file types - combine all
+                    finalData = [];
+                    Object.entries(this.combinedData).forEach(([fileType, data]) => {
+                        const dataWithType = data.map(row => ({
+                            ...row,
+                            data_type: fileType
+                        }));
+                        finalData.push(...dataWithType);
+                    });
+                }
+
+                // Convert to CSV
+                const csvContent = this.convertToCSV(finalData);
                 
-                for (let i =
+                // Create download
+                const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+                const link = document.createElement('a');
+                const url = URL.createObjectURL(blob);
+                
+                const timestamp = new Date().toISOString().slice(0, 19).replace(/:/g, '').replace('T', '_');
+                const filename = fileTypes.length === 1 
+                    ? `combined_${fileTypes[0].toLowerCase()}_data_${timestamp}.csv`
+                    : `combined_all_data_${timestamp}.csv`;
+                
+                link.setAttribute('href', url);
+                link.setAttribute('download', filename);
+                link.style.visibility = 'hidden';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            }
+
+            convertToCSV(data) {
+                if (!data || data.length === 0) return '';
+                
+                const headers = Object.keys(data[0]);
+                const csvRows = [headers.join(',')];
+                
+                data.forEach(row => {
+                    const values = headers.map(header => {
+                        let value = row[header] || '';
+                        // Escape commas and quotes
+                        if (typeof value === 'string' && (value.includes(',') || value.includes('"') || value.includes('\n'))) {
+                            value = '"' + value.replace(/"/g, '""') + '"';
+                        }
+                        return value;
+                    });
+                    csvRows.push(values.join(','));
+                });
+                
+                return csvRows.join('\n');
+            }
+
+            groupFilesByType() {
+                const grouped = {};
+                this.filesData.forEach(file => {
+                    if (!grouped[file.type]) {
+                        grouped[file.type] = [];
+                    }
+                    grouped[file.type].push(file);
+                });
+                return grouped;
+            }
+
+            getAllColumns(files) {
+                const allColumns = new Set();
+                files.forEach(file => {
+                    file.columns.forEach(col => allColumns.add(col));
+                });
+                return Array.from(allColumns).sort();
+            }
+
+            getCommonColumns(files) {
+                if (files.length === 0) return [];
+                
+                let common = new Set(files[0].columns);
+                files.slice(1).forEach(file => {
+                    common = new Set([...common].filter(col => file.columns.includes(col)));
+                });
+                return Array.from(common).sort();
+            }
+
+            getNumericColumns(data) {
+                if (!data || data.length === 0) return [];
+                
+                const sampleRow = data[0];
+                return Object.keys(sampleRow).filter(key => {
+                    if (key === 'source_file' || key === 'data_type') return false;
+                    const value = sampleRow[key];
+                    return typeof value === 'number' || (!isNaN(value) && !isNaN(parseFloat(value)));
+                });
+            }
+
+            getCategoricalColumns(data) {
+                if (!data || data.length === 0) return [];
+                
+                const allColumns = Object.keys(data[0]);
+                const numericColumns = this.getNumericColumns(data);
+                return allColumns.filter(col => 
+                    !numericColumns.includes(col) && col !== 'source_file' && col !== 'data_type'
+                );
+            }
+
+            resetApplication() {
+                this.filesData = [];
+                this.combinedData = null;
+                this.combinationLog = [];
+                
+                document.getElementById('fileInput').value = '';
+                document.getElementById('processBtn').disabled = true;
+                document.getElementById('processBtn').textContent = '🔗 Process Files';
+                
+                this.hideElement('filesSummary');
+                this.hideElement('combinationResults');
+                this.hideElement('resetBtn');
+                this.showElement('featuresSection');
+                
+                // Clear any messages
+                const messages = document.querySelectorAll('.success-message, .error-message, .warning-message');
+                messages.forEach(msg => msg.remove());
+            }
+
+            showLoading(show, message = 'Processing and cleaning uploaded files...') {
+                const loadingDiv = document.getElementById('loading');
+                if (show) {
+                    loadingDiv.querySelector('p').textContent = message;
+                    loadingDiv.classList.remove('hidden');
+                } else {
+                    loadingDiv.classList.add('hidden');
+                }
+            }
+
+            showElement(id) {
+                document.getElementById(id).classList.remove('hidden');
+            }
+
+            hideElement(id) {
+                document.getElementById(id).classList.add('hidden');
+            }
+
+            showSuccess(message) {
+                this.showMessage(message, 'success-message');
+            }
+
+            showError(message) {
+                this.showMessage(message, 'error-message');
+            }
+
+            showWarning(message) {
+                this.showMessage(message, 'warning-message');
+            }
+
+            showMessage(message, className) {
+                // Remove existing messages
+                const existingMessages = document.querySelectorAll('.success-message, .error-message, .warning-message');
+                existingMessages.forEach(msg => msg.remove());
+
+                const messageDiv = document.createElement('div');
+                messageDiv.className = className;
+                messageDiv.textContent = message;
+                
+                const container = document.querySelector('.container');
+                const uploadSection = document.querySelector('.upload-section');
+                
+                // Find a safe insertion point
+                if (uploadSection && uploadSection.nextSibling) {
+                    container.insertBefore(messageDiv, uploadSection.nextSibling);
+                } else {
+                    // If nextSibling doesn't exist, append after upload section
+                    uploadSection.parentNode.insertBefore(messageDiv, uploadSection.nextElementSibling);
+                }
+                
+                // Auto-remove success messages after 5 seconds
+                if (className === 'success-message') {
+                    setTimeout(() => {
+                        if (messageDiv.parentNode) {
+                            messageDiv.parentNode.removeChild(messageDiv);
+                        }
+                    }, 5000);
+                }
+            }
+        }
+
+        // Initialize the application
+        document.addEventListener('DOMContentLoaded', () => {
+            new FileCombiner();
+        });
+    </script>
+</body>
+</html>

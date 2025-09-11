@@ -14,9 +14,9 @@
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
             min-height: 100vh;
-            color: #333;
+            color: #e8eaed;
         }
 
         .container {
@@ -26,71 +26,74 @@
         }
 
         .header {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
+            background: linear-gradient(135deg, rgba(15, 52, 96, 0.9), rgba(22, 33, 62, 0.9));
+            backdrop-filter: blur(20px);
             padding: 30px;
             border-radius: 20px;
             text-align: center;
             margin-bottom: 30px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
-            border: 1px solid rgba(255,255,255,0.2);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+            border: 1px solid rgba(59, 130, 246, 0.3);
         }
 
         .header h1 {
             font-size: 2.5em;
-            background: linear-gradient(135deg, #667eea, #764ba2);
+            background: linear-gradient(135deg, #60a5fa, #3b82f6, #1d4ed8);
             background-clip: text;
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             margin-bottom: 10px;
+            text-shadow: 0 0 30px rgba(59, 130, 246, 0.5);
         }
 
         .header p {
             font-size: 1.2em;
-            color: #666;
+            color: #cbd5e1;
             margin-bottom: 20px;
         }
 
         .upload-section {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
+            background: linear-gradient(135deg, rgba(15, 52, 96, 0.8), rgba(22, 33, 62, 0.8));
+            backdrop-filter: blur(20px);
             padding: 30px;
             border-radius: 20px;
             margin-bottom: 30px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
-            border: 1px solid rgba(255,255,255,0.2);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+            border: 1px solid rgba(59, 130, 246, 0.2);
         }
 
         .upload-area {
-            border: 3px dashed #667eea;
+            border: 3px dashed #3b82f6;
             border-radius: 15px;
             padding: 40px;
             text-align: center;
             transition: all 0.3s ease;
             cursor: pointer;
-            background: linear-gradient(135deg, rgba(102, 126, 234, 0.05), rgba(118, 75, 162, 0.05));
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(29, 78, 216, 0.1));
         }
 
         .upload-area:hover, .upload-area.dragover {
-            border-color: #764ba2;
-            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1));
+            border-color: #60a5fa;
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.2), rgba(29, 78, 216, 0.2));
             transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(59, 130, 246, 0.3);
         }
 
         .upload-icon {
             font-size: 4em;
-            color: #667eea;
+            color: #60a5fa;
             margin-bottom: 15px;
+            text-shadow: 0 0 20px rgba(96, 165, 250, 0.5);
         }
 
         .upload-text {
             font-size: 1.3em;
-            color: #666;
+            color: #e8eaed;
             margin-bottom: 10px;
         }
 
         .upload-subtext {
-            color: #999;
+            color: #94a3b8;
             font-size: 0.9em;
         }
 
@@ -103,7 +106,7 @@
         }
 
         .file-item {
-            background: rgba(102, 126, 234, 0.1);
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.15), rgba(15, 52, 96, 0.3));
             padding: 15px;
             border-radius: 10px;
             margin: 10px 0;
@@ -111,11 +114,13 @@
             justify-content: space-between;
             align-items: center;
             transition: all 0.3s ease;
+            border: 1px solid rgba(59, 130, 246, 0.2);
         }
 
         .file-item:hover {
             transform: translateX(5px);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            box-shadow: 0 5px 20px rgba(59, 130, 246, 0.3);
+            border-color: #60a5fa;
         }
 
         .file-info {
@@ -126,33 +131,36 @@
 
         .file-icon {
             font-size: 1.5em;
-            color: #28a745;
+            color: #34d399;
+            text-shadow: 0 0 10px rgba(52, 211, 153, 0.5);
         }
 
         .file-details h4 {
             margin: 0;
-            color: #333;
+            color: #e8eaed;
         }
 
         .file-details p {
             margin: 5px 0 0 0;
-            color: #666;
+            color: #94a3b8;
             font-size: 0.9em;
         }
 
         .remove-btn {
-            background: #dc3545;
+            background: linear-gradient(135deg, #ef4444, #dc2626);
             color: white;
             border: none;
             padding: 8px 12px;
             border-radius: 6px;
             cursor: pointer;
             transition: all 0.3s ease;
+            border: 1px solid rgba(239, 68, 68, 0.3);
         }
 
         .remove-btn:hover {
-            background: #c82333;
+            background: linear-gradient(135deg, #dc2626, #b91c1c);
             transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(239, 68, 68, 0.4);
         }
 
         .action-buttons {
@@ -174,42 +182,67 @@
             display: inline-flex;
             align-items: center;
             gap: 8px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .btn:hover::before {
+            left: 100%;
         }
 
         .btn-primary {
-            background: linear-gradient(135deg, #667eea, #764ba2);
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
             color: white;
+            border: 1px solid rgba(59, 130, 246, 0.3);
         }
 
         .btn-primary:hover {
+            background: linear-gradient(135deg, #2563eb, #1e40af);
             transform: translateY(-3px);
-            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+            box-shadow: 0 10px 25px rgba(59, 130, 246, 0.4);
         }
 
         .btn-secondary {
-            background: linear-gradient(135deg, #28a745, #20c997);
+            background: linear-gradient(135deg, #1f2937, #374151);
             color: white;
+            border: 1px solid rgba(75, 85, 99, 0.5);
         }
 
         .btn-secondary:hover {
+            background: linear-gradient(135deg, #374151, #4b5563);
             transform: translateY(-3px);
-            box-shadow: 0 10px 20px rgba(40, 167, 69, 0.3);
+            box-shadow: 0 10px 25px rgba(31, 41, 55, 0.4);
         }
 
         .btn:disabled {
-            opacity: 0.6;
+            opacity: 0.4;
             cursor: not-allowed;
             transform: none;
         }
 
+        .btn:disabled::before {
+            display: none;
+        }
+
         .results-section {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
+            background: linear-gradient(135deg, rgba(15, 52, 96, 0.8), rgba(22, 33, 62, 0.8));
+            backdrop-filter: blur(20px);
             padding: 30px;
             border-radius: 20px;
             margin-bottom: 30px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
-            border: 1px solid rgba(255,255,255,0.2);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+            border: 1px solid rgba(59, 130, 246, 0.2);
             display: none;
         }
 
@@ -221,59 +254,77 @@
         }
 
         .stat-card {
-            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1));
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.15), rgba(15, 52, 96, 0.3));
             padding: 20px;
             border-radius: 15px;
             text-align: center;
             transition: all 0.3s ease;
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #3b82f6, #60a5fa, #93c5fd);
         }
 
         .stat-card:hover {
             transform: translateY(-5px);
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            box-shadow: 0 15px 30px rgba(59, 130, 246, 0.3);
+            border-color: #60a5fa;
         }
 
         .stat-number {
             font-size: 2.5em;
             font-weight: bold;
-            color: #667eea;
+            background: linear-gradient(135deg, #60a5fa, #3b82f6);
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
             margin-bottom: 5px;
+            text-shadow: 0 0 20px rgba(59, 130, 246, 0.3);
         }
 
         .stat-label {
-            color: #666;
+            color: #cbd5e1;
             font-size: 1.1em;
         }
 
         .preview-table {
             overflow-x: auto;
             margin: 20px 0;
-            border-radius: 10px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
         }
 
         table {
             width: 100%;
             border-collapse: collapse;
             background: white;
-            border-radius: 10px;
+            border-radius: 8px;
             overflow: hidden;
         }
 
         th, td {
             padding: 12px;
             text-align: left;
-            border-bottom: 1px solid #ddd;
+            border-bottom: 1px solid #e2e8f0;
         }
 
         th {
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            color: white;
+            background: #f8fafc;
             font-weight: 600;
+            border-bottom: 2px solid #e2e8f0;
         }
 
-        tr:hover {
-            background-color: rgba(102, 126, 234, 0.05);
+        tr:hover td {
+            background-color: #f8fafc;
         }
 
         .loading {
@@ -283,11 +334,11 @@
         }
 
         .spinner {
-            border: 4px solid #f3f3f3;
-            border-top: 4px solid #667eea;
+            border: 3px solid #f3f4f6;
+            border-top: 3px solid #3b82f6;
             border-radius: 50%;
-            width: 40px;
-            height: 40px;
+            width: 32px;
+            height: 32px;
             animation: spin 1s linear infinite;
             margin: 0 auto 15px;
         }
@@ -298,21 +349,31 @@
         }
 
         .error-message {
-            background: #f8d7da;
-            color: #721c24;
-            padding: 15px;
-            border-radius: 10px;
+            background: #fef2f2;
+            color: #dc2626;
+            padding: 12px;
+            border-radius: 6px;
             margin: 15px 0;
-            border: 1px solid #f5c6cb;
+            border: 1px solid #fecaca;
         }
 
         .success-message {
-            background: #d4edda;
-            color: #155724;
-            padding: 15px;
-            border-radius: 10px;
+            background: #f0fdf4;
+            color: #16a34a;
+            padding: 12px;
+            border-radius: 6px;
             margin: 15px 0;
-            border: 1px solid #c3e6cb;
+            border: 1px solid #bbf7d0;
+        }
+
+        h2, h3 {
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+
+        h3 {
+            border-bottom: 2px solid #e2e8f0;
+            padding-bottom: 8px;
         }
 
         @media (max-width: 768px) {
@@ -390,7 +451,7 @@
                 </div>
             </div>
             
-            <h3 style="color: #93c5fd; margin: 25px 0 15px 0; border-bottom: 2px solid #3b82f6; padding-bottom: 5px;">📋 Data Preview (First 10 rows)</h3>
+            <h3>📋 Data Preview (First 10 rows)</h3>
             <div class="preview-table" id="previewTable"></div>
             
             <div class="action-buttons">

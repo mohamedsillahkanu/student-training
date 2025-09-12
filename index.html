@@ -1646,6 +1646,20 @@
         let currentWeek = 'week1';
         let selectedMessageForReply = null;
         
+        // URLs configuration for embedded content
+        const urls = {
+            webtools: 'https://icf-sl-chatbox.streamlit.app?embed=true',
+            code: 'https://webr.sh/?embed=true',
+            snt: 'https://mohamedsillahkanu.github.io/AI/?embed=true',
+            files: {
+                'file1': 'https://mohamedsillahkanu.github.io/AI/?embed=true',
+                'file2': 'https://example.com/data-cleaning',
+                'file3': 'https://example.com/statistics',
+                'file4': 'https://example.com/geospatial',
+                'file5': 'https://example.com/timeseries'
+            }
+        };
+        
         // Predefined users (managed in backend)
         let userDatabase = {
             'admin': { 
@@ -1972,15 +1986,23 @@
                 `;
             }
         };
-
         
         // Switch between files in MPR outputs (dropdown options hold URLs directly)
         const switchFile = async () => {
-            const selectedURL = document.getElementById('fileSelect').value;
-            await loadFileContent(selectedURL);
+            try {
+                const selectedURL = document.getElementById('fileSelect').value;
+                if (selectedURL) {
+                    await loadFileContent(selectedURL, 'file-content-container', 'embeddedFrame');
+                    showToast('File loaded successfully', 'info');
+                } else {
+                    showToast('Please select a file', 'error');
+                }
+            } catch (error) {
+                console.error('Error switching file:', error);
+                showToast('Error loading file', 'error');
+            }
         };
-
-        // Switch between tabs
+        
         // Switch between tabs - FIXED VERSION
         const switchTab = async (event, tabName) => {
             try {
@@ -2022,24 +2044,70 @@
                         break;
                         
                     case 'webtools':
-                        await loadFileContent(urls.webtools, 'web-content-container', 'webFrame');
+                        if (urls.webtools) {
+                            await loadFileContent(urls.webtools, 'web-content-container', 'webFrame');
+                        } else {
+                            document.getElementById('web-content-container').innerHTML = `
+                                <div class="error-message-notes">
+                                    <strong>Configuration Error</strong><br>
+                                    Web tools URL not configured. Please update the urls.webtools value.
+                                </div>
+                            `;
+                        }
                         break;
                         
                     case 'code':
-                        await loadFileContent(urls.code, 'code-content-container', 'codeFrame');
+                        if (urls.code) {
+                            await loadFileContent(urls.code, 'code-content-container', 'codeFrame');
+                        } else {
+                            document.getElementById('code-content-container').innerHTML = `
+                                <div class="error-message-notes">
+                                    <strong>Configuration Error</strong><br>
+                                    Code repository URL not configured. Please update the urls.code value.
+                                </div>
+                            `;
+                        }
                         break;
                         
                     case 'snt':
-                        await loadFileContent(urls.snt, 'snt-content-container', 'sntFrame');
+                        if (urls.snt) {
+                            await loadFileContent(urls.snt, 'snt-content-container', 'sntFrame');
+                        } else {
+                            document.getElementById('snt-content-container').innerHTML = `
+                                <div class="error-message-notes">
+                                    <strong>Configuration Error</strong><br>
+                                    SNT URL not configured. Please update the urls.snt value.
+                                </div>
+                            `;
+                        }
                         break;
                         
                     case 'files':
+                        // Auto-load first file for MPR outputs
                         const fileSelect = document.getElementById('fileSelect');
-                        if (fileSelect) {
-                            const selectedKey = fileSelect.value;
-                            if (urls.files && urls.files[selectedKey]) {
-                                await loadFileContent(urls.files[selectedKey], 'file-content-container', 'embeddedFrame');
+                        if (fileSelect && urls.files) {
+                            // Populate dropdown if empty
+                            if (fileSelect.children.length === 0) {
+                                Object.entries(urls.files).forEach(([key, url]) => {
+                                    const option = document.createElement('option');
+                                    option.value = url;
+                                    option.textContent = key.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase());
+                                    fileSelect.appendChild(option);
+                                });
                             }
+                            
+                            // Auto-load first file
+                            const firstFileUrl = fileSelect.value || Object.values(urls.files)[0];
+                            if (firstFileUrl) {
+                                await loadFileContent(firstFileUrl, 'file-content-container', 'embeddedFrame');
+                            }
+                        } else {
+                            document.getElementById('file-content-container').innerHTML = `
+                                <div class="error-message-notes">
+                                    <strong>Configuration Error</strong><br>
+                                    MPR files not configured. Please update the urls.files object with your file URLs.
+                                </div>
+                            `;
                         }
                         break;
                         
@@ -2053,8 +2121,6 @@
                 }
             }
         };
-
-       
         
         // Initialize web tools tab
         const initializeWebTools = () => {
@@ -3754,10 +3820,8 @@
             // Load initial week content
             loadWeekContent(currentWeek);
         });
-                
-               
-
-   
+       
+       
         
        
     </script>

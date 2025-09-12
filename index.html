@@ -1636,7 +1636,6 @@
 
     <script>
         // Global state
-        // Global state
         let isLoggedIn = false;
         let currentUser = null;
         let userRole = null;
@@ -1991,9 +1990,11 @@
         const switchFile = async () => {
             try {
                 const selectedURL = document.getElementById('fileSelect').value;
-                if (selectedURL) {
-                    await loadFileContent(selectedURL, 'file-content-container', 'embeddedFrame');
-                    showToast('File loaded successfully', 'info');
+                const embeddedFrame = document.getElementById('embeddedFrame');
+                
+                if (selectedURL && embeddedFrame) {
+                    embeddedFrame.src = selectedURL;
+                    showToast('Loading selected file...', 'info');
                 } else {
                     showToast('Please select a file', 'error');
                 }
@@ -3819,10 +3820,7 @@
         
             // Load initial week content
             loadWeekContent(currentWeek);
-        });
-       
-       
-        
+        });      
        
     </script>
 </body>

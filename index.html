@@ -1268,25 +1268,28 @@
                     <div class="categories-header">
                         <div class="categories-title">MPR Outputs</div>
                         <div>
-                            <select id="fileSelect" onchange="switchFile()" 
-                                    style="background: #0d1117; color: #e6edf3; border: 1px solid #30363d; padding: 8px 12px; border-radius: 4px;">
-                                <option value="https://mohamedsillahkanu.github.io/AI/?embed=true">File 1: Introduction to R</option>
-                                <option value="https://example.com/data-cleaning">File 2: Data Cleaning & Visualization</option>
-                                <option value="https://example.com/statistics">File 3: Statistical Analysis</option>
-                                <option value="https://example.com/geospatial">File 4: Geospatial Data</option>
-                                <option value="https://example.com/timeseries">File 5: Time Series Analysis</option>             
+                            <select id="fileSelect" onchange="switchFile()" style="background: #0d1117; color: #e6edf3; border: 1px solid #30363d; padding: 8px 12px; border-radius: 4px;">
+                                <option value="file1">File 1: Introduction to R</option>
+                                <option value="file2">File 2: Data Cleaning & Visualization</option>
+                                <option value="file3">File 3: Statistical Analysis</option>
+                                <option value="file4">File 4: Geospatial Data</option>
+                                <option value="file5">File 5: Time Series Analysis</option>
+                                <option value="file6">File 6: Machine Learning Basics</option>
+                                <option value="file7">File 7: Advanced Visualization</option>
+                                <option value="file8">File 8: Database Integration</option>
+                                <option value="file9">File 9: Report Generation</option>
+                                <option value="file10">File 10: Reproducible Research</option>
+                                <option value="file11">File 11: Web Applications</option>
+                                <option value="file12">File 12: Final Project</option>
                             </select>
                         </div>
                     </div>
                     
                     <!-- File Content Container -->
                     <div class="files-content" id="file-content-container">
-                        <iframe id="embeddedFrame" class="web-frame"
-                            src=""
-                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                            sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-presentation">
-                        </iframe>
+                        <div class="loading-message">Loading file content...</div>
                     </div>
+                </div>
 
                 <!-- Web Tools Tab -->
                 <div class="categories-container tab-content" id="webtools-tab">
@@ -1636,6 +1639,7 @@
 
     <script>
         // Global state
+        // Global state
         let isLoggedIn = false;
         let currentUser = null;
         let userRole = null;
@@ -1644,20 +1648,6 @@
         let currentToast = null;
         let currentWeek = 'week1';
         let selectedMessageForReply = null;
-        
-        // URLs configuration for embedded content
-        const urls = {
-            webtools: 'https://icf-sl-chatbox.streamlit.app?embed=true',
-            code: 'https://webr.sh/?embed=true',
-            snt: 'https://mohamedsillahkanu.github.io/AI/?embed=true',
-            files: {
-                'file1': 'https://mohamedsillahkanu.github.io/AI/?embed=true',
-                'file2': 'https://example.com/data-cleaning',
-                'file3': 'https://example.com/statistics',
-                'file4': 'https://example.com/geospatial',
-                'file5': 'https://example.com/timeseries'
-            }
-        };
         
         // Predefined users (managed in backend)
         let userDatabase = {
@@ -1962,164 +1952,85 @@
             } 
         };
         
-        // Load file content (via iframe instead of fetching .html files)
-        const loadFileContent = async (url, containerId = 'file-content-container', frameId = 'embeddedFrame') => {
-            const container = document.getElementById(containerId);
-        
+        // Load file content
+        const loadFileContent = async (fileName) => {
+            const container = document.getElementById('file-content-container');
+            
             try {
-                container.innerHTML = `
-                    <iframe id="${frameId}" class="web-frame"
-                        src="${url}"
-                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                        sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-presentation"
-                        style="width:100%; height:600px; border:none;">
-                    </iframe>
-                `;
-                console.log(`✅ Loaded URL: ${url} into ${containerId}`);
+                container.innerHTML = '<div class="loading-message">Loading file content...</div>';
+                
+                const response = await fetch(fileName);
+                
+                if (!response.ok) {
+                    throw new Error(`Failed to load ${fileName}: ${response.status}`);
+                }
+                
+                const content = await response.text();
+                container.innerHTML = `<div class="content-wrapper">${content}</div>`;
+                
+                console.log(`Successfully loaded ${fileName}`);
+                
             } catch (error) {
+                console.error(`Error loading file content:`, error);
                 container.innerHTML = `
                     <div class="error-message-notes">
-                        <strong>Error loading ${url}</strong><br>
-                        ${error.message}
+                        <strong>Error loading ${fileName}</strong><br>
+                        Could not load ${fileName}. Please ensure the file exists in the same directory as this HTML file.<br>
+                        <small>Error: ${error.message}</small><br><br>
+                        <em>Expected files:</em><br>
+                        • file1.html<br>
+                        • file2.html<br>
+                        • ... (or whatever your actual file names are)
                     </div>
                 `;
-            }
+            } 
         };
         
-        // Switch between files in MPR outputs (dropdown options hold URLs directly)
+        // Switch between weeks in notes
+        const switchWeek = async () => {
+            const selectedWeek = document.getElementById('weekSelect').value;
+            currentWeek = selectedWeek;
+            await loadWeekContent(selectedWeek);
+        };
+        
+        // Switch between files in MPR outputs
         const switchFile = async () => {
-            try {
-                const selectedURL = document.getElementById('fileSelect').value;
-                const embeddedFrame = document.getElementById('embeddedFrame');
-                
-                if (selectedURL && embeddedFrame) {
-                    embeddedFrame.src = selectedURL;
-                    showToast('Loading selected file...', 'info');
-                } else {
-                    showToast('Please select a file', 'error');
-                }
-            } catch (error) {
-                console.error('Error switching file:', error);
-                showToast('Error loading file', 'error');
-            }
+            const selectedFile = document.getElementById('fileSelect').value;
+            await loadFileContent(selectedFile + '.html');
         };
         
-        // Switch between tabs - FIXED VERSION
+        // Switch between tabs
         const switchTab = async (event, tabName) => {
-            try {
-                // Remove active class from all tabs and buttons
-                document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
-                document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-        
-                // Add active class to selected tab and button
-                const tabElement = document.getElementById(`${tabName}-tab`);
-                if (tabElement) {
-                    tabElement.classList.add('active');
-                }
-                if (event && event.target) {
-                    event.target.classList.add('active');
-                }
-        
-                // Load content based on tab
-                switch (tabName) {
-                    case 'datasets':
-                        if (typeof renderCategories === 'function') {
-                            renderCategories();
-                        }
-                        break;
-                        
-                    case 'assignments':
-                        if (typeof renderAssignments === 'function') {
-                            renderAssignments();
-                        }
-                        break;
-                        
-                    case 'messages':
-                        if (typeof renderMessages === 'function') {
-                            renderMessages();
-                        }
-                        break;
-                        
-                    case 'notes':
-                        await loadWeekContent(currentWeek);
-                        break;
-                        
-                    case 'webtools':
-                        if (urls.webtools) {
-                            await loadFileContent(urls.webtools, 'web-content-container', 'webFrame');
-                        } else {
-                            document.getElementById('web-content-container').innerHTML = `
-                                <div class="error-message-notes">
-                                    <strong>Configuration Error</strong><br>
-                                    Web tools URL not configured. Please update the urls.webtools value.
-                                </div>
-                            `;
-                        }
-                        break;
-                        
-                    case 'code':
-                        if (urls.code) {
-                            await loadFileContent(urls.code, 'code-content-container', 'codeFrame');
-                        } else {
-                            document.getElementById('code-content-container').innerHTML = `
-                                <div class="error-message-notes">
-                                    <strong>Configuration Error</strong><br>
-                                    Code repository URL not configured. Please update the urls.code value.
-                                </div>
-                            `;
-                        }
-                        break;
-                        
-                    case 'snt':
-                        if (urls.snt) {
-                            await loadFileContent(urls.snt, 'snt-content-container', 'sntFrame');
-                        } else {
-                            document.getElementById('snt-content-container').innerHTML = `
-                                <div class="error-message-notes">
-                                    <strong>Configuration Error</strong><br>
-                                    SNT URL not configured. Please update the urls.snt value.
-                                </div>
-                            `;
-                        }
-                        break;
-                        
-                    case 'files':
-                        // Auto-load first file for MPR outputs
-                        const fileSelect = document.getElementById('fileSelect');
-                        if (fileSelect && urls.files) {
-                            // Populate dropdown if empty
-                            if (fileSelect.children.length === 0) {
-                                Object.entries(urls.files).forEach(([key, url]) => {
-                                    const option = document.createElement('option');
-                                    option.value = url;
-                                    option.textContent = key.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase());
-                                    fileSelect.appendChild(option);
-                                });
-                            }
-                            
-                            // Auto-load first file
-                            const firstFileUrl = fileSelect.value || Object.values(urls.files)[0];
-                            if (firstFileUrl) {
-                                await loadFileContent(firstFileUrl, 'file-content-container', 'embeddedFrame');
-                            }
-                        } else {
-                            document.getElementById('file-content-container').innerHTML = `
-                                <div class="error-message-notes">
-                                    <strong>Configuration Error</strong><br>
-                                    MPR files not configured. Please update the urls.files object with your file URLs.
-                                </div>
-                            `;
-                        }
-                        break;
-                        
-                    default:
-                        console.warn(`Unknown tab: ${tabName}`);
-                }
-            } catch (error) {
-                console.error(`Error switching to ${tabName} tab:`, error);
-                if (typeof showToast === 'function') {
-                    showToast(`Error loading ${tabName} content`, 'error');
-                }
+            // Remove active class from all tabs and buttons
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            // Add active class to selected tab and button
+            document.getElementById(`${tabName}-tab`).classList.add('active');
+            event.target.classList.add('active');
+            
+            // Load content based on tab
+            if (tabName === 'datasets') {
+                renderCategories();
+            } else if (tabName === 'assignments') {
+                renderAssignments();
+            } else if (tabName === 'messages') {
+                renderMessages();
+            } else if (tabName === 'notes') {
+                await loadWeekContent(currentWeek);
+            } else if (tabName === 'files') {
+                await loadFileContent('file1.html');
+            } else if (tabName === 'webtools') {
+                initializeWebTools();
+            } else if (tabName === 'code') {
+                initializeCodeTab();
+            } else if (tabName === 'snt') {
+                initializeSNTTab();
             }
         };
         
@@ -3820,7 +3731,12 @@
         
             // Load initial week content
             loadWeekContent(currentWeek);
-        });      
+        });
+                
+               
+
+   
+        
        
     </script>
 </body>

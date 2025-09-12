@@ -1268,28 +1268,25 @@
                     <div class="categories-header">
                         <div class="categories-title">MPR Outputs</div>
                         <div>
-                            <select id="fileSelect" onchange="switchFile()" style="background: #0d1117; color: #e6edf3; border: 1px solid #30363d; padding: 8px 12px; border-radius: 4px;">
-                                <option value="file1">File 1: Introduction to R</option>
-                                <option value="file2">File 2: Data Cleaning & Visualization</option>
-                                <option value="file3">File 3: Statistical Analysis</option>
-                                <option value="file4">File 4: Geospatial Data</option>
-                                <option value="file5">File 5: Time Series Analysis</option>
-                                <option value="file6">File 6: Machine Learning Basics</option>
-                                <option value="file7">File 7: Advanced Visualization</option>
-                                <option value="file8">File 8: Database Integration</option>
-                                <option value="file9">File 9: Report Generation</option>
-                                <option value="file10">File 10: Reproducible Research</option>
-                                <option value="file11">File 11: Web Applications</option>
-                                <option value="file12">File 12: Final Project</option>
+                            <select id="fileSelect" onchange="switchFile()" 
+                                    style="background: #0d1117; color: #e6edf3; border: 1px solid #30363d; padding: 8px 12px; border-radius: 4px;">
+                                <option value="https://example.com/r-intro">File 1: Introduction to R</option>
+                                <option value="https://example.com/data-cleaning">File 2: Data Cleaning & Visualization</option>
+                                <option value="https://example.com/statistics">File 3: Statistical Analysis</option>
+                                <option value="https://example.com/geospatial">File 4: Geospatial Data</option>
+                                <option value="https://example.com/timeseries">File 5: Time Series Analysis</option>             
                             </select>
                         </div>
                     </div>
                     
                     <!-- File Content Container -->
                     <div class="files-content" id="file-content-container">
-                        <div class="loading-message">Loading file content...</div>
+                        <iframe id="embeddedFrame" class="web-frame"
+                            src=""
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                            sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-presentation">
+                        </iframe>
                     </div>
-                </div>
 
                 <!-- Web Tools Tab -->
                 <div class="categories-container tab-content" id="webtools-tab">
@@ -1952,53 +1949,40 @@
             } 
         };
         
-        // Load file content
-        const loadFileContent = async (fileName) => {
+        // Load file content (via iframe instead of fetching .html files)
+        const loadFileContent = async (url) => {
             const container = document.getElementById('file-content-container');
-            
+        
             try {
-                container.innerHTML = '<div class="loading-message">Loading file content...</div>';
-                
-                const response = await fetch(fileName);
-                
-                if (!response.ok) {
-                    throw new Error(`Failed to load ${fileName}: ${response.status}`);
-                }
-                
-                const content = await response.text();
-                container.innerHTML = `<div class="content-wrapper">${content}</div>`;
-                
-                console.log(`Successfully loaded ${fileName}`);
-                
+                container.innerHTML = `
+                    <iframe id="embeddedFrame" class="web-frame"
+                        src="${url}"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-presentation"
+                        style="width:100%; height:600px; border:none;">
+                    </iframe>
+                `;
+        
+                console.log(`Successfully loaded URL: ${url}`);
+        
             } catch (error) {
-                console.error(`Error loading file content:`, error);
+                console.error(`Error loading URL:`, error);
                 container.innerHTML = `
                     <div class="error-message-notes">
-                        <strong>Error loading ${fileName}</strong><br>
-                        Could not load ${fileName}. Please ensure the file exists in the same directory as this HTML file.<br>
-                        <small>Error: ${error.message}</small><br><br>
-                        <em>Expected files:</em><br>
-                        • file1.html<br>
-                        • file2.html<br>
-                        • ... (or whatever your actual file names are)
+                        <strong>Error loading ${url}</strong><br>
+                        Could not load the requested URL.<br>
+                        <small>Error: ${error.message}</small>
                     </div>
                 `;
-            } 
+            }
         };
         
-        // Switch between weeks in notes
-        const switchWeek = async () => {
-            const selectedWeek = document.getElementById('weekSelect').value;
-            currentWeek = selectedWeek;
-            await loadWeekContent(selectedWeek);
-        };
-        
-        // Switch between files in MPR outputs
+        // Switch between files in MPR outputs (dropdown options hold URLs directly)
         const switchFile = async () => {
-            const selectedFile = document.getElementById('fileSelect').value;
-            await loadFileContent(selectedFile + '.html');
+            const selectedURL = document.getElementById('fileSelect').value;
+            await loadFileContent(selectedURL);
         };
-        
+
         // Switch between tabs
         const switchTab = async (event, tabName) => {
             // Remove active class from all tabs and buttons

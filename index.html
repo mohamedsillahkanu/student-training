@@ -1999,9 +1999,7 @@
                 renderMessages();
             } else if (tabName === 'notes') {
                 await loadWeekContent(currentWeek);
-            } else if (tabName === 'files') {
-                const selectedKey = document.getElementById('fileSelect').value;
-                await loadFileContent(urls.files[selectedKey], 'file-content-container', 'embeddedFrame');
+           
             } else if (tabName === 'webtools') {
                 await loadFileContent(urls.webtools, 'web-content-container', 'webFrame');
             } else if (tabName === 'code') {
@@ -2009,6 +2007,9 @@
             } else if (tabName === 'snt') {
                 await loadFileContent(urls.snt, 'snt-content-container', 'sntFrame');
             }
+            } else if (tabName === 'files') {
+                const selectedKey = document.getElementById('fileSelect').value;
+                await loadFileContent(urls.files[selectedKey], 'file-content-container', 'embeddedFrame');
         };
 
         

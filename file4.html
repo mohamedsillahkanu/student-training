@@ -3,33 +3,37 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Enhanced File Combiner Tool - Dark</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+    <title>File Combiner Widget</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
+        /* Scoped to .file-combiner-widget to avoid conflicts */
+        .file-combiner-widget {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
             line-height: 1.6;
             color: #e2e8f0;
             background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%);
             min-height: 100vh;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
 
-        .container {
+        .file-combiner-widget *,
+        .file-combiner-widget *::before,
+        .file-combiner-widget *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        .file-combiner-widget .fc-container {
             max-width: 1200px;
             margin: 0 auto;
             padding: 0 20px;
         }
 
-        .main-header {
+        .file-combiner-widget .fc-main-header {
             text-align: center;
-            padding: 3rem 0;
+            padding: 2rem 0;
             background: linear-gradient(135deg, #1e1b4b 0%, #312e81 50%, #4338ca 100%);
             color: white;
             margin-bottom: 2rem;
@@ -37,18 +41,19 @@
             box-shadow: 0 8px 32px rgba(79, 70, 229, 0.3);
         }
 
-        .main-header h1 {
-            font-size: 2.5rem;
+        .file-combiner-widget .fc-main-header h1 {
+            font-size: 2rem;
             margin-bottom: 0.5rem;
             text-shadow: 0 2px 4px rgba(0,0,0,0.4);
+            font-weight: 700;
         }
 
-        .main-header p {
-            font-size: 1.2rem;
+        .file-combiner-widget .fc-main-header p {
+            font-size: 1rem;
             opacity: 0.9;
         }
 
-        .upload-section {
+        .file-combiner-widget .fc-upload-section {
             background: rgba(30, 41, 59, 0.9);
             backdrop-filter: blur(10px);
             padding: 2rem;
@@ -60,18 +65,19 @@
             transition: all 0.3s ease;
         }
 
-        .upload-section:hover {
+        .file-combiner-widget .fc-upload-section:hover {
             border-color: #4f46e5;
             box-shadow: 0 12px 40px rgba(99, 102, 241, 0.25);
         }
 
-        .upload-section h3 {
+        .file-combiner-widget .fc-upload-section h3 {
             color: #c7d2fe;
             margin-bottom: 1rem;
-            font-size: 1.4rem;
+            font-size: 1.2rem;
+            font-weight: 600;
         }
 
-        .file-input {
+        .file-combiner-widget .fc-file-input {
             margin: 1rem 0;
             padding: 12px 16px;
             border: 2px solid #475569;
@@ -87,7 +93,7 @@
             -moz-appearance: none;
         }
         
-        .file-input::-webkit-file-upload-button {
+        .file-combiner-widget .fc-file-input::-webkit-file-upload-button {
             background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
             color: white;
             border: none;
@@ -98,12 +104,12 @@
             font-weight: 600;
         }
 
-        .file-input:hover {
+        .file-combiner-widget .fc-file-input:hover {
             border-color: #6366f1;
             background: rgba(71, 85, 105, 0.9);
         }
 
-        .btn {
+        .file-combiner-widget .fc-btn {
             background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
             color: white;
             border: none;
@@ -117,35 +123,35 @@
             font-weight: 600;
         }
 
-        .btn:hover {
+        .file-combiner-widget .fc-btn:hover {
             background: linear-gradient(135deg, #4f46e5 0%, #4338ca 100%);
             transform: translateY(-2px);
             box-shadow: 0 6px 20px rgba(99, 102, 241, 0.4);
         }
 
-        .btn:disabled {
+        .file-combiner-widget .fc-btn:disabled {
             background: #475569;
             cursor: not-allowed;
             transform: none;
             box-shadow: none;
         }
 
-        .btn-secondary {
+        .file-combiner-widget .fc-btn-secondary {
             background: linear-gradient(135deg, #64748b 0%, #475569 100%);
         }
 
-        .btn-secondary:hover {
+        .file-combiner-widget .fc-btn-secondary:hover {
             background: linear-gradient(135deg, #475569 0%, #334155 100%);
         }
 
-        .stats-grid {
+        .file-combiner-widget .fc-stats-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
             gap: 1rem;
             margin: 2rem 0;
         }
 
-        .stats-card {
+        .file-combiner-widget .fc-stats-card {
             background: rgba(30, 41, 59, 0.9);
             backdrop-filter: blur(10px);
             padding: 1.5rem;
@@ -156,19 +162,24 @@
             transition: all 0.3s ease;
         }
 
-        .stats-card:hover {
+        .file-combiner-widget .fc-stats-card:hover {
             transform: translateY(-5px);
             box-shadow: 0 12px 40px rgba(99, 102, 241, 0.2);
         }
 
-        .stats-card h3 {
-            font-size: 2rem;
+        .file-combiner-widget .fc-stats-card h3 {
+            font-size: 1.8rem;
             color: #c7d2fe;
             margin-bottom: 0.5rem;
             font-weight: 700;
         }
 
-        .file-card {
+        .file-combiner-widget .fc-stats-card p {
+            color: #94a3b8;
+            font-size: 0.9rem;
+        }
+
+        .file-combiner-widget .fc-file-card {
             background: rgba(30, 41, 59, 0.9);
             backdrop-filter: blur(10px);
             padding: 1rem;
@@ -178,7 +189,7 @@
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
         }
 
-        .file-type-badge {
+        .file-combiner-widget .fc-file-type-badge {
             display: inline-block;
             color: white;
             padding: 0.25rem 0.75rem;
@@ -186,17 +197,10 @@
             font-weight: bold;
             font-size: 0.8rem;
             margin-right: 0.5rem;
-        }
-
-        .file-type-badge.csv {
             background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
         }
 
-        .file-type-badge.excel {
-            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-        }
-
-        .column-info {
+        .file-combiner-widget .fc-column-info {
             background: linear-gradient(135deg, rgba(30, 41, 59, 0.8) 0%, rgba(51, 65, 85, 0.8) 100%);
             backdrop-filter: blur(10px);
             padding: 1rem;
@@ -205,21 +209,21 @@
             border-left: 3px solid #4f46e5;
         }
 
-        .column-list {
+        .file-combiner-widget .fc-column-list {
             background: rgba(15, 23, 42, 0.9);
             backdrop-filter: blur(5px);
             padding: 1rem;
             border-radius: 10px;
             margin: 0.5rem 0;
-            max-height: 200px;
+            max-height: 150px;
             overflow-y: auto;
             border: 1px solid #475569;
             font-family: 'Courier New', monospace;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             color: #cbd5e1;
         }
 
-        .success-message {
+        .file-combiner-widget .fc-success-message {
             background: linear-gradient(135deg, rgba(34, 197, 94, 0.2) 0%, rgba(22, 163, 74, 0.2) 100%);
             backdrop-filter: blur(10px);
             color: #86efac;
@@ -230,7 +234,7 @@
             box-shadow: 0 4px 15px rgba(34, 197, 94, 0.1);
         }
 
-        .warning-message {
+        .file-combiner-widget .fc-warning-message {
             background: linear-gradient(135deg, rgba(245, 158, 11, 0.2) 0%, rgba(217, 119, 6, 0.2) 100%);
             backdrop-filter: blur(10px);
             color: #fbbf24;
@@ -241,7 +245,7 @@
             box-shadow: 0 4px 15px rgba(245, 158, 11, 0.1);
         }
 
-        .error-message {
+        .file-combiner-widget .fc-error-message {
             background: linear-gradient(135deg, rgba(239, 68, 68, 0.2) 0%, rgba(220, 38, 38, 0.2) 100%);
             backdrop-filter: blur(10px);
             color: #fca5a5;
@@ -252,7 +256,7 @@
             box-shadow: 0 4px 15px rgba(239, 68, 68, 0.1);
         }
 
-        .expandable {
+        .file-combiner-widget .fc-expandable {
             border: 1px solid #475569;
             border-radius: 12px;
             margin: 1rem 0;
@@ -262,7 +266,7 @@
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
         }
 
-        .expandable-header {
+        .file-combiner-widget .fc-expandable-header {
             background: linear-gradient(135deg, rgba(51, 65, 85, 0.9) 0%, rgba(71, 85, 105, 0.9) 100%);
             backdrop-filter: blur(5px);
             padding: 1rem;
@@ -276,55 +280,55 @@
             transition: all 0.3s ease;
         }
 
-        .expandable-header:hover {
+        .file-combiner-widget .fc-expandable-header:hover {
             background: linear-gradient(135deg, rgba(71, 85, 105, 0.9) 0%, rgba(100, 116, 139, 0.9) 100%);
         }
 
-        .expandable-content {
+        .file-combiner-widget .fc-expandable-content {
             padding: 1rem;
             display: none;
         }
 
-        .expandable.open .expandable-content {
+        .file-combiner-widget .fc-expandable.fc-open .fc-expandable-content {
             display: block;
         }
 
-        .expandable-toggle {
+        .file-combiner-widget .fc-expandable-toggle {
             font-size: 1.2rem;
             margin-left: auto;
             color: #6366f1;
             transition: transform 0.3s ease;
         }
 
-        .expandable.open .expandable-toggle {
+        .file-combiner-widget .fc-expandable.fc-open .fc-expandable-toggle {
             transform: rotate(180deg);
         }
 
-        .loading {
+        .file-combiner-widget .fc-loading {
             text-align: center;
             padding: 2rem;
         }
 
-        .spinner {
+        .file-combiner-widget .fc-spinner {
             border: 4px solid rgba(99, 102, 241, 0.2);
             border-top: 4px solid #6366f1;
             border-radius: 50%;
             width: 40px;
             height: 40px;
-            animation: spin 1s linear infinite;
+            animation: fc-spin 1s linear infinite;
             margin: 0 auto 1rem;
         }
 
-        @keyframes spin {
+        @keyframes fc-spin {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
 
-        .hidden {
+        .file-combiner-widget .fc-hidden {
             display: none;
         }
 
-        .section {
+        .file-combiner-widget .fc-section {
             background: rgba(30, 41, 59, 0.9);
             backdrop-filter: blur(10px);
             margin: 2rem 0;
@@ -333,198 +337,227 @@
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
         }
 
-        .feature-grid {
+        .file-combiner-widget .fc-feature-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
             gap: 2rem;
             margin: 2rem 0;
         }
 
-        .footer {
-            text-align: center;
-            color: #94a3b8;
-            padding: 2rem;
-            margin-top: 3rem;
-            border-top: 1px solid rgba(99, 102, 241, 0.2);
-            background: rgba(30, 41, 59, 0.7);
-            backdrop-filter: blur(10px);
-        }
-
-        /* Scrollbar styling */
-        ::-webkit-scrollbar {
-            width: 8px;
-        }
-
-        ::-webkit-scrollbar-track {
-            background: rgba(51, 65, 85, 0.5);
-            border-radius: 4px;
-        }
-
-        ::-webkit-scrollbar-thumb {
-            background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
-            border-radius: 4px;
-        }
-
-        ::-webkit-scrollbar-thumb:hover {
-            background: linear-gradient(135deg, #4f46e5 0%, #4338ca 100%);
-        }
-
-        @media (max-width: 768px) {
-            .main-header h1 {
-                font-size: 2rem;
-            }
-            
-            .main-header p {
-                font-size: 1rem;
-            }
-            
-            .container {
-                padding: 0 10px;
-            }
-            
-            .upload-section {
-                padding: 1rem;
-            }
-        }
-
-        /* Additional dark theme effects */
-        .section h2, .section h3 {
+        .file-combiner-widget .fc-section h2, 
+        .file-combiner-widget .fc-section h3 {
             color: #c7d2fe;
             margin-bottom: 1rem;
+            font-weight: 600;
         }
 
-        .section ul {
+        .file-combiner-widget .fc-section h2 {
+            font-size: 1.5rem;
+        }
+
+        .file-combiner-widget .fc-section h3 {
+            font-size: 1.2rem;
+        }
+
+        .file-combiner-widget .fc-section ul {
             color: #cbd5e1;
+            list-style-position: inside;
         }
 
-        .section ul li {
+        .file-combiner-widget .fc-section ul li {
             margin-bottom: 0.5rem;
         }
 
-        /* Enhanced hover effects */
-        .file-card:hover {
+        .file-combiner-widget .fc-file-card:hover {
             transform: translateX(5px);
             transition: transform 0.3s ease;
             border-left-color: #8b5cf6;
         }
 
-        /* Dark theme specific enhancements */
-        .stats-card p {
+        .file-combiner-widget .fc-file-card small {
             color: #94a3b8;
         }
 
-        .file-card small {
-            color: #94a3b8;
-        }
-
-        .column-info strong {
+        .file-combiner-widget .fc-column-info strong {
             color: #c7d2fe;
+        }
+
+        .file-combiner-widget .fc-column-list::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .file-combiner-widget .fc-column-list::-webkit-scrollbar-track {
+            background: rgba(51, 65, 85, 0.5);
+            border-radius: 3px;
+        }
+
+        .file-combiner-widget .fc-column-list::-webkit-scrollbar-thumb {
+            background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+            border-radius: 3px;
+        }
+
+        @media (max-width: 768px) {
+            .file-combiner-widget .fc-main-header h1 {
+                font-size: 1.5rem;
+            }
+            
+            .file-combiner-widget .fc-main-header p {
+                font-size: 0.9rem;
+            }
+            
+            .file-combiner-widget .fc-container {
+                padding: 0 10px;
+            }
+            
+            .file-combiner-widget .fc-upload-section {
+                padding: 1rem;
+            }
+
+            .file-combiner-widget .fc-stats-grid {
+                grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            }
         }
     </style>
 </head>
 <body>
-    <div class="main-header">
-        <div class="container">
-            <h1>🔗 Enhanced File Combiner Tool</h1>
-            <p>Combine multiple XLS, XLSX, and CSV files with ALL columns (common + uncommon)</p>
-        </div>
-    </div>
-
-    <div class="container">
-        <!-- Upload Section -->
-        <div class="upload-section">
-            <h3>📁 Upload Multiple Files</h3>
-            <p>Upload multiple XLS, XLSX, and CSV files to combine them with ALL columns preserved</p>
-            <input type="file" id="fileInput" class="file-input" multiple accept=".csv,.xlsx,.xls">
-            <div style="margin-top: 1rem;">
-                <button id="processBtn" class="btn" disabled>🔗 Process Files</button>
-                <button id="resetBtn" class="btn btn-secondary hidden">🔄 Upload New Files</button>
+    <div class="file-combiner-widget">
+        <div class="fc-main-header">
+            <div class="fc-container">
+                <h1>CSV File Combiner</h1>
+                <p>Combine multiple CSV files with ALL columns preserved</p>
             </div>
         </div>
 
-        <!-- Loading indicator -->
-        <div id="loading" class="loading hidden">
-            <div class="spinner"></div>
-            <p>Processing and cleaning uploaded files...</p>
-        </div>
-
-        <!-- Files Summary -->
-        <div id="filesSummary" class="hidden">
-            <h2>📋 Uploaded Files Summary</h2>
-            <div id="statsGrid" class="stats-grid"></div>
-            <div id="fileDetails"></div>
-            <div id="columnAnalysis"></div>
-            <button id="combineBtn" class="btn">🔗 Combine Files (ALL Columns)</button>
-        </div>
-
-        <!-- Combination Results -->
-        <div id="combinationResults" class="hidden">
-            <h2>📊 Combined Results</h2>
-            <div id="combinationSummary"></div>
-            <div id="downloadSection">
-                <h3>💾 Download Combined Data</h3>
-                <button id="downloadBtn" class="btn">📥 Download as CSV</button>
-            </div>
-        </div>
-
-        <!-- Features Section (shown when no files uploaded) -->
-        <div id="featuresSection" class="section">
-            <h2>ℹ️ How It Works - Enhanced Version</h2>
-            <div class="feature-grid">
-                <div>
-                    <h3>Enhanced Combination Logic:</h3>
-                    <ul style="margin-left: 2rem; margin-top: 1rem;">
-                        <li><strong>Data Cleaning:</strong> Removes empty rows and unnamed columns before merging</li>
-                        <li><strong>All Columns Preserved:</strong> Combines ALL columns (common + uncommon)</li>
-                        <li><strong>By File Type:</strong> Files are grouped by type (CSV, Excel)</li>
-                        <li><strong>Source Tracking:</strong> A 'source_file' column tracks original files</li>
-                        <li><strong>Missing Data Handling:</strong> Missing columns filled with empty values</li>
-                    </ul>
-                </div>
-                <div>
-                    <h3>Data Cleaning Features:</h3>
-                    <ul style="margin-left: 2rem; margin-top: 1rem;">
-                        <li>Removes rows where first column is empty</li>
-                        <li>Removes "Unnamed" columns</li>
-                        <li>Removes completely empty rows</li>
-                        <li>Preserves all meaningful data</li>
-                        <li>Complete data preservation</li>
-                        <li>Clear source file tracking</li>
-                    </ul>
+        <div class="fc-container">
+            <!-- Upload Section -->
+            <div class="fc-upload-section">
+                <h3>Upload Multiple CSV Files</h3>
+                <p>Upload multiple CSV files to combine them with ALL columns preserved</p>
+                <input type="file" id="fileInput" class="fc-file-input" multiple accept=".csv">
+                <div style="margin-top: 1rem;">
+                    <button id="processBtn" class="fc-btn" disabled>Process Files</button>
+                    <button id="resetBtn" class="fc-btn fc-btn-secondary fc-hidden">Upload New Files</button>
                 </div>
             </div>
 
-            <h2>✨ Enhanced Tool Features</h2>
-            <div class="feature-grid">
-                <div>
-                    <h3>📋 Enhanced Processing:</h3>
-                    <ul style="margin-left: 2rem; margin-top: 1rem;">
-                        <li>Automatic data cleaning</li>
-                        <li>Preserve ALL columns (common + unique)</li>
-                        <li>Remove empty/unnamed data</li>
-                        <li>Smart column alignment</li>
-                        <li>Detailed progress reporting</li>
-                    </ul>
+            <!-- Loading indicator -->
+            <div id="loading" class="fc-loading fc-hidden">
+                <div class="fc-spinner"></div>
+                <p>Processing and cleaning uploaded files...</p>
+            </div>
+
+            <!-- Files Summary -->
+            <div id="filesSummary" class="fc-hidden">
+                <h2>Uploaded Files Summary</h2>
+                <div id="statsGrid" class="fc-stats-grid"></div>
+                <div id="fileDetails"></div>
+                <div id="columnAnalysis"></div>
+                <button id="combineBtn" class="fc-btn">Combine Files (ALL Columns)</button>
+            </div>
+
+            <!-- Combination Results -->
+            <div id="combinationResults" class="fc-hidden">
+                <h2>Combined Results</h2>
+                <div id="combinationSummary"></div>
+                <div id="downloadSection">
+                    <h3>Download Combined Data</h3>
+                    <button id="downloadBtn" class="fc-btn">Download as CSV</button>
                 </div>
-                <div>
-                    <h3>🔗 Improved Combination:</h3>
-                    <ul style="margin-left: 2rem; margin-top: 1rem;">
-                        <li>No data loss (all columns preserved)</li>
-                        <li>Clean, organized output</li>
-                        <li>Comprehensive column analysis</li>
-                        <li>Statistics without data display</li>
-                        <li>CSV download option</li>
-                    </ul>
+            </div>
+
+            <!-- Features Section -->
+            <div id="featuresSection" class="fc-section">
+                <h2>How It Works - Self-Contained Version</h2>
+                <div class="fc-feature-grid">
+                    <div>
+                        <h3>CSV Processing Features:</h3>
+                        <ul style="margin-left: 1rem; margin-top: 1rem;">
+                            <li><strong>No External Dependencies:</strong> All processing done with native JavaScript</li>
+                            <li><strong>All Columns Preserved:</strong> Combines ALL columns from all files</li>
+                            <li><strong>Data Cleaning:</strong> Removes empty rows and cleans data</li>
+                            <li><strong>Source Tracking:</strong> Adds 'source_file' column</li>
+                            <li><strong>Self-Contained:</strong> Works completely offline</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3>Iframe-Friendly Design:</h3>
+                        <ul style="margin-left: 1rem; margin-top: 1rem;">
+                            <li>Scoped CSS classes to avoid conflicts</li>
+                            <li>No global style overrides</li>
+                            <li>Responsive design for small containers</li>
+                            <li>Self-contained widget approach</li>
+                            <li>Works in any container size</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="fc-warning-message">
+                    <strong>Note:</strong> This version only supports CSV files and is designed to work safely in iframes and embedded containers without affecting parent page styles.
                 </div>
             </div>
         </div>
-    </div>
-
-    <div class="footer">
-        <p>🔗 Enhanced File Combiner Tool v2.0 | Preserves ALL Columns</p>
     </div>
 
     <script>
+        // Simple CSV Parser (replaces PapaParse)
+        class SimpleCSVParser {
+            static parse(csvText, options = {}) {
+                const lines = csvText.split('\n').filter(line => line.trim());
+                if (lines.length === 0) return { data: [] };
+
+                const headers = this.parseLine(lines[0]);
+                const data = [];
+
+                for (let i = 1; i < lines.length; i++) {
+                    const values = this.parseLine(lines[i]);
+                    if (values.length === 0) continue;
+
+                    const row = {};
+                    headers.forEach((header, index) => {
+                        let value = values[index] || '';
+                        if (options.dynamicTyping && value !== '') {
+                            const num = parseFloat(value);
+                            if (!isNaN(num) && isFinite(num)) {
+                                value = num;
+                            }
+                        }
+                        row[header] = value;
+                    });
+                    data.push(row);
+                }
+
+                return { data };
+            }
+
+            static parseLine(line) {
+                const result = [];
+                let current = '';
+                let inQuotes = false;
+
+                for (let i = 0; i < line.length; i++) {
+                    const char = line[i];
+                    const next = line[i + 1];
+
+                    if (char === '"') {
+                        if (inQuotes && next === '"') {
+                            current += '"';
+                            i++;
+                        } else {
+                            inQuotes = !inQuotes;
+                        }
+                    } else if (char === ',' && !inQuotes) {
+                        result.push(current.trim());
+                        current = '';
+                    } else {
+                        current += char;
+                    }
+                }
+
+                result.push(current.trim());
+                return result;
+            }
+        }
+
         class FileCombiner {
             constructor() {
                 this.filesData = [];
@@ -547,10 +580,10 @@
                 
                 if (files.length > 0) {
                     processBtn.disabled = false;
-                    processBtn.textContent = `🔗 Process ${files.length} File(s)`;
+                    processBtn.textContent = `Process ${files.length} File(s)`;
                 } else {
                     processBtn.disabled = true;
-                    processBtn.textContent = '🔗 Process Files';
+                    processBtn.textContent = 'Process Files';
                 }
             }
 
@@ -566,7 +599,12 @@
 
                 try {
                     for (let file of files) {
-                        const data = await this.readFile(file);
+                        if (!file.name.toLowerCase().endsWith('.csv')) {
+                            this.showWarning(`Skipping non-CSV file: ${file.name}`);
+                            continue;
+                        }
+
+                        const data = await this.readCSVFile(file);
                         if (data) {
                             this.filesData.push(data);
                         }
@@ -574,6 +612,8 @@
 
                     if (this.filesData.length > 0) {
                         this.displayFilesSummary();
+                    } else {
+                        this.showError('No valid CSV files found to process');
                     }
                 } catch (error) {
                     this.showError('Error processing files: ' + error.message);
@@ -582,43 +622,30 @@
                 }
             }
 
-            async readFile(file) {
+            async readCSVFile(file) {
                 return new Promise((resolve, reject) => {
-                    const fileExtension = file.name.toLowerCase().split('.').pop();
                     const reader = new FileReader();
 
                     reader.onload = (e) => {
                         try {
-                            let data, fileType;
+                            const csvText = e.target.result;
+                            const parsed = SimpleCSVParser.parse(csvText, {
+                                dynamicTyping: true
+                            });
 
-                            if (fileExtension === 'csv') {
-                                const csvText = e.target.result;
-                                const parsed = Papa.parse(csvText, {
-                                    header: true,
-                                    skipEmptyLines: true,
-                                    dynamicTyping: true
-                                });
-                                data = parsed.data;
-                                fileType = 'CSV';
-                            } else if (fileExtension === 'xlsx' || fileExtension === 'xls') {
-                                const workbook = XLSX.read(e.target.result, { type: 'array' });
-                                const firstSheetName = workbook.SheetNames[0];
-                                const worksheet = workbook.Sheets[firstSheetName];
-                                data = XLSX.utils.sheet_to_json(worksheet);
-                                fileType = 'Excel';
-                            } else {
-                                reject(new Error(`Unsupported file type: ${fileExtension}`));
+                            if (!parsed.data || parsed.data.length === 0) {
+                                this.showWarning(`File ${file.name} appears to be empty`);
+                                resolve(null);
                                 return;
                             }
 
-                            // Clean the data
-                            const cleanedData = this.cleanData(data, file.name);
+                            const cleanedData = this.cleanData(parsed.data, file.name);
                             
                             resolve({
                                 name: file.name,
-                                type: fileType,
+                                type: 'CSV',
                                 data: cleanedData,
-                                originalSize: data.length,
+                                originalSize: parsed.data.length,
                                 cleanedSize: cleanedData.length,
                                 columns: Object.keys(cleanedData[0] || {})
                             });
@@ -628,19 +655,13 @@
                     };
 
                     reader.onerror = () => reject(new Error(`Error reading file: ${file.name}`));
-
-                    if (fileExtension === 'csv') {
-                        reader.readAsText(file);
-                    } else {
-                        reader.readAsArrayBuffer(file);
-                    }
+                    reader.readAsText(file);
                 });
             }
 
             cleanData(data, filename) {
                 if (!data || data.length === 0) return [];
 
-                // Remove rows with empty first column
                 const firstColumnKey = Object.keys(data[0] || {})[0];
                 let cleaned = data.filter(row => {
                     const firstValue = row[firstColumnKey];
@@ -648,7 +669,6 @@
                            String(firstValue).trim() !== '';
                 });
 
-                // Remove unnamed columns and clean column names
                 cleaned = cleaned.map(row => {
                     const cleanRow = {};
                     Object.keys(row).forEach(key => {
@@ -661,7 +681,6 @@
                     return cleanRow;
                 });
 
-                // Remove completely empty rows
                 cleaned = cleaned.filter(row => {
                     return Object.values(row).some(value => 
                         value !== null && value !== undefined && String(value).trim() !== ''
@@ -672,49 +691,40 @@
             }
 
             displayFilesSummary() {
-                const summaryDiv = document.getElementById('filesSummary');
                 const statsGrid = document.getElementById('statsGrid');
                 const fileDetails = document.getElementById('fileDetails');
                 const columnAnalysis = document.getElementById('columnAnalysis');
 
-                // Stats grid
                 const totalFiles = this.filesData.length;
-                const csvCount = this.filesData.filter(f => f.type === 'CSV').length;
-                const excelCount = this.filesData.filter(f => f.type === 'Excel').length;
+                const totalRows = this.filesData.reduce((sum, f) => sum + f.cleanedSize, 0);
 
                 statsGrid.innerHTML = `
-                    <div class="stats-card">
+                    <div class="fc-stats-card">
                         <h3>${totalFiles}</h3>
-                        <p>Total Files</p>
-                    </div>
-                    <div class="stats-card">
-                        <h3>${csvCount}</h3>
                         <p>CSV Files</p>
                     </div>
-                    <div class="stats-card">
-                        <h3>${excelCount}</h3>
-                        <p>Excel Files</p>
+                    <div class="fc-stats-card">
+                        <h3>${totalRows}</h3>
+                        <p>Total Rows</p>
                     </div>
                 `;
 
-                // File details
-                let fileDetailsHTML = '<h3>📄 Individual File Details</h3>';
+                let fileDetailsHTML = '<h3>Individual File Details</h3>';
                 this.filesData.forEach((file, index) => {
-                    const badgeClass = file.type === 'CSV' ? 'csv' : 'excel';
                     fileDetailsHTML += `
-                        <div class="expandable" id="file-${index}">
-                            <div class="expandable-header" onclick="this.parentElement.classList.toggle('open')">
+                        <div class="fc-expandable" id="file-${index}">
+                            <div class="fc-expandable-header" onclick="this.parentElement.classList.toggle('fc-open')">
                                 <div>
-                                    <span class="file-type-badge ${badgeClass}">${file.type}</span>
+                                    <span class="fc-file-type-badge">CSV</span>
                                     <strong>${file.name}</strong> (${file.cleanedSize} rows × ${file.columns.length} columns)
                                 </div>
-                                <span class="expandable-toggle">▼</span>
+                                <span class="fc-expandable-toggle">▼</span>
                             </div>
-                            <div class="expandable-content">
-                                <div class="file-card">
-                                    <p><small>📏 Original: ${file.originalSize} rows → Cleaned: ${file.cleanedSize} rows</small></p>
-                                    <p><strong>All Columns:</strong></p>
-                                    <div class="column-list">${file.columns.join(', ')}</div>
+                            <div class="fc-expandable-content">
+                                <div class="fc-file-card">
+                                    <p><small>Original: ${file.originalSize} rows → Cleaned: ${file.cleanedSize} rows</small></p>
+                                    <p><strong>Columns:</strong></p>
+                                    <div class="fc-column-list">${file.columns.join(', ')}</div>
                                 </div>
                             </div>
                         </div>
@@ -722,227 +732,146 @@
                 });
                 fileDetails.innerHTML = fileDetailsHTML;
 
-                // Column analysis
                 this.displayColumnAnalysis(columnAnalysis);
-
                 this.showElement('filesSummary');
             }
 
             displayColumnAnalysis(container) {
-                const filesByType = this.groupFilesByType();
-                let analysisHTML = '<h3>🔍 Column Analysis by File Type</h3>';
-
-                Object.entries(filesByType).forEach(([fileType, files]) => {
-                    if (files.length > 1) {
-                        const allColumns = this.getAllColumns(files);
-                        const commonColumns = this.getCommonColumns(files);
-                        
-                        analysisHTML += `
-                            <div class="column-info">
-                                <strong>${fileType} Files (${files.length} files)</strong><br>
-                                <strong>Total unique columns:</strong> ${allColumns.length}<br>
-                                <strong>Common columns (${commonColumns.length}):</strong> ${commonColumns.length > 0 ? commonColumns.join(', ') : 'None'}<br>
-                                <strong>All columns will be preserved in final output</strong><br>
-                                <small>Files: ${files.map(f => f.name).join(', ')}</small>
-                            </div>
-                            <div class="expandable">
-                                <div class="expandable-header" onclick="this.parentElement.classList.toggle('open')">
-                                    <span>View all ${allColumns.length} columns for ${fileType} files</span>
-                                    <span class="expandable-toggle">▼</span>
-                                </div>
-                                <div class="expandable-content">
-                                    <div class="column-list">${allColumns.join(', ')}</div>
-                                </div>
-                            </div>
-                        `;
-                    } else {
-                        analysisHTML += `
-                            <div class="column-info">
-                                <strong>${fileType} Files (1 file)</strong><br>
-                                <strong>All ${files[0].columns.length} columns will be preserved</strong><br>
-                                <small>File: ${files[0].name}</small>
-                            </div>
-                        `;
-                    }
-                });
+                const allColumns = this.getAllColumns(this.filesData);
+                const commonColumns = this.getCommonColumns(this.filesData);
+                
+                let analysisHTML = '<h3>Column Analysis</h3>';
+                analysisHTML += `
+                    <div class="fc-column-info">
+                        <strong>CSV Files (${this.filesData.length} files)</strong><br>
+                        <strong>Total unique columns:</strong> ${allColumns.length}<br>
+                        <strong>Common columns:</strong> ${commonColumns.length}<br>
+                        <strong>All columns will be preserved in final output</strong><br>
+                        <small>Files: ${this.filesData.map(f => f.name).join(', ')}</small>
+                    </div>
+                    <div class="fc-expandable">
+                        <div class="fc-expandable-header" onclick="this.parentElement.classList.toggle('fc-open')">
+                            <span>View all ${allColumns.length} unique columns</span>
+                            <span class="fc-expandable-toggle">▼</span>
+                        </div>
+                        <div class="fc-expandable-content">
+                            <div class="fc-column-list">${allColumns.join(', ')}</div>
+                        </div>
+                    </div>
+                `;
 
                 container.innerHTML = analysisHTML;
             }
 
             combineFiles() {
-                this.showLoading(true, 'Combining files with ALL columns...');
+                this.showLoading(true, 'Combining CSV files with ALL columns...');
 
                 try {
-                    const filesByType = this.groupFilesByType();
-                    this.combinedData = {};
-                    this.combinationLog = [];
+                    const allColumns = this.getAllColumns(this.filesData);
+                    const combinedRows = [];
 
-                    Object.entries(filesByType).forEach(([fileType, files]) => {
-                        if (files.length === 1) {
-                            // Single file
-                            const combinedData = files[0].data.map(row => ({
-                                ...row,
-                                source_file: files[0].name
-                            }));
-                            this.combinedData[fileType] = combinedData;
-
-                            this.combinationLog.push({
-                                fileType,
-                                filesCombined: 1,
-                                fileNames: [files[0].name],
-                                totalRowsBefore: files[0].cleanedSize,
-                                totalRowsAfter: combinedData.length,
-                                allColumns: [...files[0].columns, 'source_file']
+                    this.filesData.forEach(file => {
+                        file.data.forEach(row => {
+                            const newRow = {};
+                            // Add all columns with default empty values
+                            allColumns.forEach(col => {
+                                newRow[col] = row[col] || '';
                             });
-                        } else {
-                            // Multiple files
-                            const allColumns = this.getAllColumns(files);
-                            const combinedRows = [];
-
-                            files.forEach(file => {
-                                file.data.forEach(row => {
-                                    const newRow = {};
-                                    // Add all columns with default empty values
-                                    allColumns.forEach(col => {
-                                        newRow[col] = row[col] || '';
-                                    });
-                                    newRow.source_file = file.name;
-                                    combinedRows.push(newRow);
-                                });
-                            });
-
-                            this.combinedData[fileType] = combinedRows;
-
-                            this.combinationLog.push({
-                                fileType,
-                                filesCombined: files.length,
-                                fileNames: files.map(f => f.name),
-                                totalRowsBefore: files.reduce((sum, f) => sum + f.cleanedSize, 0),
-                                totalRowsAfter: combinedRows.length,
-                                allColumns: [...allColumns, 'source_file'],
-                                commonColumns: this.getCommonColumns(files)
-                            });
-                        }
+                            newRow.source_file = file.name;
+                            combinedRows.push(newRow);
+                        });
                     });
 
+                    this.combinedData = combinedRows;
+
+                    this.combinationLog = [{
+                        fileType: 'CSV',
+                        filesCombined: this.filesData.length,
+                        fileNames: this.filesData.map(f => f.name),
+                        totalRowsBefore: this.filesData.reduce((sum, f) => sum + f.cleanedSize, 0),
+                        totalRowsAfter: combinedRows.length,
+                        allColumns: [...allColumns, 'source_file'],
+                        commonColumns: this.getCommonColumns(this.filesData)
+                    }];
+
                     this.displayCombinationResults();
-                    this.showSuccess('✅ Files combined successfully with ALL columns preserved!');
+                    this.showSuccess('Files combined successfully with ALL columns preserved!');
                 } catch (error) {
-                    this.showError('❌ Error combining files: ' + error.message);
+                    this.showError('Error combining files: ' + error.message);
                 } finally {
                     this.showLoading(false);
                 }
             }
 
             displayCombinationResults() {
-                const resultsDiv = document.getElementById('combinationResults');
                 const summaryDiv = document.getElementById('combinationSummary');
 
-                let summaryHTML = '<h3>📋 Combination Summary</h3>';
+                const log = this.combinationLog[0];
+                let summaryHTML = '<h3>Combination Summary</h3>';
 
-                this.combinationLog.forEach(log => {
-                    summaryHTML += `
-                        <div class="success-message">
-                            <strong>${log.fileType} Files Combined</strong><br>
-                            <strong>Files:</strong> ${log.filesCombined} files combined<br>
-                            <strong>Names:</strong> ${log.fileNames.join(', ')}<br>
-                            ${log.commonColumns ? `<strong>Common Columns:</strong> ${log.commonColumns.length}<br>` : ''}
-                            <strong>Total Unique Columns:</strong> ${log.allColumns.length - 1}<br>
-                            <strong>Rows:</strong> ${log.totalRowsBefore} → ${log.totalRowsAfter}<br>
-                            <strong>Final Columns (including source_file):</strong> ${log.allColumns.length}
+                summaryHTML += `
+                    <div class="fc-success-message">
+                        <strong>CSV Files Combined</strong><br>
+                        <strong>Files:</strong> ${log.filesCombined} files combined<br>
+                        <strong>Names:</strong> ${log.fileNames.join(', ')}<br>
+                        <strong>Common Columns:</strong> ${log.commonColumns.length}<br>
+                        <strong>Total Unique Columns:</strong> ${log.allColumns.length - 1}<br>
+                        <strong>Rows:</strong> ${log.totalRowsBefore} → ${log.totalRowsAfter}<br>
+                        <strong>Final Columns (including source_file):</strong> ${log.allColumns.length}
+                    </div>
+                    <div class="fc-expandable">
+                        <div class="fc-expandable-header" onclick="this.parentElement.classList.toggle('fc-open')">
+                            <span>View all ${log.allColumns.length} columns in combined data</span>
+                            <span class="fc-expandable-toggle">▼</span>
                         </div>
-                        <div class="expandable">
-                            <div class="expandable-header" onclick="this.parentElement.classList.toggle('open')">
-                                <span>View all ${log.allColumns.length} columns in combined ${log.fileType} data</span>
-                                <span class="expandable-toggle">▼</span>
-                            </div>
-                            <div class="expandable-content">
-                                <div class="column-list">${log.allColumns.join(', ')}</div>
-                            </div>
+                        <div class="fc-expandable-content">
+                            <div class="fc-column-list">${log.allColumns.join(', ')}</div>
                         </div>
-                    `;
-                });
+                    </div>
+                `;
 
-                // Add data summary for each file type
-                Object.entries(this.combinedData).forEach(([fileType, data]) => {
-                    const numericColumns = this.getNumericColumns(data);
-                    const categoricalColumns = this.getCategoricalColumns(data);
-                    const sourceFiles = [...new Set(data.map(row => row.source_file))];
+                // Add data summary
+                const numericColumns = this.getNumericColumns(this.combinedData);
+                const categoricalColumns = this.getCategoricalColumns(this.combinedData);
+                const sourceFiles = [...new Set(this.combinedData.map(row => row.source_file))];
 
-                    summaryHTML += `
-                        <h3>📈 Combined ${fileType} Data Summary</h3>
-                        <div class="stats-grid">
-                            <div class="stats-card">
-                                <h3>${data.length}</h3>
-                                <p>Rows</p>
-                            </div>
-                            <div class="stats-card">
-                                <h3>${Object.keys(data[0] || {}).length}</h3>
-                                <p>Total Columns</p>
-                            </div>
-                            <div class="stats-card">
-                                <h3>${numericColumns.length}</h3>
-                                <p>Numeric Columns</p>
-                            </div>
-                            <div class="stats-card">
-                                <h3>${sourceFiles.length}</h3>
-                                <p>Source Files</p>
-                            </div>
+                summaryHTML += `
+                    <h3>Combined Data Summary</h3>
+                    <div class="fc-stats-grid">
+                        <div class="fc-stats-card">
+                            <h3>${this.combinedData.length}</h3>
+                            <p>Total Rows</p>
                         </div>
-                        <div class="expandable">
-                            <div class="expandable-header" onclick="this.parentElement.classList.toggle('open')">
-                                <span>📊 Column Data Types for ${fileType}</span>
-                                <span class="expandable-toggle">▼</span>
-                            </div>
-                            <div class="expandable-content">
-                                <p><strong>📝 Categorical/Text Columns</strong>: ${categoricalColumns.length}</p>
-                                ${categoricalColumns.length > 0 ? `<p style="margin-left: 1rem;">${categoricalColumns.slice(0, 10).join(', ')}${categoricalColumns.length > 10 ? '...' : ''}</p>` : ''}
-                                <p><strong>🔢 Numeric Columns</strong>: ${numericColumns.length}</p>
-                                ${numericColumns.length > 0 ? `<p style="margin-left: 1rem;">${numericColumns.slice(0, 10).join(', ')}${numericColumns.length > 10 ? '...' : ''}</p>` : ''}
-                                <p><strong>📁 Source Tracking</strong>: source_file column</p>
-                            </div>
+                        <div class="fc-stats-card">
+                            <h3>${Object.keys(this.combinedData[0] || {}).length}</h3>
+                            <p>Total Columns</p>
                         </div>
-                    `;
-                });
+                        <div class="fc-stats-card">
+                            <h3>${numericColumns.length}</h3>
+                            <p>Numeric Columns</p>
+                        </div>
+                        <div class="fc-stats-card">
+                            <h3>${sourceFiles.length}</h3>
+                            <p>Source Files</p>
+                        </div>
+                    </div>
+                `;
 
                 summaryDiv.innerHTML = summaryHTML;
                 this.showElement('combinationResults');
-                document.getElementById('resetBtn').classList.remove('hidden');
+                document.getElementById('resetBtn').classList.remove('fc-hidden');
             }
 
             downloadCombinedData() {
                 if (!this.combinedData) return;
 
-                let finalData;
-                const fileTypes = Object.keys(this.combinedData);
-
-                if (fileTypes.length === 1) {
-                    // Single file type
-                    finalData = this.combinedData[fileTypes[0]];
-                } else {
-                    // Multiple file types - combine all
-                    finalData = [];
-                    Object.entries(this.combinedData).forEach(([fileType, data]) => {
-                        const dataWithType = data.map(row => ({
-                            ...row,
-                            data_type: fileType
-                        }));
-                        finalData.push(...dataWithType);
-                    });
-                }
-
-                // Convert to CSV
-                const csvContent = this.convertToCSV(finalData);
-                
-                // Create download
+                const csvContent = this.convertToCSV(this.combinedData);
                 const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
                 const link = document.createElement('a');
                 const url = URL.createObjectURL(blob);
                 
                 const timestamp = new Date().toISOString().slice(0, 19).replace(/:/g, '').replace('T', '_');
-                const filename = fileTypes.length === 1 
-                    ? `combined_${fileTypes[0].toLowerCase()}_data_${timestamp}.csv`
-                    : `combined_all_data_${timestamp}.csv`;
+                const filename = `combined_csv_data_${timestamp}.csv`;
                 
                 link.setAttribute('href', url);
                 link.setAttribute('download', filename);
@@ -950,6 +879,7 @@
                 document.body.appendChild(link);
                 link.click();
                 document.body.removeChild(link);
+                URL.revokeObjectURL(url);
             }
 
             convertToCSV(data) {
@@ -961,7 +891,6 @@
                 data.forEach(row => {
                     const values = headers.map(header => {
                         let value = row[header] || '';
-                        // Escape commas and quotes
                         if (typeof value === 'string' && (value.includes(',') || value.includes('"') || value.includes('\n'))) {
                             value = '"' + value.replace(/"/g, '""') + '"';
                         }
@@ -971,17 +900,6 @@
                 });
                 
                 return csvRows.join('\n');
-            }
-
-            groupFilesByType() {
-                const grouped = {};
-                this.filesData.forEach(file => {
-                    if (!grouped[file.type]) {
-                        grouped[file.type] = [];
-                    }
-                    grouped[file.type].push(file);
-                });
-                return grouped;
             }
 
             getAllColumns(files) {
@@ -1007,7 +925,7 @@
                 
                 const sampleRow = data[0];
                 return Object.keys(sampleRow).filter(key => {
-                    if (key === 'source_file' || key === 'data_type') return false;
+                    if (key === 'source_file') return false;
                     const value = sampleRow[key];
                     return typeof value === 'number' || (!isNaN(value) && !isNaN(parseFloat(value)));
                 });
@@ -1019,7 +937,7 @@
                 const allColumns = Object.keys(data[0]);
                 const numericColumns = this.getNumericColumns(data);
                 return allColumns.filter(col => 
-                    !numericColumns.includes(col) && col !== 'source_file' && col !== 'data_type'
+                    !numericColumns.includes(col) && col !== 'source_file'
                 );
             }
 
@@ -1030,7 +948,7 @@
                 
                 document.getElementById('fileInput').value = '';
                 document.getElementById('processBtn').disabled = true;
-                document.getElementById('processBtn').textContent = '🔗 Process Files';
+                document.getElementById('processBtn').textContent = 'Process Files';
                 
                 this.hideElement('filesSummary');
                 this.hideElement('combinationResults');
@@ -1038,7 +956,7 @@
                 this.showElement('featuresSection');
                 
                 // Clear any messages
-                const messages = document.querySelectorAll('.success-message, .error-message, .warning-message');
+                const messages = document.querySelectorAll('.fc-success-message, .fc-error-message, .fc-warning-message');
                 messages.forEach(msg => msg.remove());
             }
 
@@ -1046,54 +964,50 @@
                 const loadingDiv = document.getElementById('loading');
                 if (show) {
                     loadingDiv.querySelector('p').textContent = message;
-                    loadingDiv.classList.remove('hidden');
+                    loadingDiv.classList.remove('fc-hidden');
                 } else {
-                    loadingDiv.classList.add('hidden');
+                    loadingDiv.classList.add('fc-hidden');
                 }
             }
 
             showElement(id) {
-                document.getElementById(id).classList.remove('hidden');
+                document.getElementById(id).classList.remove('fc-hidden');
             }
 
             hideElement(id) {
-                document.getElementById(id).classList.add('hidden');
+                document.getElementById(id).classList.add('fc-hidden');
             }
 
             showSuccess(message) {
-                this.showMessage(message, 'success-message');
+                this.showMessage(message, 'fc-success-message');
             }
 
             showError(message) {
-                this.showMessage(message, 'error-message');
+                this.showMessage(message, 'fc-error-message');
             }
 
             showWarning(message) {
-                this.showMessage(message, 'warning-message');
+                this.showMessage(message, 'fc-warning-message');
             }
 
             showMessage(message, className) {
-                // Remove existing messages
-                const existingMessages = document.querySelectorAll('.success-message, .error-message, .warning-message');
+                const existingMessages = document.querySelectorAll('.fc-success-message, .fc-error-message, .fc-warning-message');
                 existingMessages.forEach(msg => msg.remove());
 
                 const messageDiv = document.createElement('div');
                 messageDiv.className = className;
                 messageDiv.textContent = message;
                 
-                const container = document.querySelector('.container');
-                const uploadSection = document.querySelector('.upload-section');
+                const container = document.querySelector('.fc-container');
+                const uploadSection = document.querySelector('.fc-upload-section');
                 
-                // Find a safe insertion point
-                if (uploadSection && uploadSection.nextSibling) {
-                    container.insertBefore(messageDiv, uploadSection.nextSibling);
+                if (uploadSection && uploadSection.nextElementSibling) {
+                    container.insertBefore(messageDiv, uploadSection.nextElementSibling);
                 } else {
-                    // If nextSibling doesn't exist, append after upload section
-                    uploadSection.parentNode.insertBefore(messageDiv, uploadSection.nextElementSibling);
+                    uploadSection.parentNode.appendChild(messageDiv);
                 }
                 
-                // Auto-remove success messages after 5 seconds
-                if (className === 'success-message') {
+                if (className === 'fc-success-message') {
                     setTimeout(() => {
                         if (messageDiv.parentNode) {
                             messageDiv.parentNode.removeChild(messageDiv);

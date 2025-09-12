@@ -1639,7 +1639,6 @@
 
     <script>
         // Global state
-        // Global state
         let isLoggedIn = false;
         let currentUser = null;
         let userRole = null;
@@ -1952,38 +1951,13 @@
             } 
         };
         
-        // Load file content
-        const loadFileContent = async (fileName) => {
-            const container = document.getElementById('file-content-container');
-            
-            try {
-                container.innerHTML = '<div class="loading-message">Loading file content...</div>';
-                
-                const response = await fetch(fileName);
-                
-                if (!response.ok) {
-                    throw new Error(`Failed to load ${fileName}: ${response.status}`);
-                }
-                
-                const content = await response.text();
-                container.innerHTML = `<div class="content-wrapper">${content}</div>`;
-                
-                console.log(`Successfully loaded ${fileName}`);
-                
-            } catch (error) {
-                console.error(`Error loading file content:`, error);
-                container.innerHTML = `
-                    <div class="error-message-notes">
-                        <strong>Error loading ${fileName}</strong><br>
-                        Could not load ${fileName}. Please ensure the file exists in the same directory as this HTML file.<br>
-                        <small>Error: ${error.message}</small><br><br>
-                        <em>Expected files:</em><br>
-                        • file1.html<br>
-                        • file2.html<br>
-                        • ... (or whatever your actual file names are)
-                    </div>
-                `;
-            } 
+        // Load URL content for MPR Outputs
+        const loadFileUrl = (url) => {
+            const iframe = document.getElementById('filesFrame');
+            if (iframe && url) {
+                iframe.src = url;
+                showToast('Loading MPR output...', 'info');
+            }
         };
         
         // Switch between weeks in notes
@@ -1994,9 +1968,9 @@
         };
         
         // Switch between files in MPR outputs
-        const switchFile = async () => {
-            const selectedFile = document.getElementById('fileSelect').value;
-            await loadFileContent(selectedFile + '.html');
+        const switchFile = () => {
+            const selectedUrl = document.getElementById('fileSelect').value;
+            loadFileUrl(selectedUrl);
         };
         
         // Switch between tabs
@@ -2024,7 +1998,7 @@
             } else if (tabName === 'notes') {
                 await loadWeekContent(currentWeek);
             } else if (tabName === 'files') {
-                await loadFileContent('file1.html');
+                initializeFilesTab();
             } else if (tabName === 'webtools') {
                 initializeWebTools();
             } else if (tabName === 'code') {
@@ -2058,6 +2032,14 @@
             }
         };
         
+        // Initialize files tab
+        const initializeFilesTab = () => {
+            const iframe = document.getElementById('filesFrame');
+            if (iframe) {
+                console.log('Files tab initialized with embedded URL:', iframe.src);
+            }
+        };
+        
         // Handle iframe loading error
         const handleFrameError = (frameType = 'web') => {
             let container, iframe, url;
@@ -2068,6 +2050,9 @@
             } else if (frameType === 'snt') {
                 container = document.getElementById('snt-content-container');
                 iframe = document.getElementById('sntFrame');
+            } else if (frameType === 'files') {
+                container = document.getElementById('file-content-container');
+                iframe = document.getElementById('filesFrame');
             } else {
                 container = document.getElementById('web-content-container');
                 iframe = document.getElementById('embeddedFrame');
@@ -2093,6 +2078,8 @@
                 iframe = document.getElementById('codeFrame');
             } else if (frameType === 'snt') {
                 iframe = document.getElementById('sntFrame');
+            } else if (frameType === 'files') {
+                iframe = document.getElementById('filesFrame');
             } else {
                 iframe = document.getElementById('embeddedFrame');
             }
@@ -3249,7 +3236,7 @@
                 timestamp: new Date().toLocaleString(),
                 readBy: [currentUserEmail],
                 replies: [],
-                studentName: userDatabase[file.uploadedBy] ? userDatabase[file.uploadedBy].fullName : file.uploadedBy // Add student name
+                studentName: userDatabase[file.uploadedBy] ? userDatabase[file.uploadedBy].fullName : file.uploadedBy
             };
             globalMessages.push(newMessage);
             
@@ -3732,10 +3719,7 @@
             // Load initial week content
             loadWeekContent(currentWeek);
         });
-                
-               
-
-   
+           
         
        
     </script>

@@ -1993,11 +1993,7 @@
             document.querySelectorAll('.tab-btn').forEach(btn => {
                 btn.classList.remove('active');
             });
-            
-            // Add active class to selected tab and button
-            document.getElementById(`${tabName}-tab`).classList.add('active');
-            event.target.classList.add('active');
-            
+
             // Load content based on tab
             if (tabName === 'datasets') {
                 renderCategories();
@@ -2008,15 +2004,20 @@
             } else if (tabName === 'notes') {
                 await loadWeekContent(currentWeek);
             } else if (tabName === 'files') {
-                await loadFileContent('file1.html');
+                // Load the currently selected file URL from dropdown
+                const selectedKey = document.getElementById('fileSelect').value;
+                await loadFileContent(urls.files[selectedKey], 'file-content-container', 'embeddedFrame');
             } else if (tabName === 'webtools') {
-                initializeWebTools();
+                await loadFileContent(urls.webtools, 'web-content-container', 'webFrame');
             } else if (tabName === 'code') {
-                initializeCodeTab();
+                await loadFileContent(urls.code, 'code-content-container', 'codeFrame');
             } else if (tabName === 'snt') {
-                initializeSNTTab();
+                await loadFileContent(urls.snt, 'snt-content-container', 'sntFrame');
             }
+           
         };
+           
+
         
         // Initialize web tools tab
         const initializeWebTools = () => {

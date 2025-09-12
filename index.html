@@ -1969,8 +1969,38 @@
         
         // Switch between files in MPR outputs
         const switchFile = () => {
-            const selectedUrl = document.getElementById('fileSelect').value;
-            loadFileUrl(selectedUrl);
+            const selectedFile = document.getElementById('fileSelect').value;
+            
+            // Define your URL mappings here
+            const fileUrls = {
+                'file1': 'https://mohamedsillahkanu.github.io/AI/?embed=true',
+                'file2': 'https://your-url-for-file2.com', 
+                'file3': 'https://your-url-for-file3.com',
+                'file4': 'https://your-url-for-file4.com',
+                'file5': 'https://your-url-for-file5.com',
+                'file6': 'https://your-url-for-file6.com',
+                'file7': 'https://your-url-for-file7.com',
+                'file8': 'https://your-url-for-file8.com',
+                'file9': 'https://your-url-for-file9.com',
+                'file10': 'https://your-url-for-file10.com',
+                'file11': 'https://your-url-for-file11.com',
+                'file12': 'https://your-url-for-file12.com'
+            };
+            
+            const url = fileUrls[selectedFile];
+            if (url) {
+                const container = document.getElementById('file-content-container');
+                container.innerHTML = `
+                    <iframe 
+                        src="${url}" 
+                        class="web-frame"
+                        onload="showToast('File loaded successfully', 'success')"
+                        onerror="handleFrameError('files')">
+                    </iframe>
+                `;
+            } else {
+                showToast('File URL not configured', 'error');
+            }
         };
         
         // Switch between tabs

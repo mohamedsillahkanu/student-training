@@ -2064,12 +2064,11 @@
         
         // Initialize files tab
         const initializeFilesTab = () => {
-            const iframe = document.getElementById('filesFrame');
-            if (iframe) {
-                console.log('Files tab initialized with embedded URL:', iframe.src);
-            }
+            // Auto-load the first file when tab is opened
+            document.getElementById('fileSelect').value = 'file1';
+            switchFile(); // This will load file1 automatically
         };
-        
+            
         // Handle iframe loading error
         const handleFrameError = (frameType = 'web') => {
             let container, iframe, url;

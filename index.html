@@ -2225,7 +2225,6 @@
                 assignment.daysUntilAvailable = Math.max(0, daysUntilDue - 7);
             });
         };
-        
         // Render weekly assignments with locking functionality
         const renderAssignments = () => {
             const container = document.getElementById('assignments-container');
@@ -2247,12 +2246,20 @@
                 const hasSubmission = userRole === 'student' && 
                     globalStudentFiles.some(f => f.weekNumber == assignment.week && f.uploadedBy === currentUser);
                 
+                // For lecturers and admin, check if there are any submissions for this assignment
+                const assignmentSubmissions = globalStudentFiles.filter(f => f.weekNumber == assignment.week);
+                
                 let statusClass = 'pending';
                 let statusText = 'Not Submitted';
                 
+                // Assignment locking logic applies to ALL users
                 if (!isAvailable && !hasSubmission) {
                     statusClass = 'locked';
-                    statusText = `Locked (${daysUntilAvailable} days)`;
+                    if (userRole === 'student') {
+                        statusText = `Locked (${daysUntilAvailable} days)`;
+                    } else {
+                        statusText = `Locked (Available in ${daysUntilAvailable} days)`;
+                    }
                 } else if (hasSubmission) {
                     const submission = globalStudentFiles.find(f => f.weekNumber == assignment.week && f.uploadedBy === currentUser);
                     if (submission.grade !== null) {
@@ -2269,37 +2276,52 @@
                     statusClass = 'available';
                     statusText = 'Available';
                 }
+                
+                // For lecturers, show appropriate status based on submissions
+                if ((userRole === 'lecturer' || userRole === 'admin') && isAvailable) {
+                    if (assignmentSubmissions.length > 0) {
+                        const gradedCount = assignmentSubmissions.filter(s => s.grade !== null).length;
+                        statusText = `${assignmentSubmissions.length} submissions (${gradedCount} graded)`;
+                        statusClass = 'available';
+                    } else {
+                        statusText = 'No submissions yet';
+                        statusClass = 'available';
+                    }
+                }
         
                 const assignmentDiv = document.createElement('div');
                 assignmentDiv.classList.add('assignment-card', statusClass);
                 
                 let dueText;
-                if (!isAvailable && !hasSubmission) {
+                if (!isAvailable) {
                     dueText = `Available in ${daysUntilAvailable} days (${assignment.dueDate})`;
                 } else {
                     dueText = isOverdue ? `${Math.abs(daysUntilDue)} days overdue` : 
                                daysUntilDue === 0 ? 'Due today' : `${daysUntilDue} days remaining`;
                 }
+                
+                // Hide assignment details when locked for ALL users
+                const isAssignmentLocked = !isAvailable && !hasSubmission && assignmentSubmissions.length === 0;
         
                 assignmentDiv.innerHTML = `
                     <div class="assignment-header">
                         <div class="assignment-title">
-                            ${!isAvailable && !hasSubmission ? '🔒 ' : ''}Week ${assignment.week}: ${assignment.title}
+                            ${isAssignmentLocked ? '🔒 ' : ''}Week ${assignment.week}: ${isAssignmentLocked ? 'Assignment Locked' : assignment.title}
                         </div>
                         <div class="assignment-status ${statusClass}">${statusText}</div>
                     </div>
                     <div class="assignment-meta">
                         <div><strong>Course:</strong> ${assignment.course}</div>
                         <div><strong>Due:</strong> ${dueText}</div>
-                        <div><strong>Points:</strong> ${assignment.totalPoints}</div>
-                        <div><strong>Requirements:</strong> ${assignment.requirements.length} items</div>
+                        ${!isAssignmentLocked ? `<div><strong>Points:</strong> ${assignment.totalPoints}</div>` : ''}
+                        ${!isAssignmentLocked ? `<div><strong>Requirements:</strong> ${assignment.requirements.length} items</div>` : ''}
                     </div>
                     <div class="assignment-description">
-                        ${!isAvailable && !hasSubmission ? 
-                            `<div style="color: #f85149; font-weight: 500; margin-bottom: 10px;">🔒 This assignment will be available ${daysUntilAvailable} days before the due date.</div>` : 
-                            ''
+                        ${isAssignmentLocked ? 
+                            `<div style="color: #f85149; font-weight: 500; margin-bottom: 10px;">🔒 This assignment will be available ${daysUntilAvailable} days before the due date.</div>
+                             <div style="color: #8b949e; font-style: italic;">Assignment details are hidden until the assignment becomes available.</div>` : 
+                            assignment.description
                         }
-                        ${assignment.description}
                     </div>
                     <div class="assignment-actions">
                         ${userRole === 'student' && !hasSubmission && isAvailable ? 
@@ -2311,22 +2333,27 @@
                         ${hasSubmission ? 
                             `<button class="download-btn" onclick="viewSubmission(${assignment.week})">View Submission</button>` : ''
                         }
-                        ${userRole === 'lecturer' || userRole === 'admin' ? 
-                            `<button class="comment-btn" onclick="viewAssignmentSubmissions(${assignment.week})">View Submissions (${globalStudentFiles.filter(f => f.weekNumber == assignment.week).length})</button>` : ''
+                        ${(userRole === 'lecturer' || userRole === 'admin') && isAvailable ? 
+                            `<button class="comment-btn" onclick="viewAssignmentSubmissions(${assignment.week})">View Submissions (${assignmentSubmissions.length})</button>` : ''
+                        }
+                        ${(userRole === 'lecturer' || userRole === 'admin') && !isAvailable ? 
+                            `<button class="comment-btn" style="opacity: 0.5; cursor: not-allowed;" disabled title="Assignment locked - submissions not available yet">View Submissions (Locked)</button>` : ''
                         }
                     </div>
-                    <div style="margin-top: 10px; padding: 10px; background: #0d1117; border-radius: 4px; font-size: 12px;">
-                        <strong>Requirements:</strong>
-                        <ul style="margin: 5px 0 0 20px; color: #8b949e;">
-                            ${assignment.requirements.map(req => `<li>${req}</li>`).join('')}
-                        </ul>
-                        ${!isAvailable && !hasSubmission ? 
-                            `<div style="margin-top: 10px; padding: 8px; background: rgba(248, 81, 73, 0.1); border-radius: 4px; border-left: 3px solid #f85149;">
-                                <strong style="color: #f85149;">Assignment Policy:</strong> Assignments become available 7 days before the due date to encourage proper time management and prevent last-minute submissions.
-                            </div>` : 
-                            ''
-                        }
-                    </div>
+                    ${!isAssignmentLocked ? `
+                        <div style="margin-top: 10px; padding: 10px; background: #0d1117; border-radius: 4px; font-size: 12px;">
+                            <strong>Requirements:</strong>
+                            <ul style="margin: 5px 0 0 20px; color: #8b949e;">
+                                ${assignment.requirements.map(req => `<li>${req}</li>`).join('')}
+                            </ul>
+                        </div>
+                    ` : ''}
+                    ${isAssignmentLocked ? 
+                        `<div style="margin-top: 10px; padding: 8px; background: rgba(248, 81, 73, 0.1); border-radius: 4px; border-left: 3px solid #f85149;">
+                            <strong style="color: #f85149;">Assignment Policy:</strong> Assignments become available 7 days before the due date. This applies to all users to maintain fairness and encourage proper time management.
+                        </div>` : 
+                        ''
+                    }
                 `;
                 container.appendChild(assignmentDiv);
             });

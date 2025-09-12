@@ -1981,37 +1981,80 @@
         };
 
         // Switch between tabs
+        // Switch between tabs - FIXED VERSION
         const switchTab = async (event, tabName) => {
-            // Remove active class from all tabs and buttons
-            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
-            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            try {
+                // Remove active class from all tabs and buttons
+                document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+                document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
         
-            // Add active class to selected tab and button
-            document.getElementById(`${tabName}-tab`).classList.add('active');
-            event.target.classList.add('active');
+                // Add active class to selected tab and button
+                const tabElement = document.getElementById(`${tabName}-tab`);
+                if (tabElement) {
+                    tabElement.classList.add('active');
+                }
+                if (event && event.target) {
+                    event.target.classList.add('active');
+                }
         
-            // Load content AFTER activating the tab
-            if (tabName === 'datasets') {
-                renderCategories();
-            } else if (tabName === 'assignments') {
-                renderAssignments();
-            } else if (tabName === 'messages') {
-                renderMessages();
-            } else if (tabName === 'notes') {
-                await loadWeekContent(currentWeek);
-           
-            } else if (tabName === 'webtools') {
-                await loadFileContent(urls.webtools, 'web-content-container', 'webFrame');
-            } else if (tabName === 'code') {
-                await loadFileContent(urls.code, 'code-content-container', 'codeFrame');
-            } else if (tabName === 'snt') {
-                await loadFileContent(urls.snt, 'snt-content-container', 'sntFrame');
+                // Load content based on tab
+                switch (tabName) {
+                    case 'datasets':
+                        if (typeof renderCategories === 'function') {
+                            renderCategories();
+                        }
+                        break;
+                        
+                    case 'assignments':
+                        if (typeof renderAssignments === 'function') {
+                            renderAssignments();
+                        }
+                        break;
+                        
+                    case 'messages':
+                        if (typeof renderMessages === 'function') {
+                            renderMessages();
+                        }
+                        break;
+                        
+                    case 'notes':
+                        await loadWeekContent(currentWeek);
+                        break;
+                        
+                    case 'webtools':
+                        await loadFileContent(urls.webtools, 'web-content-container', 'webFrame');
+                        break;
+                        
+                    case 'code':
+                        await loadFileContent(urls.code, 'code-content-container', 'codeFrame');
+                        break;
+                        
+                    case 'snt':
+                        await loadFileContent(urls.snt, 'snt-content-container', 'sntFrame');
+                        break;
+                        
+                    case 'files':
+                        const fileSelect = document.getElementById('fileSelect');
+                        if (fileSelect) {
+                            const selectedKey = fileSelect.value;
+                            if (urls.files && urls.files[selectedKey]) {
+                                await loadFileContent(urls.files[selectedKey], 'file-content-container', 'embeddedFrame');
+                            }
+                        }
+                        break;
+                        
+                    default:
+                        console.warn(`Unknown tab: ${tabName}`);
+                }
+            } catch (error) {
+                console.error(`Error switching to ${tabName} tab:`, error);
+                if (typeof showToast === 'function') {
+                    showToast(`Error loading ${tabName} content`, 'error');
+                }
             }
-            } else if (tabName === 'files') {
-                const selectedKey = document.getElementById('fileSelect').value;
-                await loadFileContent(urls.files[selectedKey], 'file-content-container', 'embeddedFrame');
         };
 
+       
         
         // Initialize web tools tab
         const initializeWebTools = () => {

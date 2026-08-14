@@ -71,7 +71,8 @@
         }
 
         .repo-info {
-            flex: 1;
+            flex: 1 1 340px;
+            min-width: 300px;
             text-align: center;
         }
 
@@ -553,6 +554,7 @@
         .full-frame {
             width: 100%;
             height: calc(100vh - 150px);
+            height: calc(100dvh - 150px);
             min-height: 600px;
             border: none;
             margin: 0;
@@ -587,6 +589,7 @@
         .web-frame {
             width: 100%;
             height: calc(100vh - 150px);
+            height: calc(100dvh - 150px);
             min-height: 600px;
             border: none;
             margin: 0;
@@ -823,6 +826,7 @@
             max-width: 500px;
             text-align: center;
             max-height: 90vh;
+            max-height: 90dvh;
             overflow-y: auto;
         }
 
@@ -1013,11 +1017,6 @@
 
             .assignment-meta {
                 grid-template-columns: 1fr;
-            }
-
-            .tab-btn {
-                padding: 10px 8px;
-                font-size: 12px;
             }
 
             .modal-content {
@@ -1406,9 +1405,11 @@
 
         /* The lecturer email is long, so let the user strip wrap on phones */
         .user-info {
+            flex: 0 1 auto;
+            min-width: 0;
+            max-width: 420px;
             flex-wrap: wrap;
             justify-content: center;
-            max-width: 100%;
         }
 
         .user-info > span {
@@ -1556,25 +1557,285 @@
             border-color: #f85149;
         }
 
-        .tab-navigation {
-            flex-wrap: wrap;
+        /* ----------------------------------------------------------------
+           Tablet: two columns of cards, a little less air around everything
+           ---------------------------------------------------------------- */
+        @media (max-width: 1024px) {
+            .tile-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 14px;
+                padding: 16px;
+            }
+
+            /* logos keep flanking the title, the login line drops below them */
+            .repo-header {
+                display: grid;
+                grid-template-columns: auto minmax(0, 1fr) auto;
+                grid-template-areas:
+                    "left title right"
+                    "user user user";
+                align-items: center;
+                justify-items: center;
+                text-align: center;
+                gap: 12px;
+            }
+
+            .logo-primary { grid-area: left; }
+            .repo-info { grid-area: title; }
+            .logo-secondary { grid-area: right; }
+            .user-info { grid-area: user; }
+
+            /* stacked, the flex basis would become a height, so drop it */
+            .repo-info {
+                flex: 0 0 auto;
+                min-width: 0;
+                width: 100%;
+            }
+
+            .user-info {
+                flex-direction: row;
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 8px 10px;
+            }
+
+            .logo {
+                height: 110px;
+                width: 110px;
+            }
+
+            .logo-stack .logo {
+                height: 84px;
+                width: 84px;
+            }
+
+            .repo-title {
+                font-size: 26px;
+            }
         }
 
-        .tab-btn {
-            min-width: 110px;
+        /* ----------------------------------------------------------------
+           Touch screens, phone or tablet: finger sized controls
+           ---------------------------------------------------------------- */
+        @media (max-width: 1024px), (pointer: coarse) {
+            .back-btn,
+            .menu-link,
+            .refresh-btn,
+            .upload-btn,
+            .message-btn,
+            .download-btn,
+            .comment-btn,
+            .grade-btn,
+            .reply-btn,
+            .pick-btn,
+            .release-btn,
+            .logout-btn,
+            .login-btn,
+            .submit-btn,
+            .cancel-btn {
+                min-height: 44px;
+                padding: 11px 16px;
+                font-size: 14px;
+            }
+
+            .notification-badge {
+                font-size: 11px;
+            }
         }
 
-        @media (max-width: 700px) {
-            .lb-table {
+        /* ----------------------------------------------------------------
+           Phone: one column, bigger tap targets, a compact header
+           ---------------------------------------------------------------- */
+        @media (max-width: 640px) {
+            .container {
+                padding: 0 12px;
+            }
+
+            /* too narrow to flank, so everything stacks */
+            .repo-header {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                gap: 10px;
+                margin-bottom: 12px;
+                text-align: center;
+            }
+
+            .repo-title {
+                font-size: 22px;
+            }
+
+            .repo-description {
+                font-size: 13px;
+            }
+
+            .logo {
+                height: 78px;
+                width: 78px;
+            }
+
+            .logo-stack {
+                gap: 10px;
+            }
+
+            .logo-stack .logo {
+                height: 66px;
+                width: 66px;
+            }
+
+            .user-info {
                 font-size: 12px;
-                min-width: 900px;
+                gap: 8px 10px;
+                flex-direction: row;
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .user-info > span {
+                flex: 0 1 auto;
+            }
+
+            /* the counters read across two lines instead of six */
+            .stats-bar {
+                flex-direction: row;
+                flex-wrap: wrap;
+                align-items: center;
+                gap: 8px 16px;
+                padding: 12px;
+                font-size: 12px;
+            }
+
+            .home-cards, .tile-grid {
+                grid-template-columns: 1fr;
+                gap: 14px;
+                padding: 14px;
+            }
+
+            .home-card {
+                padding: 18px;
+            }
+
+            .home-card-title {
+                font-size: 18px;
+            }
+
+            .categories-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+                padding: 14px;
+            }
+
+            .categories-header > div {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 8px;
+                align-items: center;
+                width: 100%;
+            }
+
+            .back-bar {
+                flex-wrap: wrap;
+                padding: 12px;
+            }
+
+            .file-actions,
+            .message-actions,
+            .modal-actions {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .file-actions button,
+            .message-actions button,
+            .modal-actions button {
+                width: 100%;
+            }
+
+            /* nothing on a phone should sit below 12px */
+            .message-meta,
+            .file-meta,
+            .lb-note,
+            .lb-legend,
+            .tile-skills,
+            .home-card-meta {
+                font-size: 12px;
+            }
+
+            .modal-content {
+                width: 94%;
+                padding: 20px;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            input, select, textarea {
+                font-size: 16px;   /* stops iOS zooming the page on focus */
+            }
+
+            .full-frame, .web-frame {
+                height: calc(100vh - 190px);
+                height: calc(100dvh - 190px);
+                min-height: 420px;
+            }
+
+            /* the leaderboard scrolls sideways with the name held in view */
+            .lb-wrap {
+                padding: 0 0 14px;
+            }
+
+            .lb-table {
+                min-width: 760px;
+                font-size: 12px;
             }
 
             .lb-table th, .lb-table td {
-                padding: 6px;
+                padding: 6px 8px;
             }
 
-            .lb-wrap, .tile-grid, .home-cards {
+            .lb-table th:nth-child(2),
+            .lb-table td.lb-name {
+                position: sticky;
+                left: 0;
+                background: #161b22;
+                border-right: 2px solid #30363d;
+                z-index: 2;
+                min-width: 128px;
+            }
+
+            .lb-table th:nth-child(2) {
+                z-index: 3;
+                background: #21262d;
+            }
+
+            .lb-table td.lb-org {
+                max-width: 130px;
+            }
+
+            .lb-score-input {
+                width: 42px;
+            }
+        }
+
+        /* Narrow phones */
+        @media (max-width: 380px) {
+            .logo {
+                height: 66px;
+                width: 66px;
+            }
+
+            .logo-stack .logo {
+                height: 58px;
+                width: 58px;
+            }
+
+            .repo-title {
+                font-size: 20px;
+            }
+
+            .home-cards, .tile-grid {
                 padding: 12px;
             }
         }

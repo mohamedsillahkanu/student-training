@@ -1858,6 +1858,9 @@
             white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
         /* the toast sat top right, on top of the ICF logo */
         .toast{top:auto !important;bottom:20px !important}
+        .tile-file{font-family:Consolas,'Courier New',monospace;font-size:11.5px;color:#8899ad;
+            margin:6px 0 2px;word-break:break-all}
+        .tile-file code{color:#9fc6ff}
         .flag{height:19px;width:auto;border-radius:3px;margin-right:7px;vertical-align:-3px;
             box-shadow:0 0 0 1px rgba(255,255,255,.4)}
         .flag-txt{margin-left:4px}
@@ -2345,24 +2348,36 @@
         ];
 
         const trainingModules = [
-            { n: 1, title: "The working directory", file: "module1-working-directory.html",
-              text: "Where R is looking and how to move it: getwd, setwd and forward slashes. Five posters and ten scenarios." },
-            { n: 2, title: "Install and read packages", file: "module2-install-packages.html",
+            { n: 1, title: "Reading files", link: "week1.html",
+              text: "Read CSV, Excel, Stata, SPSS, JSON, RDS and shapefiles into R." },
+            { n: 2, title: "First and last rows", link: "week2.html",
+              text: "Look at a dataset with head() and tail() before anything else." },
+            { n: 3, title: "Choosing columns", link: "week3.html",
+              text: "Keep only the columns you need with select() and its helpers." },
+            { n: 4, title: "Filtering rows", link: "week4.html",
+              text: "Pick the rows that meet a condition with filter()." },
+            { n: 5, title: "Rows by position and order", link: "week5.html",
+              text: "Use slice(), arrange() and distinct() to order and trim rows." },
+            { n: 6, title: "Renaming", link: "week6.html",
+              text: "Give columns clean, consistent names with rename()." },
+            { n: 7, title: "Bar charts", link: "week7.html",
+              text: "Build bar charts every possible way with ggplot2." },
+            { n: 8, title: "Maps and geospatial analysis", link: "week8.html",
+              text: "Work with the chiefdom shapefile, colours and overlaid layers." },
+            { n: 9, title: "Histograms", link: "week9.html",
+              text: "Show the shape of a distribution and choose sensible bins." },
+            { n: 10, title: "Pie and donut charts", link: "week10.html",
+              text: "Build pie and donut charts, and know when not to." },
+            { n: 11, title: "SNT Code Library", section: "webtools",
+              text: "The shared library of SNT analysis code, opened inside the portal." },
+            { n: 12, title: "D-MAT Software", section: "dmat",
+              text: "The D-MAT stratification and analysis platform, opened inside the portal." },
+            { n: 13, title: "The working directory", file: "module1-working-directory.html",
+              text: "getwd, setwd and forward slashes. Five posters and ten scenarios." },
+            { n: 14, title: "Install and read packages", file: "module2-install-packages.html",
               text: "install.packages once, library every session. Three posters and ten scenarios." },
-            { n: 3, title: "Choosing columns", text: "Keep only the columns you need with select() and its helpers." },
-            { n: 4, title: "Filtering rows", text: "Pick the rows that meet a condition with filter()." },
-            { n: 5, title: "Rows by position and order", text: "Use slice(), arrange() and distinct() to order and trim rows." },
-            { n: 6, title: "Renaming", text: "Give columns clean, consistent names with rename()." },
-            { n: 7, title: "Bar charts", text: "Build bar charts every possible way with ggplot2." },
-            { n: 8, title: "Maps and geospatial analysis", text: "Work with the chiefdom shapefile, colours and overlaid layers." },
-            { n: 9, title: "Histograms", text: "Show the shape of a distribution and choose sensible bins." },
-            { n: 10, title: "Pie and donut charts", text: "Build pie and donut charts, and know when not to." },
-            { n: 11, title: "SNT Code Library", text: "The shared library of SNT analysis code, opened inside the portal.", section: "webtools" },
-            { n: 12, title: "D-MAT Software", text: "The D-MAT stratification and analysis platform, opened inside the portal.", section: "dmat" },
-            { n: 13, title: "Reading data files", file: "module2-reading-files.html",
-              text: "csv, Excel, Stata, SPSS, GeoJSON and shapefiles: one line each and the five cases that go wrong." },
-            { n: 14, title: "First and last rows", link: "week2.html",
-              text: "Look at a dataset with head() and tail() before anything else." }
+            { n: 15, title: "Reading data files: the six formats", file: "module2-reading-files.html",
+              text: "csv, Excel, Stata, SPSS, GeoJSON and shapefiles, and the five cases that go wrong for each." }
         ];
 
         const capstoneTopics = [
@@ -2534,6 +2549,9 @@
                     '<div class="tile-badge">MODULE ' + m.n + '</div>' +
                     '<div class="tile-title">' + m.title + '</div>' +
                     '<div class="tile-text">' + m.text + '</div>' +
+                    (m.section ? '' :
+                        '<div class="tile-file">opens: <code>'
+                        + (m.file || m.link || ('week' + m.n + '.html')) + '</code></div>') +
                     '<div class="tile-actions">' +
                         (m.section
                             ? '<button class="download-btn" onclick="goTab(\'' + m.section + '\')">Open Module ' + m.n + '</button>'
@@ -2547,9 +2565,25 @@
             window.open('week' + n + '.html', '_blank');
         };
 
-        // a module either names its own file or falls back to weekN.html
+        // A module either names its own file or falls back to weekN.html. The page is opened
+        // straight away, but we also check quietly whether the file is actually there: these
+        // are plain relative links, so a missing file means it was not copied into the same
+        // folder as index.html, and saying so is far more useful than a blank browser error.
         const openFile = (name) => {
-            window.open(name, '_blank');
+            const win = window.open(name, '_blank');
+            // The check below only runs when the portal is served over http or https. Opened
+            // straight off the disk, a file:// page cannot fetch its neighbours at all: the
+            // browser blocks it, which would report every single file as missing even when it
+            // is sitting right there. So on file:// we simply open it and say nothing.
+            if (location.protocol !== 'http:' && location.protocol !== 'https:') return;
+            fetch(name, { method: 'HEAD' })
+                .then(r => {
+                    if (r.ok) return;
+                    showToast(name + ' is not on the server. Upload it beside index.html.',
+                        'error');
+                    if (win) { try { win.close(); } catch (e) {} }
+                })
+                .catch(() => {});
         };
 
         const CAPSTONE_PICKS_KEY = 'ammnet-capstone-picks-v1';

@@ -1848,22 +1848,22 @@
             !important;justify-content:flex-start !important;text-align:left !important;
             gap:16px;flex-wrap:nowrap;padding:0}
         .repo-info{text-align:left !important}
-        .brand{flex:none;height:52px;width:auto;background:#fff;border-radius:8px;
-            padding:5px 7px;object-fit:contain}
-        .brand-icf{height:44px;background:#fff}
+        .brand{flex:none;height:70px;width:auto;background:#fff;border-radius:9px;
+            padding:6px 9px;object-fit:contain}
+        .brand-icf{height:60px;background:#fff}
         .repo-info{flex:1;min-width:0}
         .repo-title{font-size:26px !important;font-weight:800;color:#fff;margin:0 !important;
             line-height:1.15}
-        .repo-description{margin:3px 0 0 !important;font-size:13px;color:#9fb0c6;
+        .repo-description{margin:5px 0 0 !important;font-size:13.5px;color:#9fb0c6;
             white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
         /* the toast sat top right, on top of the ICF logo */
         .toast{top:auto !important;bottom:20px !important}
-        .flag{height:13px;width:auto;border-radius:2px;margin-right:5px;vertical-align:-1px;
-            box-shadow:0 0 0 1px rgba(255,255,255,.35)}
+        .flag{height:19px;width:auto;border-radius:3px;margin-right:7px;vertical-align:-3px;
+            box-shadow:0 0 0 1px rgba(255,255,255,.4)}
         .flag-txt{margin-left:4px}
         @media (max-width: 620px){
             .repo-description{display:block !important;white-space:normal}
-            .flag{height:11px}
+            .flag{height:16px}
             .flag-txt{display:none}
         }
         .stats-bar{margin-top:10px !important;display:flex;flex-wrap:wrap;gap:8px 18px;
@@ -1880,19 +1880,20 @@
         }
 
         @media (max-width: 900px){
-            .brand{height:44px}
-            .brand-icf{height:38px}
+            .brand{height:58px}
+            .brand-icf{height:50px}
             .repo-title{font-size:21px !important}
             .repo-description{font-size:12px}
         }
         @media (max-width: 620px){
             .repo-header{gap:10px}
-            .brand{height:36px;padding:4px 5px}
-            .brand-icf{height:31px}
+            .brand{height:46px;padding:5px 6px}
+            .brand-icf{height:40px}
             .repo-title{font-size:17px !important}
             .repo-description{display:none}
         }
         @media (max-width: 380px){
+            .brand{height:40px}
             .brand-icf{display:none}
             .repo-title{font-size:15px !important}
         }
@@ -2344,8 +2345,10 @@
         ];
 
         const trainingModules = [
-            { n: 1, title: "Reading files", text: "Read CSV, Excel, Stata, SPSS, JSON, RDS and shapefiles into R." },
-            { n: 2, title: "First and last rows", text: "Look at a dataset with head() and tail() before anything else." },
+            { n: 1, title: "The working directory", file: "module1-working-directory.html",
+              text: "Where R is looking and how to move it: getwd, setwd and forward slashes. Five posters and ten scenarios." },
+            { n: 2, title: "Install and read packages", file: "module2-install-packages.html",
+              text: "install.packages once, library every session. Three posters and ten scenarios." },
             { n: 3, title: "Choosing columns", text: "Keep only the columns you need with select() and its helpers." },
             { n: 4, title: "Filtering rows", text: "Pick the rows that meet a condition with filter()." },
             { n: 5, title: "Rows by position and order", text: "Use slice(), arrange() and distinct() to order and trim rows." },
@@ -2355,7 +2358,11 @@
             { n: 9, title: "Histograms", text: "Show the shape of a distribution and choose sensible bins." },
             { n: 10, title: "Pie and donut charts", text: "Build pie and donut charts, and know when not to." },
             { n: 11, title: "SNT Code Library", text: "The shared library of SNT analysis code, opened inside the portal.", section: "webtools" },
-            { n: 12, title: "D-MAT Software", text: "The D-MAT stratification and analysis platform, opened inside the portal.", section: "dmat" }
+            { n: 12, title: "D-MAT Software", text: "The D-MAT stratification and analysis platform, opened inside the portal.", section: "dmat" },
+            { n: 13, title: "Reading data files", file: "module2-reading-files.html",
+              text: "csv, Excel, Stata, SPSS, GeoJSON and shapefiles: one line each and the five cases that go wrong." },
+            { n: 14, title: "First and last rows", link: "week2.html",
+              text: "Look at a dataset with head() and tail() before anything else." }
         ];
 
         const capstoneTopics = [
@@ -2530,7 +2537,7 @@
                     '<div class="tile-actions">' +
                         (m.section
                             ? '<button class="download-btn" onclick="goTab(\'' + m.section + '\')">Open Module ' + m.n + '</button>'
-                            : '<button class="download-btn" onclick="openModule(' + m.n + ')">Open Module ' + m.n + '</button>') +
+                            : '<button class="download-btn" onclick="openFile(\'' + (m.file || m.link || ('week' + m.n + '.html')) + '\')">Open Module ' + m.n + '</button>') +
                     '</div>' +
                 '</div>'
             ).join('');
@@ -2538,6 +2545,11 @@
 
         const openModule = (n) => {
             window.open('week' + n + '.html', '_blank');
+        };
+
+        // a module either names its own file or falls back to weekN.html
+        const openFile = (name) => {
+            window.open(name, '_blank');
         };
 
         const CAPSTONE_PICKS_KEY = 'ammnet-capstone-picks-v1';
